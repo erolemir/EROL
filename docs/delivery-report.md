@@ -4,6 +4,16 @@ This is the first usable local learning milestone, not completion of every featu
 in the long-term specification. Public GitHub distribution and release rules are
 documented in releases.md; runtime limitations remain explicit.
 
+The subsequent opt-in autonomous core and research delivery is documented in
+execution.md, research-execution.md and implementation-plan.md. It adds retained
+worktree execution, observed checks, separate review and native-session resume.
+The follow-up in autonomous-work.md adds discovery, bounded policy queues,
+dependency deltas, parallel read-only specialists, indexed bilingual retrieval,
+source access receipts, paired behavior suites and the local evidence panel.
+See validation.md for the current 180-test / twelve-Node-test local record, narrow
+Codex trials and the user-waived Claude live acceptance limitation. The sections below
+describe the earlier learning milestone rather than replacing that newer evidence.
+
 ## ARCHITECTURE
 
 One standard-library Python core owns SQLite memory, project identity, routing and
@@ -104,9 +114,10 @@ cost, repair-time or task-success improvement.
 
 ## KNOWN LIMITATIONS
 
-Lexical retrieval scans memory records. Runtime authenticity of reviewed reports,
+Indexed BM25 and explicit bilingual concept retrieval complement lexical search.
+Full record and optional file digests guard freshness. Runtime authenticity of reviewed reports,
 automatic native event ingestion, provider-backed scheduling, contained third-party
-execution, live harness trials, cross-project behavior trials, global revision
+execution, broad live harness trials, cross-project behavior trials, global revision
 generation/installation remain pending. GitHub source distribution and automated
 release packaging are documented in releases.md. Local Windows
 checks do not establish that the declared CI matrix has passed.
@@ -118,6 +129,6 @@ checks do not establish that the declared CI matrix has passed.
 2. Add native event adapters with sanitized evidence capture and authentic test
    execution receipts, preserving the distinction between observations and authority.
 3. Trial project-generated workflows on held-out real tasks and additional projects.
-4. Add indexed retrieval with measured relevance and bounded memory growth.
+4. Extend measured retrieval relevance beyond explicit bilingual aliases to separately evaluated embeddings.
 5. Implement portable global revisions with independent eval and explicit approval,
    preserving reviewed approval gates for global installation.

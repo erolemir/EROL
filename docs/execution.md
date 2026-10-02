@@ -1,0 +1,123 @@
+# Local autonomous execution
+
+`plan` and `explain` remain advisory. `run` explicitly opts into native model
+execution and the reviewed check commands supplied by the caller. The canonical
+Python runtime remains standard-library-only; Codex or Claude must already be
+installed and authenticated. EROL does not install a harness or change saved
+settings, plugins, hooks, authentication or permissions.
+
+## Commands
+
+Pass `--project` and `--home` before the subcommand. Start from a clean local Git
+checkout with a committed HEAD and an external EROL home:
+
+```console
+erol --project /path/to/project --home /external/erol run --task "Repair the failing import" --harness codex --checks /path/to/reviewed-checks.json
+erol --project /path/to/project --home /external/erol run --task "Repair the failing import" --harness claude --review-harness codex --checks /path/to/reviewed-checks.json --task-id unique-repair-42
+erol --project /path/to/project --home /external/erol runs list
+erol --project /path/to/project --home /external/erol runs show --id <RUN_ID>
+erol --project /path/to/project --home /external/erol runs resume --id <RUN_ID>
+erol --project /path/to/project --home /external/erol runs cancel --id <RUN_ID>
+```
+
+The default reviewer uses the selected harness in a distinct native session. EROL
+does not substitute another harness if authentication or capabilities fail. The
+harness uses its configured default model. `run` and `runs resume` exit 0 only
+when completed, 1 when incomplete/cancelled, and 2 for rejected input or unavailable
+resources. Inspection/cancellation commands use ordinary 0/2 exit statuses.
+
+The [manifest schema](../schemas/checks.schema.json) and
+[example](../examples/checks.json) define literal argv arrays, unique check names,
+`acceptance`/`static` kinds and timeouts of 1–300 seconds. At least one acceptance
+check is mandatory. Select checks that exercise the requested behavior: marking
+a no-op command `acceptance` does not make it behavioral evidence. Checks execute
+without an assembled shell string, with the caller's permissions. Review the
+manifest before invoking `run`. Windows `.cmd`, `.bat` and `.ps1` executable
+wrappers are rejected; use native executables or Node script entry points.
+Ignored local dependencies and environment files are not copied to the worktree.
+
+## Execution and evidence
+
+OS-held leases permit one unfinished run per project, including callers using
+different homes for the same Git checkout. A small Git metadata marker references
+the retained external run record; missing/unknown referenced state fails closed.
+Use the original home to resume or cancel its run. The runner creates
+a detached worktree from HEAD beneath external state and retains the original
+project identity and exact admitted skill revisions. Git worktree registration
+changes local Git metadata; the main checkout stays intact. No automatic commit,
+merge, push or publication is performed. A worktree is not an OS sandbox.
+
+The loop records baseline checks, invokes an implementer, observes checks directly,
+and launches a separate reviewer. Codex uses workspace-write for implementation
+and read-only for review with approval requests disabled; denied operations stay
+denied. Claude uses `dontAsk`, an explicit read/edit tool set for implementation,
+read-only tools for review, and an empty strict MCP configuration. EROL runs the
+checks; Claude workers have no Bash tool. Native and managed settings can further
+restrict these operations. This does not establish OS containment, universal
+prompt-injection protection or reviewer correctness.
+
+Completion requires all checks and no unresolved high/critical findings on the
+same source digest. Digests cover tracked/staged changes and nonignored new files,
+including contents; ignored caches/build outputs are excluded. Changing source
+during checks/review invalidates the evidence. Changed HEAD, linked source files,
+files larger than 4 MiB and patches above 128,000 bytes require attention.
+Successful runs return an applicable `changes.patch`, retained worktree, observed
+checks and review.
+
+Check records contain exit codes and bounded, secret-screened diagnostic excerpts.
+Native streams are parsed in memory; only session IDs, numeric usage, structured
+outcomes and bounded native errors are retained. Raw conversations, reasoning and
+tool payloads are not copied into EROL storage or the repo. Native clients retain
+their own sessions under their own policies. Secret screening is best effort.
+Usage fields are native provider reports, not billing totals. An interrupted
+checkpoint may lack a finished invocation's usage measurements.
+
+`runs.db` has a separate schema version and project binding, beside `memory.db`.
+Successful completion uses existing revision-bound learning gates and is labelled
+`runner_observed`, not cryptographically authenticated. Omitted skills and replayed
+task IDs receive no credit; incomplete runs receive no success credit. Incident
+drafting, skill activation and promotion remain separate workflows.
+
+## Interruption and limits
+
+At most three implementation attempts are allowed, including two correction turns.
+Two matching strategy/failure observations require causal replanning. Defaults are
+60 minutes from creation (including downtime), 15 minutes per model invocation
+and at most 5 minutes per check. Limits preserve work and return `needs_attention`;
+resume does not reset them.
+
+Resume verifies project/root, registered worktree, HEAD, manifest/source digests
+and process state. Changed manifests require a new task. Changed source invalidates
+checks/review. Native sessions resume by exact ID, never `--last`. An interrupted
+launch without an acknowledged session, or an alive/unknown previous child,
+prevents a second worker. Finalization is idempotent across execution and learning
+databases, so checkpoint interruption cannot double-credit usage.
+
+Cancellation is durable and observed by the active owner. The cancelling CLI never
+kills an arbitrary saved PID. Windows children start suspended, join a kill-on-close
+Job Object and then resume; POSIX children use owned process groups. Windows owner
+exit terminates its job. Abrupt POSIX owner death may leave children alive; resume
+refuses duplicate workers. Unknown/reused PID state is handled conservatively.
+Completed/cancelled runs cannot resume. Worktrees are retained, not auto-deleted.
+
+## Explicit live acceptance
+
+These development commands invoke real models in external temporary Git fixtures:
+
+```console
+python scripts/execution_trial.py --harness codex --report .validation/execution-codex.json
+python scripts/execution_trial.py --harness claude --report .validation/execution-claude.json
+```
+
+The trial fixes an arithmetic error, injects runner interruption after native worker
+completion but before checkpointing, resumes that session and requires passing tests
+plus review. This differs from interrupting a native tool mid-execution. Fake-process
+tests cover timeouts, malformed events, output limits and descendant cleanup. Trial
+directories remain available for inspection. See validation.md for measured results.
+
+`--mode research` enables native web tools and additional report/source gates.
+See [research](research-execution.md); it uses the same retained worktree, checks and resume
+protocol. It does not require a provider SDK or add runtime dependencies.
+
+Scanning, rule-based automatic starts, parallel workers, semantic retrieval and a
+dashboard remain subsequent milestones.

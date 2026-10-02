@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EROL research source ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "question", "scope", "sources", "claims", "conflicts", "limitations"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "question": {"$ref": "#/$defs/text"},
+    "scope": {"$ref": "#/$defs/text"},
+    "sources": {
+      "type": "array", "minItems": 1, "maxItems": 30,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "url", "title", "publisher", "accessed_on", "published_on", "kind"],
+        "properties": {
+          "id": {"$ref": "#/$defs/identifier"},
+          "url": {"type": "string", "minLength": 1, "maxLength": 4000, "format": "uri", "pattern": "^https?://"},
+          "title": {"$ref": "#/$defs/text"},
+          "publisher": {"$ref": "#/$defs/text"},
+          "accessed_on": {"type": "string", "format": "date"},
+          "published_on": {"type": ["string", "null"], "format": "date"},
+          "kind": {"enum": ["primary", "secondary"]}
+        }
+      }
+    },
+    "claims": {
+      "type": "array", "minItems": 1, "maxItems": 100,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "statement", "source_ids", "kind", "confidence"],
+        "properties": {
+          "id": {"$ref": "#/$defs/identifier"},
+          "statement": {"$ref": "#/$defs/text"},
+          "source_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+          "kind": {"enum": ["fact", "inference"]},
+          "confidence": {"enum": ["high", "medium", "low"]}
+        }
+      }
+    },
+    "conflicts": {"type": "array", "maxItems": 30, "items": {"$ref": "#/$defs/text"}},
+    "limitations": {"type": "array", "minItems": 1, "maxItems": 30, "items": {"$ref": "#/$defs/text"}}
+  },
+  "$defs": {
+    "text": {"type": "string", "minLength": 1, "maxLength": 4000},
+    "identifier": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"}
+  }
+}

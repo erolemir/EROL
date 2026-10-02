@@ -136,8 +136,67 @@ with the local `npx --no-install erol` prefix from this checkout.
 
 EROL supplies plans and durable evidence. The host assistant runs agents, edits,
 tests and reviews. A local installed Codex CLI trial passed skill loading, planning
-and receipt persistence. Desktop selection, live Claude use and complete real
-repair execution remain pending; see [installation acceptance](docs/installation-check.md).
+and receipt persistence. The opt-in runner also has a limited live Codex repair/resume
+trial. Desktop selection remains pending; Claude's live trial was blocked by expired
+OAuth. See [validation](docs/validation.md) and [installation acceptance](docs/installation-check.md).
+
+### Opt-in autonomous tasks
+
+`run` executes an explicitly requested task through an authenticated Codex or
+Claude CLI. It creates a separate Git worktree, observes reviewed acceptance
+commands and requires a distinct reviewer session on the same source digest.
+The default `plan` and plugin bridge remain advisory.
+
+```console
+erol --project /path/to/project run --task "Repair the failing import" --harness codex --checks /path/to/reviewed-checks.json
+erol --project /path/to/project runs list
+erol --project /path/to/project runs show --id <RUN_ID>
+erol --project /path/to/project runs resume --id <RUN_ID>
+erol --project /path/to/project runs cancel --id <RUN_ID>
+```
+
+Start from a clean committed checkout. `--review-harness claude` selects a Claude
+review of Codex's work; `--harness claude` selects Claude implementation. Review
+and adapt [the check example](examples/checks.json) to the requested behavior.
+Interrupted work, native session IDs and evidence persist outside the repo in
+`runs.db`. The result contains a retained worktree and applicable patch. See
+[local execution](docs/execution.md) for permissions, limits and live evidence.
+
+Technical, product and competitor research uses the same execution gates:
+
+```console
+erol run --mode research --task "Compare these tools for our deployment constraints using official sources" --harness codex --checks /path/to/research-acceptance.json
+```
+
+Research mode enables native web tools and requires `research/report.md` plus a
+dated claim/source ledger. A separate reviewer checks the cited pages, comparisons
+and conflicting evidence. Missing or contradicted source review blocks completion.
+Local structure checks do not establish source truth. Define meaningful checks for
+your question; see [research contracts and examples](docs/research-execution.md).
+Research now also records EROL-observed public HTTPS access receipts. These establish
+access, while claim correctness still requires independent review.
+
+### Discover, queue and inspect work
+
+```console
+erol scan --checks /absolute/reviewed-checks.json
+erol queue policy --harness codex --checks /absolute/reviewed-checks.json --output /absolute/policy.json --max-tasks 2 --reviewers 2
+erol queue enqueue --policy /absolute/policy.json
+erol queue work --policy /absolute/policy.json
+erol queue resume --id <JOB_ID> --policy /absolute/policy.json
+erol memory search "veritabanı zaman aşımı" --mode hybrid
+erol benchmark --suite examples/behavior-suite.json --harness codex --report /absolute/behavior-report.json
+erol panel --open
+```
+
+Explicit project policies bound automatic starts, check definitions and resources.
+Dependencies carry verified delta patches into child worktrees. Two or three
+read-only specialists can review in parallel; each project retains one implementer.
+Indexed retrieval combines BM25 and bilingual concept aliases, with revision and
+optional current-file bindings. The local read-only panel shows runs, queue entries
+and measurements. See [contracts, limits and recovery](docs/autonomous-work.md).
+Behavior trials compare identical fixtures with and without EROL context; they do
+not establish a general performance improvement or a vanilla harness comparison.
 
 ## Learning from recurring errors
 
@@ -240,13 +299,15 @@ Read more: [architecture](docs/architecture.md), [learning lifecycle](docs/learn
 
 ## Current limits
 
-- Routing and memory retrieval are lexical; semantic retrieval and indexed search are pending.
-- Role plans and model tiers are advisory; EROL has no model provider or worker scheduler.
+- Routing uses explicit phrases; indexed memory retrieval uses BM25 and explicit
+  bilingual aliases. Neural embedding search is not implemented.
+- Role plans and model tiers remain advisory; opt-in execution uses native CLIs,
+  with one writing task per project, a policy queue and parallel read-only reviews.
 - Learning relies on explicit sanitized evidence; automatic native event ingestion is pending.
 - Security heuristics do not provide complete secret detection or an execution sandbox.
-- Live harness trials, cross-project behavior trials and global skill installation are pending.
-- Local benchmarks measure routing and rendered context, without claiming better task
-  success, real token savings or faster repairs.
+- Broad live behavior benchmarks, cross-project trials and global skill installation are pending.
+- Default benchmarks measure routing/context proxies. Opt-in paired behavioral trials
+  measure observed outcomes and native usage; broad gains remain unproven.
 
 AGPL-3.0-only licensed. You may use, modify and redistribute EROL under the
 [license](LICENSE), preserving required notices and sharing source as required.

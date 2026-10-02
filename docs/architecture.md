@@ -1,5 +1,16 @@
 # Architecture
 
+The autonomous-work follow-up keeps separate external work.db schema 1 and
+rebuildable search.db schema 2 alongside runs.db and unchanged memory.db. `work`
+discovers source-bound candidates, validates explicit policies and schedules a
+dependency graph; `execution` owns the single-writer worktree and concurrent
+read-only review sessions. Verified ancestor delta packages compose before child
+baseline checks. `retrieval` uses an inverted term index with revision/file guards;
+`sources` observes bounded public HTTPS access without archiving bodies.
+`benchmark` runs isolated paired context ablations, and `panel` exposes selected
+read-only local metadata. These canonical modules use only the standard library.
+See [autonomous contracts](autonomous-work.md) and [validation](validation.md).
+
 One canonical Python core supports both harnesses. There is no per-harness memory copy.
 
 | Module | Responsibility |
@@ -14,6 +25,11 @@ One canonical Python core supports both harnesses. There is no per-harness memor
 | adapters/installer | Small harness bridges, managed blocks, backups, conflicts, ownership |
 | plugin | Generated native manifests and bundled canonical runtime snapshots |
 | cli | JSON contracts; deterministic exit status and safe input errors |
+| execution | Opt-in serial loop, detached worktrees, source/check digests and usage credit |
+| harness | Capability-checked native CLI adapters and structured event decoding |
+| runstore | Separate external runs.db and OS-held project execution lease |
+| runprocess/runwin | Bounded streams, cancellation and owned child cleanup |
+| research | Dated source/claim contracts, static artifact checks and independent source-review gaps |
 
 Python provides built-in SQLite and a standard-library core. A dependency-free
 Node launcher provides the local npx command and plugin entry point, probing for
@@ -44,5 +60,9 @@ marks exact duplicates stale without erasing incidents or decisions. It does not
 perform semantic summarization or reduce total historical database size.
 
 Plans are execution contracts, not execution claims. Independent role recommendations
-do not establish a real review. Completion must include explicit externally produced
-evidence. There is no unsupported model name or synthetic harness capability.
+do not establish a real review. The separate opt-in `run` command can launch native
+sessions and observe caller-supplied checks; see execution.md. Local receipts do not
+authenticate reviewers or prove OS containment. Execution leaves memory schema v1
+intact and binds finalization to original project task receipts. Checkpoint replay
+cannot increase skill-use counts. There is no unsupported model name or synthetic
+harness capability.

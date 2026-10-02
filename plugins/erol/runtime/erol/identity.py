@@ -39,7 +39,12 @@ def normalized_remote(raw: str) -> str | None:
 def _git(root: Path, *args: str) -> str | None:
     try:
         result = subprocess.run(
-            ["git", "-C", str(root), *args], capture_output=True, text=True, timeout=5, check=False
+            ["git", "-C", str(root), *args],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=5,
+            check=False,
         )
         return result.stdout.strip() if result.returncode == 0 else None
     except (OSError, subprocess.TimeoutExpired):

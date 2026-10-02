@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "issues": [
+    {"id": "example-1", "title": "Add a regression for the reported date filter boundary", "path": "src"}
+  ]
+}
