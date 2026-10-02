@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Windows updater files live in `~/.erol/updater` so Task Scheduler can see them
+  when registration runs from a packaged desktop application.
+- Unregister refuses to remove another application's task with the same name.
+
 ## 0.1.2 — 2026-10-02
 
 - Public GitHub distribution under AGPL-3.0-only with owner-reviewed main protection.

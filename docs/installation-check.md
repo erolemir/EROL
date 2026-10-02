@@ -1,7 +1,28 @@
-# Local installation acceptance — 2026-10-02
+# Installation acceptance — 2026-10-02
 
-Installed at the user's request on their Windows computer. No public packages or
-marketplaces were published.
+## GitHub distribution acceptance
+
+The first public release, [0.1.2](https://github.com/erolemir/EROL/releases/tag/v0.1.2),
+was generated automatically after all six OS/Python jobs passed. Both clients
+were migrated from the local marketplace to the GitHub `stable` ref, installed
+and enabled `erol@erol` 0.1.2, and exposed AGPL-3.0-only manifests.
+The installed Codex bundled launcher returned version 0.1.2 and the existing
+project's external memory counts. No database was copied into the plugin.
+
+A Windows Task Scheduler run actually refreshed both native clients successfully
+with exit code 0. Updater files live in `~/.erol/updater`: files first placed in
+application-private AppData were invisible to the scheduled process. The task
+uses the OS shell, ordinary user permissions and saved CLI paths where needed.
+See [release and update instructions](releases.md).
+
+These are native installation, runtime and updater checks. The earlier model
+trial below used 0.1.1. Desktop picker invocation and an authenticated Claude
+model session remain unverified; no new model trial is claimed here.
+
+## Earlier local development acceptance
+
+Installed at the user's request on their Windows computer. At that stage no
+public packages or marketplaces had been published.
 
 | Host | Plugin | Status |
 | --- | --- | --- |
