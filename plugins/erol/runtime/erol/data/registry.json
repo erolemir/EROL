@@ -26,7 +26,8 @@
       "project_id": null,
       "agent": "debugger",
       "path": "skills/incident-debugging/SKILL.md",
-      "digest": "8c550b0fbe39fbac69bc1033043374d7e2ed4950f94f2d0996c9c52c3bb95b24"
+      "digest": "8c550b0fbe39fbac69bc1033043374d7e2ed4950f94f2d0996c9c52c3bb95b24",
+      "category": "coding"
     },
     {
       "name": "message-idempotency",
@@ -52,7 +53,8 @@
       "project_id": null,
       "agent": "database-specialist",
       "path": "skills/message-idempotency/SKILL.md",
-      "digest": "ae28ddaa59f6833d67bf5082473126b3c5501ac67031d18e4ca61c4d07655b51"
+      "digest": "ae28ddaa59f6833d67bf5082473126b3c5501ac67031d18e4ca61c4d07655b51",
+      "category": "backend"
     },
     {
       "name": "stable-pagination",
@@ -77,7 +79,8 @@
       "project_id": null,
       "agent": "database-specialist",
       "path": "skills/stable-pagination/SKILL.md",
-      "digest": "0a9ffa3f7f56ca04c9d8cbfc22714a5a5c5e4781f62c4b5c77febfbe0c1078b1"
+      "digest": "0a9ffa3f7f56ca04c9d8cbfc22714a5a5c5e4781f62c4b5c77febfbe0c1078b1",
+      "category": "backend"
     },
     {
       "name": "database-query-performance",
@@ -103,7 +106,8 @@
       "project_id": null,
       "agent": "database-specialist",
       "path": "skills/database-query-performance/SKILL.md",
-      "digest": "b2b2ab0dcfc9d04b65f5aa4fe1c347705ee75a1edd0680f639d708419fc2ca62"
+      "digest": "b2b2ab0dcfc9d04b65f5aa4fe1c347705ee75a1edd0680f639d708419fc2ca62",
+      "category": "backend"
     },
     {
       "name": "database-migration-safety",
@@ -126,7 +130,8 @@
       "project_id": null,
       "agent": "database-specialist",
       "path": "skills/database-migration-safety/SKILL.md",
-      "digest": "6dcdefeaca13df5e31c6eb2d62f811ba2a3797edc14d4f6d5fdb87e1a5bd7af5"
+      "digest": "6dcdefeaca13df5e31c6eb2d62f811ba2a3797edc14d4f6d5fdb87e1a5bd7af5",
+      "category": "backend"
     },
     {
       "name": "api-contract-design",
@@ -139,18 +144,22 @@
         "API tasarımı",
         "istek doğrulama",
         "api sözleşmesi",
-        "servis uç noktası"
+        "servis uç noktası",
+        "API creation",
+        "API oluştur",
+        "API sözleşmesini"
       ],
       "avoid_when": [
         "endpoint in geometry",
         "geometri uç noktası"
       ],
-      "version": "1.0.1",
+      "version": "1.0.2",
       "scope": "builtin",
       "project_id": null,
       "agent": "implementer",
       "path": "skills/api-contract-design/SKILL.md",
-      "digest": "2f10169d1db82ea2e36317e8e726c312aba37e6a6a664e134bffccf308b744b5"
+      "digest": "2f10169d1db82ea2e36317e8e726c312aba37e6a6a664e134bffccf308b744b5",
+      "category": "backend"
     },
     {
       "name": "regression-test-design",
@@ -166,18 +175,23 @@
         "birim testi",
         "entegrasyon testi",
         "test ekle",
-        "testleri yaz"
+        "testleri yaz",
+        "regression tests",
+        "unit tests",
+        "integration tests",
+        "regresyon testleri"
       ],
       "avoid_when": [
         "statistical hypothesis test",
         "istatistik testi"
       ],
-      "version": "1.0.1",
+      "version": "1.0.2",
       "scope": "builtin",
       "project_id": null,
       "agent": "tester",
       "path": "skills/regression-test-design/SKILL.md",
-      "digest": "4c70a2bd3c8b79695be7c43a22606a664499401d74899c3130c17a147a78b0fa"
+      "digest": "4c70a2bd3c8b79695be7c43a22606a664499401d74899c3130c17a147a78b0fa",
+      "category": "coding"
     },
     {
       "name": "evidence-code-review",
@@ -203,7 +217,8 @@
       "project_id": null,
       "agent": "reviewer",
       "path": "skills/evidence-code-review/SKILL.md",
-      "digest": "64e2d2ade9fa936125b1d66be0677a2fa99131d9ecebbc6eae7957ecce76138d"
+      "digest": "64e2d2ade9fa936125b1d66be0677a2fa99131d9ecebbc6eae7957ecce76138d",
+      "category": "coding"
     },
     {
       "name": "security-boundary-review",
@@ -230,7 +245,8 @@
       "project_id": null,
       "agent": "security-reviewer",
       "path": "skills/security-boundary-review/SKILL.md",
-      "digest": "1589a04bc419e2485a42ae9bc12cba3a1c1b488aee5057ffe707a3f7347552a3"
+      "digest": "1589a04bc419e2485a42ae9bc12cba3a1c1b488aee5057ffe707a3f7347552a3",
+      "category": "security"
     },
     {
       "name": "dependency-upgrade",
@@ -254,7 +270,8 @@
       "project_id": null,
       "agent": "implementer",
       "path": "skills/dependency-upgrade/SKILL.md",
-      "digest": "81822b662e2a23a5bd63f7e362b7c18186dbae1e98313675b4fc50235509bd7b"
+      "digest": "81822b662e2a23a5bd63f7e362b7c18186dbae1e98313675b4fc50235509bd7b",
+      "category": "coding"
     },
     {
       "name": "architecture-decision",
@@ -277,7 +294,8 @@
       "project_id": null,
       "agent": "planner",
       "path": "skills/architecture-decision/SKILL.md",
-      "digest": "ebff5fbc76c2583564dcae59a35e8e42719832cdbaf1b2a47d631be834a3b15d"
+      "digest": "ebff5fbc76c2583564dcae59a35e8e42719832cdbaf1b2a47d631be834a3b15d",
+      "category": "coding"
     },
     {
       "name": "repository-exploration",
@@ -301,7 +319,8 @@
       "project_id": null,
       "agent": "explorer",
       "path": "skills/repository-exploration/SKILL.md",
-      "digest": "99d1232ed27c2a5351f0c48b0f215bebe0f1616ea561966f81c9ce0caf35735b"
+      "digest": "99d1232ed27c2a5351f0c48b0f215bebe0f1616ea561966f81c9ce0caf35735b",
+      "category": "coding"
     },
     {
       "name": "safe-refactoring",
@@ -324,7 +343,8 @@
       "project_id": null,
       "agent": "implementer",
       "path": "skills/safe-refactoring/SKILL.md",
-      "digest": "741d0a786eb6609da078f3ff2812e5c098d710a43e0ec168c67dbeecc055b53c"
+      "digest": "741d0a786eb6609da078f3ff2812e5c098d710a43e0ec168c67dbeecc055b53c",
+      "category": "coding"
     },
     {
       "name": "ci-failure-triage",
@@ -349,7 +369,8 @@
       "project_id": null,
       "agent": "debugger",
       "path": "skills/ci-failure-triage/SKILL.md",
-      "digest": "c0bfb69429fcb0b5bbf8b7678151758f2f6ed94c7d98acb3c5bc02c2d34c84bf"
+      "digest": "c0bfb69429fcb0b5bbf8b7678151758f2f6ed94c7d98acb3c5bc02c2d34c84bf",
+      "category": "devops"
     },
     {
       "name": "release-verification",
@@ -375,7 +396,8 @@
       "project_id": null,
       "agent": "verifier",
       "path": "skills/release-verification/SKILL.md",
-      "digest": "e135e699ab7071a230a9255e0b5857edc90694e31fdad2f1a9d2b92e8bb3b4b7"
+      "digest": "e135e699ab7071a230a9255e0b5857edc90694e31fdad2f1a9d2b92e8bb3b4b7",
+      "category": "devops"
     },
     {
       "name": "documentation-maintenance",
@@ -399,7 +421,8 @@
       "project_id": null,
       "agent": "documentation-writer",
       "path": "skills/documentation-maintenance/SKILL.md",
-      "digest": "41d210d2a4bf1a4a34bb0a30ec16d730d65e4ce1639e3ea9118eb00aae906097"
+      "digest": "41d210d2a4bf1a4a34bb0a30ec16d730d65e4ce1639e3ea9118eb00aae906097",
+      "category": "coding"
     },
     {
       "name": "accessibility-audit",
@@ -423,7 +446,8 @@
       "project_id": null,
       "agent": "frontend-specialist",
       "path": "skills/accessibility-audit/SKILL.md",
-      "digest": "a8b769f0c58831f85fecab1dbceef8ba94ad13876e230d63ed74dfcbd4aa6a85"
+      "digest": "a8b769f0c58831f85fecab1dbceef8ba94ad13876e230d63ed74dfcbd4aa6a85",
+      "category": "frontend"
     },
     {
       "name": "frontend-state-correctness",
@@ -461,7 +485,8 @@
       "project_id": null,
       "agent": "frontend-specialist",
       "path": "skills/frontend-state-correctness/SKILL.md",
-      "digest": "e189817f6c0a88e5f8dc8a2df798cd3e9eee889b0332402125dc3c728edaddbc"
+      "digest": "e189817f6c0a88e5f8dc8a2df798cd3e9eee889b0332402125dc3c728edaddbc",
+      "category": "frontend"
     },
     {
       "name": "performance-profiling",
@@ -486,7 +511,8 @@
       "project_id": null,
       "agent": "performance-specialist",
       "path": "skills/performance-profiling/SKILL.md",
-      "digest": "2dd3cba87b184a9e26a5edc1d2b4f75def7bbb05d70b3c6f01e37585033d0e02"
+      "digest": "2dd3cba87b184a9e26a5edc1d2b4f75def7bbb05d70b3c6f01e37585033d0e02",
+      "category": "coding"
     },
     {
       "name": "memory-hygiene",
@@ -510,7 +536,8 @@
       "project_id": null,
       "agent": "memory-curator",
       "path": "skills/memory-hygiene/SKILL.md",
-      "digest": "36857a0a054264fff5b2db3590f77f446acd4ff12de2ec85588dece494be6c1e"
+      "digest": "36857a0a054264fff5b2db3590f77f446acd4ff12de2ec85588dece494be6c1e",
+      "category": "coding"
     },
     {
       "name": "learning-pattern-discovery",
@@ -535,7 +562,8 @@
       "project_id": null,
       "agent": "memory-curator",
       "path": "skills/learning-pattern-discovery/SKILL.md",
-      "digest": "e0c3903df446147c9473533552a00b015bfed04a0bd3b96327b41049c6d4214e"
+      "digest": "e0c3903df446147c9473533552a00b015bfed04a0bd3b96327b41049c6d4214e",
+      "category": "coding"
     },
     {
       "name": "skill-quality-evaluation",
@@ -559,7 +587,8 @@
       "project_id": null,
       "agent": "verifier",
       "path": "skills/skill-quality-evaluation/SKILL.md",
-      "digest": "fee617cd24b18f82aca51f1a5d229c6748a9009c11a17eea7dd3738abee09030"
+      "digest": "fee617cd24b18f82aca51f1a5d229c6748a9009c11a17eea7dd3738abee09030",
+      "category": "coding"
     },
     {
       "name": "context-handoff",
@@ -584,7 +613,8 @@
       "project_id": null,
       "agent": "lead-engineer",
       "path": "skills/context-handoff/SKILL.md",
-      "digest": "8b7e04e765f15b3e4e90230b5bcaecc004241e8392f14c2572213534f4bfd7b7"
+      "digest": "8b7e04e765f15b3e4e90230b5bcaecc004241e8392f14c2572213534f4bfd7b7",
+      "category": "coding"
     },
     {
       "name": "tool-capability-selection",
@@ -608,7 +638,1594 @@
       "project_id": null,
       "agent": "lead-engineer",
       "path": "skills/tool-capability-selection/SKILL.md",
-      "digest": "2e68cd3559e30c8412bac22539072920355bcf58e98bf5594b55f33b74c90471"
+      "digest": "2e68cd3559e30c8412bac22539072920355bcf58e98bf5594b55f33b74c90471",
+      "category": "coding"
+    },
+    {
+      "name": "service-api-integration",
+      "description": "Implement external service adapters from verified provider contracts, including credentials, timeouts and uncertain outcomes.",
+      "triggers": [
+        "API integration",
+        "service integration",
+        "provider API integration",
+        "API entegrasyonu",
+        "servis entegrasyonu"
+      ],
+      "avoid_when": [
+        "integration calculus",
+        "integral hesabı"
+      ],
+      "category": "backend",
+      "agent": "implementer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/service-api-integration/SKILL.md",
+      "digest": "c9098721a9a723b887fd64d61b5d214b1edf6ab1fc10b196af2e1190741ce1bf"
+    },
+    {
+      "name": "transaction-boundaries",
+      "description": "Define database transaction ownership and concurrency invariants for multi-step writes.",
+      "triggers": [
+        "transaction boundary",
+        "database transaction",
+        "concurrent writes",
+        "işlem sınırı",
+        "eşzamanlı yazma"
+      ],
+      "avoid_when": [
+        "bank transaction statement",
+        "banka işlem dökümü"
+      ],
+      "category": "backend",
+      "agent": "database-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/transaction-boundaries/SKILL.md",
+      "digest": "968be94b1d5cc85974ea14dad7e1ab2be5dfe66b9a9a22e1510928941fc2d63f"
+    },
+    {
+      "name": "webhook-delivery",
+      "description": "Implement inbound or outbound webhook delivery with verification, durable acknowledgement and replay handling.",
+      "triggers": [
+        "webhook delivery",
+        "webhook retry",
+        "webhook signature",
+        "webhook teslimatı",
+        "webhook imzası"
+      ],
+      "avoid_when": [
+        "fishing hook",
+        "olta kancası"
+      ],
+      "category": "backend",
+      "agent": "implementer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/webhook-delivery/SKILL.md",
+      "digest": "c10dd48ae491d4bcc7412c65bd23a3d713678720cd01fe5fdf15b6a1c7df4ee4"
+    },
+    {
+      "name": "background-job-reliability",
+      "description": "Make queued work recoverable through acknowledgements, leases, bounded retries and safe replay.",
+      "triggers": [
+        "background job",
+        "queue worker",
+        "dead letter queue",
+        "arka plan işi",
+        "kuyruk işçisi"
+      ],
+      "avoid_when": [
+        "job interview",
+        "iş görüşmesi"
+      ],
+      "category": "backend",
+      "agent": "implementer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/background-job-reliability/SKILL.md",
+      "digest": "51287849c6de80ae62a385601552c64a6f72eafa625eda18984221e80bd855e1"
+    },
+    {
+      "name": "caching-strategy",
+      "description": "Design cache keys, invalidation and freshness policies from measured read behavior and correctness requirements.",
+      "triggers": [
+        "cache invalidation",
+        "cache strategy",
+        "cache stampede",
+        "önbellek stratejisi",
+        "önbellek geçersizleştirme"
+      ],
+      "avoid_when": [
+        "browser cache instructions only",
+        "yalnızca tarayıcı önbelleğini temizle"
+      ],
+      "category": "backend",
+      "agent": "performance-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/caching-strategy/SKILL.md",
+      "digest": "78813aa2f5252197c8efcd171017ddb7589a7fd676833a72bcd702728d8d89e3"
+    },
+    {
+      "name": "rate-limit-design",
+      "description": "Design bounded request quotas with explicit identities, burst behavior and fair failure responses.",
+      "triggers": [
+        "rate limit",
+        "request quota",
+        "token bucket",
+        "istek kotası",
+        "hız sınırlama"
+      ],
+      "avoid_when": [
+        "currency rate",
+        "döviz kuru"
+      ],
+      "category": "backend",
+      "agent": "implementer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/rate-limit-design/SKILL.md",
+      "digest": "5f7e2afb616002484ec4b27c050be26e748434f118e161d244990777d60bb78a"
+    },
+    {
+      "name": "file-upload-pipeline",
+      "description": "Build resumable file ingestion with bounded resources, durable ownership and visible processing states.",
+      "triggers": [
+        "upload pipeline",
+        "resumable upload",
+        "file ingestion",
+        "dosya yükleme akışı",
+        "devam edebilir yükleme"
+      ],
+      "avoid_when": [
+        "upload screenshot manually",
+        "elle ekran görüntüsü yükle"
+      ],
+      "category": "backend",
+      "agent": "implementer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/file-upload-pipeline/SKILL.md",
+      "digest": "b869e55dcb9477c33c5d8cebf4559dfb7c66ab822a92950a6e8bb3333f9f3928"
+    },
+    {
+      "name": "multi-tenant-isolation",
+      "description": "Verify tenant scoping across queries, jobs, caches and object references.",
+      "triggers": [
+        "tenant isolation",
+        "multi tenant",
+        "cross tenant",
+        "kiracı izolasyonu",
+        "müşteri izolasyonu"
+      ],
+      "avoid_when": [
+        "apartment tenant",
+        "ev kiracısı"
+      ],
+      "category": "backend",
+      "agent": "security-reviewer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/multi-tenant-isolation/SKILL.md",
+      "digest": "5faf68660b19d258d81b4931ef6d8bdb387d13d7c010f0186255922d614c5de8"
+    },
+    {
+      "name": "realtime-service",
+      "description": "Design authenticated realtime connections with bounded delivery, reconnect and backpressure behavior.",
+      "triggers": [
+        "websocket service",
+        "server sent events",
+        "realtime channel",
+        "gerçek zamanlı kanal",
+        "websocket servisi"
+      ],
+      "avoid_when": [
+        "live concert",
+        "canlı konser"
+      ],
+      "category": "backend",
+      "agent": "implementer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/realtime-service/SKILL.md",
+      "digest": "169ec3a70260df14d4132c20fd2809bc4beb065c0343926090c91d054ff5185c"
+    },
+    {
+      "name": "distributed-workflow",
+      "description": "Coordinate multi-service effects using durable states, reconciliation and explicit compensation limits.",
+      "triggers": [
+        "distributed workflow",
+        "saga orchestration",
+        "compensating action",
+        "dağıtık iş akışı",
+        "telafi işlemi"
+      ],
+      "avoid_when": [
+        "literary saga",
+        "roman serisi"
+      ],
+      "category": "backend",
+      "agent": "planner",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/distributed-workflow/SKILL.md",
+      "digest": "2f13ac5718764ff79b0379f36704db2ee6b0b0921046bc993b9bf3d880d783b2"
+    },
+    {
+      "name": "responsive-layout",
+      "description": "Build layouts that remain usable across viewport sizes, zoom and variable content.",
+      "triggers": [
+        "responsive layout",
+        "mobile layout",
+        "breakpoint design",
+        "mobil yerleşim",
+        "duyarlı tasarım"
+      ],
+      "avoid_when": [
+        "responsive customer support",
+        "hızlı müşteri desteği"
+      ],
+      "category": "frontend",
+      "agent": "frontend-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/responsive-layout/SKILL.md",
+      "digest": "5387155ebcc543418d555f763f9b3d216709ca462df3811c615bf362b8d8a910"
+    },
+    {
+      "name": "design-system-components",
+      "description": "Create reusable UI components with explicit variants, interaction contracts and consistent tokens.",
+      "triggers": [
+        "design system component",
+        "component library",
+        "design tokens",
+        "bileşen kütüphanesi",
+        "tasarım tokenları"
+      ],
+      "avoid_when": [
+        "electronic component library",
+        "elektronik parça"
+      ],
+      "category": "frontend",
+      "agent": "frontend-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/design-system-components/SKILL.md",
+      "digest": "8927358f97b6c300480c9f5a8acd35c37d91a4515745390691e0eec5dbe111f0"
+    },
+    {
+      "name": "form-validation",
+      "description": "Implement form validation, submission and recovery without losing user input or trusting client checks alone.",
+      "triggers": [
+        "form validation",
+        "form submission",
+        "field error",
+        "form doğrulama",
+        "form gönderimi"
+      ],
+      "avoid_when": [
+        "paper form filing",
+        "kağıt form arşivi"
+      ],
+      "category": "frontend",
+      "agent": "frontend-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/form-validation/SKILL.md",
+      "digest": "60d2f3a02443767e4da06b5c229562a81c406ed8b6beeb4557c698eef0b02ec1"
+    },
+    {
+      "name": "frontend-data-fetching",
+      "description": "Manage remote UI data through cache keys, cancellation and consistent loading/error states.",
+      "triggers": [
+        "frontend data fetching",
+        "client query cache",
+        "client data synchronization",
+        "istemci veri eşitleme",
+        "istemci veri çekme"
+      ],
+      "avoid_when": [
+        "fetch dog training",
+        "köpeğe getir eğitimi"
+      ],
+      "category": "frontend",
+      "agent": "frontend-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/frontend-data-fetching/SKILL.md",
+      "digest": "887a7cbc5e5e1ba68bd37e07badd94c3262f6e26cd40321d0b2e9ef4dfcff23c"
+    },
+    {
+      "name": "web-performance-budget",
+      "description": "Measure web loading and interaction bottlenecks with repeatable budgets and representative users.",
+      "triggers": [
+        "web performance",
+        "bundle budget",
+        "core web vitals",
+        "web performansı",
+        "paket boyutu bütçesi"
+      ],
+      "avoid_when": [
+        "stage performance review",
+        "sahne performansı değerlendirmesi"
+      ],
+      "category": "frontend",
+      "agent": "performance-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/web-performance-budget/SKILL.md",
+      "digest": "38057ccedbf8814268f4e9c251b4bbc0d4f5f59474574dbdc7d7cc9a327567b8"
+    },
+    {
+      "name": "frontend-e2e-testing",
+      "description": "Test critical browser journeys with stable state setup, meaningful assertions and controlled dependencies.",
+      "triggers": [
+        "browser journey test",
+        "end to end browser",
+        "e2e test",
+        "uçtan uca tarayıcı",
+        "tarayıcı akış testi"
+      ],
+      "avoid_when": [
+        "travel journey diary",
+        "seyahat günlüğü"
+      ],
+      "category": "frontend",
+      "agent": "tester",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/frontend-e2e-testing/SKILL.md",
+      "digest": "ac67b2ae01346fb6024764525d1eda73028ae55f0f8f3dfaae509f49c3fae6f8"
+    },
+    {
+      "name": "internationalization",
+      "description": "Implement locale-aware UI strings, formats and directionality without changing canonical stored values.",
+      "triggers": [
+        "internationalization",
+        "i18n",
+        "locale formatting",
+        "çok dilli arayüz",
+        "yerel biçimlendirme"
+      ],
+      "avoid_when": [
+        "international travel itinerary",
+        "uluslararası gezi planı"
+      ],
+      "category": "frontend",
+      "agent": "frontend-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/internationalization/SKILL.md",
+      "digest": "b01e1814771d34219de32340a9232120a0cd102413046a62801783edc9619b7a"
+    },
+    {
+      "name": "dashboard-design",
+      "description": "Design operational dashboards around decisions, metric definitions and comparable data states.",
+      "triggers": [
+        "dashboard design",
+        "metric dashboard",
+        "reporting dashboard",
+        "dashboard tasarımı",
+        "gösterge paneli"
+      ],
+      "avoid_when": [
+        "car dashboard repair",
+        "araç gösterge tamiri"
+      ],
+      "category": "frontend",
+      "agent": "frontend-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/dashboard-design/SKILL.md",
+      "digest": "0727d6ca52a58932880f4495b48c291a1f268a3757e34f2f339b337b493604a1"
+    },
+    {
+      "name": "requirements-acceptance",
+      "description": "Turn feature requests into observable acceptance criteria, boundaries and unresolved decisions.",
+      "triggers": [
+        "acceptance criteria",
+        "feature requirements",
+        "kabul kriterleri",
+        "özellik gereksinimleri"
+      ],
+      "avoid_when": [
+        "college acceptance letter",
+        "üniversite kabul mektubu"
+      ],
+      "category": "coding",
+      "agent": "planner",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/requirements-acceptance/SKILL.md",
+      "digest": "bfb74fa36020873d9fada1d75712d6d719636a6c4330e20559819b8f5b961915"
+    },
+    {
+      "name": "repository-change-planning",
+      "description": "Plan a scoped code change from affected callers, compatibility constraints and verifiable milestones.",
+      "triggers": [
+        "implementation plan",
+        "change impact",
+        "code change plan",
+        "uygulama planı",
+        "değişiklik etki analizi"
+      ],
+      "avoid_when": [
+        "wedding plan",
+        "düğün planı"
+      ],
+      "category": "coding",
+      "agent": "planner",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/repository-change-planning/SKILL.md",
+      "digest": "4679f093239f9d63d830b2a3beb47f4fce1d0d6be69f040d3e190797db824e0f"
+    },
+    {
+      "name": "git-branch-integration",
+      "description": "Synchronize and integrate Git branches while preserving local work and divergent history.",
+      "triggers": [
+        "branch integration",
+        "merge main into dev",
+        "git branch sync",
+        "branch eşitle",
+        "main dev birleştir"
+      ],
+      "avoid_when": [
+        "tree branch pruning",
+        "ağaç dalı budama"
+      ],
+      "category": "coding",
+      "agent": "implementer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/git-branch-integration/SKILL.md",
+      "digest": "873ebc4431fe07b76eae3ddd3dfac9b95e5bb835832ddbced9014b85159195e2"
+    },
+    {
+      "name": "error-handling-contracts",
+      "description": "Design errors that preserve causality, stable caller behavior and safe operational diagnostics.",
+      "triggers": [
+        "error contract",
+        "exception handling",
+        "error mapping",
+        "hata sözleşmesi",
+        "istisna yönetimi"
+      ],
+      "avoid_when": [
+        "grammar exception",
+        "dilbilgisi istisnası"
+      ],
+      "category": "coding",
+      "agent": "implementer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/error-handling-contracts/SKILL.md",
+      "digest": "ff2365fb7780f98f0cd9f75bd6e63c830f96fc183fd2bd0490a90bb280c3a6dc"
+    },
+    {
+      "name": "configuration-management",
+      "description": "Make configuration explicit, validated and environment-consistent without exposing secrets.",
+      "triggers": [
+        "configuration schema",
+        "environment configuration",
+        "config validation",
+        "yapılandırma doğrulama",
+        "ortam yapılandırması"
+      ],
+      "avoid_when": [
+        "desk configuration",
+        "masa düzeni"
+      ],
+      "category": "coding",
+      "agent": "implementer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/configuration-management/SKILL.md",
+      "digest": "e7c1689032b2f82456de5832f6085615d7a52005defe3a98550ce236934b89ea"
+    },
+    {
+      "name": "dependency-boundaries",
+      "description": "Restructure modules around dependency direction, ownership and testable interfaces.",
+      "triggers": [
+        "module boundary",
+        "dependency inversion",
+        "circular import",
+        "modül sınırı",
+        "döngüsel import"
+      ],
+      "avoid_when": [
+        "parcel import customs",
+        "gümrük ithalatı"
+      ],
+      "category": "coding",
+      "agent": "planner",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/dependency-boundaries/SKILL.md",
+      "digest": "6b3de0e10a2ec27c58ddc0a798211264e6755638fc89523eb9c236f604162fc5"
+    },
+    {
+      "name": "test-fixture-design",
+      "description": "Build deterministic fixtures that expose behavioral failures without reproducing implementation details.",
+      "triggers": [
+        "test fixture",
+        "test data isolation",
+        "deterministic test",
+        "test verisi izolasyonu",
+        "deterministik test"
+      ],
+      "avoid_when": [
+        "lighting fixture",
+        "aydınlatma armatürü"
+      ],
+      "category": "coding",
+      "agent": "tester",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/test-fixture-design/SKILL.md",
+      "digest": "b1a2b5242d770fbd8323bc1d608ee99744a7cbe0a8f40bcf2bfad1bbc203c5c9"
+    },
+    {
+      "name": "legacy-modernization",
+      "description": "Modernize legacy code incrementally with characterization, compatibility seams and recoverable rollout.",
+      "triggers": [
+        "legacy modernization",
+        "strangler migration",
+        "legacy code migration",
+        "eski kodu modernleştir",
+        "legacy dönüşümü"
+      ],
+      "avoid_when": [
+        "heritage building restoration",
+        "tarihi bina restorasyonu"
+      ],
+      "category": "coding",
+      "agent": "planner",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/legacy-modernization/SKILL.md",
+      "digest": "839715f69d546beba3e7f8fc0848b8ea73407c5dd5083029ae7fb75537ed7c3b"
+    },
+    {
+      "name": "threat-modeling",
+      "description": "Model assets, trust boundaries and concrete abuse paths before choosing security controls.",
+      "triggers": [
+        "threat model",
+        "abuse case",
+        "trust boundary map",
+        "tehdit modeli",
+        "kötüye kullanım senaryosu"
+      ],
+      "avoid_when": [
+        "fictional villain plot",
+        "kurgu kötü karakter"
+      ],
+      "category": "security",
+      "agent": "security-reviewer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/threat-modeling/SKILL.md",
+      "digest": "df5a38125b4466ba17d148043cc92d99bc75b09bb364b5c1445391e8bec111d5"
+    },
+    {
+      "name": "authentication-session-security",
+      "description": "Review login, tokens and session lifecycle for binding, expiry, revocation and recovery weaknesses.",
+      "triggers": [
+        "session security",
+        "token lifecycle",
+        "login hardening",
+        "oturum güvenliği",
+        "token yaşam döngüsü"
+      ],
+      "avoid_when": [
+        "therapy session scheduling",
+        "terapi seansı"
+      ],
+      "category": "security",
+      "agent": "security-reviewer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/authentication-session-security/SKILL.md",
+      "digest": "a551e3eb7114b30b643177a0d613d9551ca14660e7c113dece9b436d6a9c0333"
+    },
+    {
+      "name": "secrets-rotation",
+      "description": "Plan and verify credential rotation with overlap, revocation and recoverable dependent-service updates.",
+      "triggers": [
+        "credential rotation",
+        "secret rotation",
+        "rotate credentials",
+        "kimlik bilgisi yenileme",
+        "anahtar rotasyonu"
+      ],
+      "avoid_when": [
+        "fictional secret plot",
+        "roman sırrı"
+      ],
+      "category": "security",
+      "agent": "security-reviewer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/secrets-rotation/SKILL.md",
+      "digest": "34eb14114786b1c9c47656a14de5f344c3ee44b563d620e0cc45acf5e3d6eaae"
+    },
+    {
+      "name": "dependency-supply-chain-review",
+      "description": "Review dependency provenance, build scripts and artifact integrity for supply-chain exposure.",
+      "triggers": [
+        "supply chain review",
+        "package provenance",
+        "artifact integrity",
+        "tedarik zinciri güvenliği",
+        "paket kaynağı"
+      ],
+      "avoid_when": [
+        "grocery supply chain",
+        "market tedarik zinciri"
+      ],
+      "category": "security",
+      "agent": "security-reviewer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/dependency-supply-chain-review/SKILL.md",
+      "digest": "df7820a02cffabed14b57dc04617f0da28eb17467c378084f761513e8d39e2b6"
+    },
+    {
+      "name": "secure-file-handling",
+      "description": "Review untrusted file parsing, paths and storage boundaries for traversal and resource exhaustion.",
+      "triggers": [
+        "secure file handling",
+        "path traversal",
+        "untrusted file parser",
+        "güvenli dosya işleme",
+        "dizin geçişi"
+      ],
+      "avoid_when": [
+        "hiking path traversal",
+        "yürüyüş parkuru"
+      ],
+      "category": "security",
+      "agent": "security-reviewer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/secure-file-handling/SKILL.md",
+      "digest": "d5abd153950eaff643b94d115e2f21105c4b95db0114cc2339042d3e18446392"
+    },
+    {
+      "name": "vulnerability-triage",
+      "description": "Assess vulnerability reports by reachable behavior, exact versions and evidence-backed remediation.",
+      "triggers": [
+        "vulnerability triage",
+        "CVE assessment",
+        "security finding triage",
+        "zafiyet değerlendirmesi",
+        "güvenlik bulgusu"
+      ],
+      "avoid_when": [
+        "fictional vulnerability",
+        "kurgu zafiyet"
+      ],
+      "category": "security",
+      "agent": "security-reviewer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/vulnerability-triage/SKILL.md",
+      "digest": "bf501de170a3d05557405edaaf2c904180b64328fa6efb4dd94f8544da549c3b"
+    },
+    {
+      "name": "security-log-detection",
+      "description": "Design actionable security detections from reliable event semantics and tested false-positive controls.",
+      "triggers": [
+        "security detection",
+        "SIEM rule",
+        "audit log detection",
+        "güvenlik tespiti",
+        "siem kuralı"
+      ],
+      "avoid_when": [
+        "metal detector hobby",
+        "metal dedektörü"
+      ],
+      "category": "security",
+      "agent": "security-reviewer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/security-log-detection/SKILL.md",
+      "digest": "8d04ad01b7b88ba13b21121813ccca04463ba44b3a52a369396351dd5b555e94"
+    },
+    {
+      "name": "authorized-security-testing",
+      "description": "Plan and execute bounded security tests on explicitly authorized targets with reproducible findings.",
+      "triggers": [
+        "authorized security test",
+        "penetration test plan",
+        "security test scope",
+        "yetkili güvenlik testi",
+        "sızma testi planı"
+      ],
+      "avoid_when": [
+        "unauthorized target",
+        "izinsiz hedef"
+      ],
+      "category": "security",
+      "agent": "security-reviewer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/authorized-security-testing/SKILL.md",
+      "digest": "0d425bd2d5748b4e4d91d76a757760d382ec0a2d1f0462f8734a1ec1dcc828ee"
+    },
+    {
+      "name": "linux-service-operations",
+      "description": "Diagnose Linux service health from process ownership, logs, resources and configuration before changing service state.",
+      "triggers": [
+        "linux service",
+        "systemd service",
+        "server service health",
+        "linux servisi",
+        "sunucu servis sağlığı"
+      ],
+      "avoid_when": [
+        "restaurant service",
+        "restoran servisi"
+      ],
+      "category": "devops",
+      "agent": "devops-engineer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/linux-service-operations/SKILL.md",
+      "digest": "2d1d71a6261240b7d46388d2218b8db4939f839c8365cf05e3b37bce48e67b19"
+    },
+    {
+      "name": "reverse-proxy-tls",
+      "description": "Configure proxy routing and TLS while preserving trusted client identity and upstream request semantics.",
+      "triggers": [
+        "reverse proxy",
+        "TLS certificate",
+        "proxy timeout",
+        "ters proxy",
+        "tls sertifikası"
+      ],
+      "avoid_when": [
+        "proxy voting",
+        "vekaleten oy"
+      ],
+      "category": "devops",
+      "agent": "devops-engineer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/reverse-proxy-tls/SKILL.md",
+      "digest": "07ece0cf6c1009ed916787d23d7e38c39bd39b0c41314722476e1837004e8a28"
+    },
+    {
+      "name": "container-runtime-hardening",
+      "description": "Reduce container privileges and image exposure while preserving required runtime behavior.",
+      "triggers": [
+        "container hardening",
+        "docker hardening",
+        "container privileges",
+        "konteyner sıkılaştırma",
+        "docker güvenliği"
+      ],
+      "avoid_when": [
+        "shipping container paint",
+        "nakliye konteyneri"
+      ],
+      "category": "devops",
+      "agent": "devops-engineer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/container-runtime-hardening/SKILL.md",
+      "digest": "0f2fa16ecd57fd108026533e64f4be00023233993be42b0aa4cae8f4fe68efaf"
+    },
+    {
+      "name": "kubernetes-rollout",
+      "description": "Plan recoverable Kubernetes deployments using readiness, capacity, versioned artifacts and rollback checks.",
+      "triggers": [
+        "kubernetes rollout",
+        "deployment readiness",
+        "k8s deployment",
+        "kubernetes dağıtımı",
+        "pod hazır olma"
+      ],
+      "avoid_when": [
+        "poster deployment",
+        "afiş dağıtımı"
+      ],
+      "category": "devops",
+      "agent": "devops-engineer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/kubernetes-rollout/SKILL.md",
+      "digest": "44cf41045c880965f1cbd50ab27085c3c2c498ddcd8a11e51d9be4400b44a641"
+    },
+    {
+      "name": "infrastructure-change-plan",
+      "description": "Review infrastructure changes for drift, state ownership, blast radius and recoverable application impact.",
+      "triggers": [
+        "infrastructure plan",
+        "terraform plan",
+        "infrastructure drift",
+        "altyapı değişikliği",
+        "altyapı sapması"
+      ],
+      "avoid_when": [
+        "city infrastructure essay",
+        "şehir altyapısı ödevi"
+      ],
+      "category": "devops",
+      "agent": "devops-engineer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/infrastructure-change-plan/SKILL.md",
+      "digest": "61e2a1a1d494868d04f51cbe352db36b9154ca4dadff6749d9550a9b6e8e6000"
+    },
+    {
+      "name": "database-backup-restore",
+      "description": "Design backup and restore procedures around recoverable data, dependencies and measured recovery objectives.",
+      "triggers": [
+        "database backup",
+        "restore drill",
+        "point in time recovery",
+        "veritabanı yedeği",
+        "geri yükleme provası"
+      ],
+      "avoid_when": [
+        "phone photo backup",
+        "telefon fotoğraf yedeği"
+      ],
+      "category": "devops",
+      "agent": "database-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/database-backup-restore/SKILL.md",
+      "digest": "82f68b89fb46c9efaf6801414358b3e2ac2d4ded030b6d0154884b9fce22796c"
+    },
+    {
+      "name": "observability-design",
+      "description": "Design logs, metrics and traces that explain user-visible failures without excessive cardinality or sensitive payloads.",
+      "triggers": [
+        "observability design",
+        "distributed tracing",
+        "service level objective",
+        "gözlemlenebilirlik",
+        "servis seviyesi hedefi"
+      ],
+      "avoid_when": [
+        "astronomy observation",
+        "astronomi gözlemi"
+      ],
+      "category": "devops",
+      "agent": "devops-engineer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/observability-design/SKILL.md",
+      "digest": "19b517aa24fd94c29ff91ce60bea38c82bec9798ab7bb1b802be876a6eef07dd"
+    },
+    {
+      "name": "production-incident-response",
+      "description": "Respond to production incidents with evidence preservation, scoped mitigation and recovery verification.",
+      "triggers": [
+        "production incident",
+        "service outage",
+        "incident response",
+        "üretim kesintisi",
+        "canlı ortam olayı"
+      ],
+      "avoid_when": [
+        "fictional disaster story",
+        "kurgu felaket"
+      ],
+      "category": "devops",
+      "agent": "debugger",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/production-incident-response/SKILL.md",
+      "digest": "f5239629dd5909890f641ae94896b4c91718bd51fafcf6149ab39c732c9085a6"
+    },
+    {
+      "name": "disaster-recovery",
+      "description": "Plan disaster recovery across infrastructure, data, credentials and routing with a tested failback boundary.",
+      "triggers": [
+        "disaster recovery",
+        "failover rehearsal",
+        "recovery runbook",
+        "felaket kurtarma",
+        "failover provası"
+      ],
+      "avoid_when": [
+        "movie disaster review",
+        "felaket filmi"
+      ],
+      "category": "devops",
+      "agent": "devops-engineer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/disaster-recovery/SKILL.md",
+      "digest": "1f35abd83642e6a3a9c0e866508b782a3d5a37a9d5d8f50fb80c38c7e3bb3c32"
+    },
+    {
+      "name": "cloud-cost-optimization",
+      "description": "Reduce cloud spend using attributable usage, unit costs and reversible capacity decisions.",
+      "triggers": [
+        "cloud cost",
+        "FinOps",
+        "idle cloud resources",
+        "bulut maliyeti",
+        "atıl bulut kaynakları"
+      ],
+      "avoid_when": [
+        "cloud painting price",
+        "bulut resmi fiyatı"
+      ],
+      "category": "devops",
+      "agent": "devops-engineer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/cloud-cost-optimization/SKILL.md",
+      "digest": "a7d22b52c59ccebf89a8d19c513d0f89f337bac035012e5aac8b7fe6cb691563"
+    },
+    {
+      "name": "seo-technical-audit",
+      "description": "Audit crawlability, rendering, canonical URLs and index eligibility from page and search evidence.",
+      "triggers": [
+        "technical SEO",
+        "SEO audit",
+        "indexing audit",
+        "teknik seo",
+        "seo denetimi"
+      ],
+      "avoid_when": [
+        "SEO acronym joke",
+        "seo kelime şakası"
+      ],
+      "category": "seo",
+      "agent": "seo-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/seo-technical-audit/SKILL.md",
+      "digest": "98b30662e2f3dc3bcc94025048a3c61c45050002847e4df62a586b83004391a2"
+    },
+    {
+      "name": "seo-content-brief",
+      "description": "Create useful search-oriented content briefs from audience questions, original evidence and clear page intent.",
+      "triggers": [
+        "SEO content brief",
+        "search intent brief",
+        "keyword content plan",
+        "seo içerik briefi",
+        "arama niyeti"
+      ],
+      "avoid_when": [
+        "keyword stuffing request",
+        "anahtar kelime doldurma"
+      ],
+      "category": "seo",
+      "agent": "seo-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/seo-content-brief/SKILL.md",
+      "digest": "8204055a7b53f69c9de9630d459242d512bf82a2967e8829734790456ba87f99"
+    },
+    {
+      "name": "seo-structured-data",
+      "description": "Implement structured data that reflects visible page content and the current supported search feature.",
+      "triggers": [
+        "SEO structured data",
+        "page structured data",
+        "JSON LD markup",
+        "schema markup",
+        "yapılandırılmış sayfa verisi",
+        "şema işaretlemesi"
+      ],
+      "avoid_when": [
+        "database schema diagram",
+        "veritabanı şema diyagramı"
+      ],
+      "category": "seo",
+      "agent": "seo-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/seo-structured-data/SKILL.md",
+      "digest": "f54c7a403104f96df25c71b6905841176313b38928d00b2087cceede8194a347"
+    },
+    {
+      "name": "seo-international-sites",
+      "description": "Design localized URL discovery, alternate-language annotations and consistent international page targeting.",
+      "triggers": [
+        "international SEO",
+        "hreflang",
+        "localized SEO",
+        "uluslararası seo",
+        "dil alternatifi"
+      ],
+      "avoid_when": [
+        "language homework only",
+        "yalnızca dil ödevi"
+      ],
+      "category": "seo",
+      "agent": "seo-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/seo-international-sites/SKILL.md",
+      "digest": "cda48ca634b3d819341d79c3aa3747ca81cc6517841bf025955890453c185240"
+    },
+    {
+      "name": "seo-migration",
+      "description": "Plan URL or domain migrations with preserved destinations, redirects and post-move search monitoring.",
+      "triggers": [
+        "SEO migration",
+        "site URL migration",
+        "domain migration SEO",
+        "seo geçişi",
+        "site url taşıma"
+      ],
+      "avoid_when": [
+        "database migration only",
+        "yalnızca veritabanı geçişi"
+      ],
+      "category": "seo",
+      "agent": "seo-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/seo-migration/SKILL.md",
+      "digest": "c2f3d7d0621ca1c178d650904bb82d5a85937b6c76fc423ad11cc70637bd7cea"
+    },
+    {
+      "name": "seo-performance-measurement",
+      "description": "Measure organic-search outcomes using comparable query/page cohorts and explicit attribution limits.",
+      "triggers": [
+        "SEO measurement",
+        "organic search analysis",
+        "Search Console analysis",
+        "seo ölçümü",
+        "organik arama analizi"
+      ],
+      "avoid_when": [
+        "organic farming report",
+        "organik tarım raporu"
+      ],
+      "category": "seo",
+      "agent": "seo-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/seo-performance-measurement/SKILL.md",
+      "digest": "08fc1255de060423b4f2bd5b9fd531e850d7ec3968f38604a6447ada08e5e6d2"
+    },
+    {
+      "name": "market-research",
+      "description": "Research a market and competitors with dated evidence, explicit segments and defensible comparisons.",
+      "triggers": [
+        "market research",
+        "competitor analysis",
+        "market sizing",
+        "pazar araştırması",
+        "rakip analizi"
+      ],
+      "avoid_when": [
+        "stock trade recommendation",
+        "hisse alım tavsiyesi"
+      ],
+      "category": "marketing",
+      "agent": "growth-strategist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/market-research/SKILL.md",
+      "digest": "502e6d0412a270c7305e0c7038a24c1935be5e187f1fc99d622c874ad21b8fdd"
+    },
+    {
+      "name": "customer-segmentation",
+      "description": "Define actionable customer segments from needs, behavior and reachable evidence rather than invented personas.",
+      "triggers": [
+        "customer segmentation",
+        "ICP definition",
+        "audience segments",
+        "müşteri segmentasyonu",
+        "hedef müşteri profili"
+      ],
+      "avoid_when": [
+        "image segmentation",
+        "görüntü segmentasyonu"
+      ],
+      "category": "marketing",
+      "agent": "growth-strategist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/customer-segmentation/SKILL.md",
+      "digest": "c738f654900cea762f42bdde459ad64d72f900bb582dce00a41368c825c795b7"
+    },
+    {
+      "name": "brand-positioning",
+      "description": "Develop positioning from customer alternatives, credible differentiation and proof.",
+      "triggers": [
+        "brand positioning",
+        "positioning statement",
+        "value proposition",
+        "marka konumlandırma",
+        "değer önerisi"
+      ],
+      "avoid_when": [
+        "CSS positioning",
+        "css konumlandırma"
+      ],
+      "category": "marketing",
+      "agent": "growth-strategist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/brand-positioning/SKILL.md",
+      "digest": "c1df6c252d64b82b4fdef1049c9f128ab6589172a807730d9e1a19c01df1c964"
+    },
+    {
+      "name": "marketing-copywriting",
+      "description": "Write truthful campaign or product copy matched to audience intent, channel constraints and a clear action.",
+      "triggers": [
+        "marketing copy",
+        "advertising copy",
+        "campaign messaging",
+        "pazarlama metni",
+        "reklam metni"
+      ],
+      "avoid_when": [
+        "copy code verbatim",
+        "kodu aynen kopyala"
+      ],
+      "category": "marketing",
+      "agent": "growth-strategist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/marketing-copywriting/SKILL.md",
+      "digest": "1b0059c1700b1ee4c97c8ee74d2ac0dc49406c3a30f3c87d71679ee94b97587c"
+    },
+    {
+      "name": "content-distribution-plan",
+      "description": "Plan reusable content and channel distribution around audience needs, capacity and measurable outcomes.",
+      "triggers": [
+        "content distribution",
+        "editorial calendar",
+        "content marketing plan",
+        "içerik dağıtımı",
+        "içerik takvimi"
+      ],
+      "avoid_when": [
+        "calendar date arithmetic",
+        "takvim tarih hesabı"
+      ],
+      "category": "marketing",
+      "agent": "growth-strategist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/content-distribution-plan/SKILL.md",
+      "digest": "271daa32ba44b7a500643db879ae304f85587773a9105241e23041f0f317a436"
+    },
+    {
+      "name": "paid-search-campaign",
+      "description": "Design paid-search campaign drafts with intent separation, budget boundaries and reliable conversion measurement.",
+      "triggers": [
+        "paid search",
+        "Google Ads campaign",
+        "search ads",
+        "arama reklamı",
+        "google ads kampanyası"
+      ],
+      "avoid_when": [
+        "unpaid search tutorial",
+        "ücretsiz arama eğitimi"
+      ],
+      "category": "marketing",
+      "agent": "growth-strategist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/paid-search-campaign/SKILL.md",
+      "digest": "5ebd47c0199a399e8543547e58e03b8daaba73dbaad922bc9f8dec5ac6f60fb7"
+    },
+    {
+      "name": "paid-social-campaign",
+      "description": "Prepare paid-social creative tests with credible messages, audience boundaries and budget-aware measurement.",
+      "triggers": [
+        "paid social",
+        "social ads campaign",
+        "Meta ads",
+        "sosyal medya reklamı",
+        "meta reklamı"
+      ],
+      "avoid_when": [
+        "social studies homework",
+        "sosyal bilgiler ödevi"
+      ],
+      "category": "marketing",
+      "agent": "growth-strategist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/paid-social-campaign/SKILL.md",
+      "digest": "a4d0f9323b511e03f5d6aaa89289728225e12b2b2c730ddbdf64690a1386b612"
+    },
+    {
+      "name": "lifecycle-email-marketing",
+      "description": "Design permission-aware lifecycle emails triggered by meaningful product states and measured user outcomes.",
+      "triggers": [
+        "lifecycle email",
+        "email marketing flow",
+        "drip campaign",
+        "e-posta pazarlama akışı",
+        "yaşam döngüsü e-postası"
+      ],
+      "avoid_when": [
+        "write personal email only",
+        "yalnızca kişisel mail yaz"
+      ],
+      "category": "marketing",
+      "agent": "growth-strategist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/lifecycle-email-marketing/SKILL.md",
+      "digest": "144f40497d7290c57fe1145387ba4d75d5c0283bef90bdfb63be60b0f5f3c628"
+    },
+    {
+      "name": "growth-experiment-design",
+      "description": "Design bounded business growth experiments with falsifiable hypotheses, guardrails and decision rules.",
+      "triggers": [
+        "growth experiment",
+        "growth strategy",
+        "acquisition experiment",
+        "büyüme deneyi",
+        "iş büyütme planı"
+      ],
+      "avoid_when": [
+        "plant growth experiment",
+        "bitki büyüme deneyi"
+      ],
+      "category": "growth",
+      "agent": "growth-strategist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/growth-experiment-design/SKILL.md",
+      "digest": "9bed4cfdb39f4fb9fb89dff2002bd84ef825e6f9745ac331e7405552fb9ae8ba"
+    },
+    {
+      "name": "conversion-funnel-analysis",
+      "description": "Analyze conversion funnels with consistent identities, event ordering and meaningful denominators.",
+      "triggers": [
+        "conversion funnel",
+        "funnel dropoff",
+        "activation funnel",
+        "dönüşüm hunisi",
+        "aktivasyon hunisi"
+      ],
+      "avoid_when": [
+        "kitchen funnel",
+        "mutfak hunisi"
+      ],
+      "category": "growth",
+      "agent": "data-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/conversion-funnel-analysis/SKILL.md",
+      "digest": "a1713053e704483b32554f64f215d55f76034cc25ce3cf679648320aa076cc20"
+    },
+    {
+      "name": "landing-page-optimization",
+      "description": "Improve landing pages through message/offer alignment, user friction and measured conversion hypotheses.",
+      "triggers": [
+        "landing page optimization",
+        "conversion optimization",
+        "CRO audit",
+        "açılış sayfası optimizasyonu",
+        "dönüşüm optimizasyonu"
+      ],
+      "avoid_when": [
+        "aircraft landing plan",
+        "uçak iniş planı"
+      ],
+      "category": "growth",
+      "agent": "growth-strategist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/landing-page-optimization/SKILL.md",
+      "digest": "f1b5f0fd714ad49c943a8ee5f0f799fb2f800d8388a97392103f215c27458a17"
+    },
+    {
+      "name": "pricing-packaging-research",
+      "description": "Research product pricing and packaging from customer value, unit economics and defensible willingness-to-pay evidence.",
+      "triggers": [
+        "pricing research",
+        "pricing packaging",
+        "willingness to pay",
+        "fiyatlandırma araştırması",
+        "paket fiyatlandırma"
+      ],
+      "avoid_when": [
+        "stock price prediction",
+        "hisse fiyat tahmini"
+      ],
+      "category": "growth",
+      "agent": "growth-strategist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/pricing-packaging-research/SKILL.md",
+      "digest": "db2e71f66d07ce39b07514fd3bb28ab6c971301c118e588b027eaf21a635f90e"
+    },
+    {
+      "name": "customer-discovery",
+      "description": "Plan unbiased customer discovery that separates observed problems from reactions to a proposed solution.",
+      "triggers": [
+        "customer discovery",
+        "customer interview",
+        "problem interview",
+        "müşteri keşfi",
+        "müşteri görüşmesi"
+      ],
+      "avoid_when": [
+        "job interview preparation",
+        "iş mülakatı hazırlığı"
+      ],
+      "category": "growth",
+      "agent": "growth-strategist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/customer-discovery/SKILL.md",
+      "digest": "a25da7097764eaa3cdfc1ea1aa133345fdc0277eaa0d2ed56cac4278c2d3db56"
+    },
+    {
+      "name": "retention-cohort-analysis",
+      "description": "Measure retention using comparable cohorts, meaningful activity definitions and censoring-aware windows.",
+      "triggers": [
+        "retention cohort",
+        "churn analysis",
+        "cohort retention",
+        "müşteri tutma analizi",
+        "kayıp müşteri analizi",
+        "retention cohorts"
+      ],
+      "avoid_when": [
+        "memory retention psychology",
+        "hafıza tutma psikolojisi"
+      ],
+      "category": "growth",
+      "agent": "data-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/retention-cohort-analysis/SKILL.md",
+      "digest": "9676c79d9cacebd87fe0bb26212f4ddee2d0dc8864f2b18bb1cf0947de69c0b0"
+    },
+    {
+      "name": "sales-pipeline-design",
+      "description": "Design a sales pipeline around buyer evidence, stage exit criteria and reliable operational reporting.",
+      "triggers": [
+        "sales pipeline",
+        "sales process",
+        "deal qualification",
+        "satış hunisi",
+        "satış süreci"
+      ],
+      "avoid_when": [
+        "software pipeline failure",
+        "yazılım pipeline hatası"
+      ],
+      "category": "growth",
+      "agent": "growth-strategist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/sales-pipeline-design/SKILL.md",
+      "digest": "69753a4ac07e47c9e89871c44967c87a6e629c85498ef264b704bbe680252ca4"
+    },
+    {
+      "name": "partnership-strategy",
+      "description": "Evaluate partnerships from mutual customer value, economics, responsibilities and pilot evidence.",
+      "triggers": [
+        "partnership strategy",
+        "channel partnership",
+        "partner pilot",
+        "iş ortaklığı stratejisi",
+        "kanal ortaklığı"
+      ],
+      "avoid_when": [
+        "fictional romance partnership",
+        "kurgu romantik ortaklık"
+      ],
+      "category": "growth",
+      "agent": "growth-strategist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/partnership-strategy/SKILL.md",
+      "digest": "74e4c0da7ab661ca62717b7c124fd55199ed359217e2858828ae1274d2c4ad6f"
+    },
+    {
+      "name": "analytics-event-contracts",
+      "description": "Define analytics events with stable identities, semantics and privacy-aware verification.",
+      "triggers": [
+        "analytics event",
+        "tracking plan",
+        "event taxonomy",
+        "analitik olay",
+        "ölçüm olay planı"
+      ],
+      "avoid_when": [
+        "concert event schedule",
+        "konser etkinlik takvimi"
+      ],
+      "category": "data",
+      "agent": "data-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/analytics-event-contracts/SKILL.md",
+      "digest": "36d5828364e48112c5ee06e1139a08b603ddcd40fb291fefb89d37b17608ad81"
+    },
+    {
+      "name": "data-pipeline-integrity",
+      "description": "Build batch or streaming pipelines with explicit schemas, reconciliation and recoverable checkpoints.",
+      "triggers": [
+        "data pipeline",
+        "ETL validation",
+        "data reconciliation",
+        "veri hattı",
+        "veri mutabakatı",
+        "data ingestion"
+      ],
+      "avoid_when": [
+        "water pipeline repair",
+        "su boru hattı"
+      ],
+      "category": "data",
+      "agent": "data-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/data-pipeline-integrity/SKILL.md",
+      "digest": "1e56b43d7c792d77bf33ad9e8ee91b0160b2dcd389e65cdbbee3b7362e6f44c8"
+    },
+    {
+      "name": "experiment-statistics",
+      "description": "Evaluate experiments with valid randomization, uncertainty and predeclared outcome decisions.",
+      "triggers": [
+        "A B experiment",
+        "experiment statistics",
+        "sample ratio mismatch",
+        "deney istatistiği",
+        "ab testi"
+      ],
+      "avoid_when": [
+        "school chemistry experiment",
+        "okul kimya deneyi"
+      ],
+      "category": "data",
+      "agent": "data-specialist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/experiment-statistics/SKILL.md",
+      "digest": "805a1e8a79b5f88ea80f185e538c1cb261c9e0f96b85e6f99bac15c5ff6b77de"
+    },
+    {
+      "name": "llm-feature-evaluation",
+      "description": "Evaluate LLM features on representative fixtures, failure categories, cost and human-review requirements.",
+      "triggers": [
+        "LLM evaluation",
+        "AI feature eval",
+        "prompt regression",
+        "llm değerlendirme",
+        "yapay zeka özellik testi"
+      ],
+      "avoid_when": [
+        "fictional AI character",
+        "kurgu yapay zeka karakteri"
+      ],
+      "category": "data",
+      "agent": "verifier",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/llm-feature-evaluation/SKILL.md",
+      "digest": "3505f7d4a3e3eb54d0ebeb2be0b679e34d6ae1f047ad76bbb3bd66a08a9c7f9d"
+    },
+    {
+      "name": "privacy-data-retention",
+      "description": "Map sensitive data collection, retention and deletion to concrete systems and stated policy requirements.",
+      "triggers": [
+        "data retention",
+        "privacy data map",
+        "data deletion workflow",
+        "veri saklama",
+        "veri silme akışı"
+      ],
+      "avoid_when": [
+        "memory retention study",
+        "hafıza araştırması"
+      ],
+      "category": "data",
+      "agent": "security-reviewer",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/privacy-data-retention/SKILL.md",
+      "digest": "42a23a24707668bb1b1e7837807d3faac28c480129ec0d58e59508af39692d32"
+    },
+    {
+      "name": "product-prioritization",
+      "description": "Prioritize product work using customer evidence, constraints and transparent impact assumptions.",
+      "triggers": [
+        "product prioritization",
+        "roadmap prioritization",
+        "feature priority",
+        "ürün önceliklendirme",
+        "özellik önceliği"
+      ],
+      "avoid_when": [
+        "personal chore priority",
+        "kişisel ev işi"
+      ],
+      "category": "data",
+      "agent": "growth-strategist",
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "path": "skills/product-prioritization/SKILL.md",
+      "digest": "2880ae6845c366bedae598aaf9d67e3e3d711f89b3ea1fc1b32e8f807eee5498"
     }
   ]
 }

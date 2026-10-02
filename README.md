@@ -188,7 +188,18 @@ learnings, incidents, patterns, tasks and handoffs. No transcript upload or
 telemetry is implemented. POSIX state directories request private permissions;
 Windows state inherits the user's directory permissions.
 
-The built-in pack contains 24 original foundation skills and 14 advisory roles.
+The built-in pack contains **96 original ready-made skills and 18 advisory roles**.
+Browse the [full skill catalog](docs/skill-catalog.md) for backend, frontend,
+general coding, cybersecurity, servers/DevOps, SEO, marketing/advertising,
+business growth, and data/AI workflows.
+
+```console
+erol skills list --category backend
+erol skills list --category marketing
+erol skill show paid-search-campaign
+erol explain --task "API integration with regression tests and code review"
+```
+
 Discovery reads metadata; selected skill bodies load on demand. Negative triggers
 override positive matches. Oversized context items are reported as omitted.
 Turkish task phrases and ASCII spellings are supported through explicit aliases.
@@ -196,6 +207,10 @@ For example, "Tahakkuk Gönderilenler ekranında filtreyi ve tarih aralığını
 selects `frontend-state-correctness` even when project memory is empty. Routing
 uses phrase matching; it does not infer every possible paraphrase.
 Token budgets use character estimates, not measured model token counts.
+New workflows include concrete checks and boundaries: campaign drafting does not
+launch ads, and a recovery plan does not change a production database. Two
+independent forward drafting trials complement the deterministic catalog checks;
+they do not establish performance gains for every skill.
 
 ## Development and validation
 

@@ -12,6 +12,26 @@ from erol.registry import Registry
 
 
 class OrchestrationTests(unittest.TestCase):
+    def test_new_domain_plans_remain_bounded_and_advisory(self):
+        tasks = {
+            "paid search campaign draft": "growth-strategist",
+            "technical SEO audit": "seo-specialist",
+            "kubernetes rollout": "devops-engineer",
+            "data pipeline validation": "data-specialist",
+        }
+        for task, role in tasks.items():
+            with self.subTest(task=task):
+                plan = Orchestrator().plan(task)
+                self.assertIn(role, [agent["name"] for agent in plan["agents"]])
+                self.assertFalse(plan["execution_supported"])
+                self.assertLessEqual(len(plan["context"]["selected_skills"]), 4)
+                self.assertLessEqual(plan["context"]["estimated_tokens"], 4000)
+
+    def test_tenant_isolation_reserves_security_review(self):
+        plan = Orchestrator().plan("Verify tenant isolation across account queries")
+        self.assertTrue(plan["verification"]["independent_review_recommended"])
+        self.assertIn("security-reviewer", [entry["name"] for entry in plan["agents"]])
+
     def test_plan_is_bounded_and_does_not_claim_execution(self):
         plan = Orchestrator().plan("RabbitMQ duplicate timeout", max_agents=2, max_skills=2)
         self.assertLessEqual(len(plan["agents"]), 2)
@@ -82,7 +102,7 @@ class OrchestrationTests(unittest.TestCase):
 
     def test_catalog_roles_and_outputs(self):
         entries = agents()
-        self.assertEqual(14, len(entries))
+        self.assertEqual(18, len(entries))
         self.assertEqual(len(entries), len({entry["name"] for entry in entries}))
         for entry in entries:
             self.assertIn("evidence", entry["output_fields"])

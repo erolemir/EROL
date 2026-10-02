@@ -23,6 +23,12 @@ dotted-capital/ASCII normalization, and screen/date-filter regression fixtures.
 Bridges distinguish admitted builtin workflows from learned project revisions.
 Negative precedence, lazy body loading, and the four-skill context cap remain in force.
 
+The curated builtin catalog now has 96 workflows across nine domains and 18
+advisory roles, including operations, SEO, marketing and growth. Category discovery,
+common API/test phrase coverage and adjacent-domain negative fixtures support the
+larger catalog. Independent review and two limited drafting trials supplement
+static/routing checks; live outcome improvement for the full pack remains unproven.
+
 Acceptance criteria are defined in eval-plan.md before implementation. Test fixtures
 use temporary homes outside their projects. Native installations change user
 configuration only at the user's explicit request.

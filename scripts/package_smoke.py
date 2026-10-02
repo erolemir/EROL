@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import subprocess
 import tempfile
+import textwrap
 import tomllib
 import venv
 from pathlib import Path
@@ -14,6 +16,13 @@ from pathlib import Path
 def smoke() -> int:
     root = Path(__file__).resolve().parents[1]
     version = tomllib.loads((root / "pyproject.toml").read_text("utf-8"))["project"]["version"]
+    expected_pack = len(
+        json.loads((root / "src/erol/data/registry.json").read_text("utf-8"))["skills"]
+    )
+    expected_data = {
+        name: hashlib.sha256((root / "src/erol/data" / name).read_bytes()).hexdigest()
+        for name in ("registry.json", "agents.json")
+    }
     wheels = list((root / "dist").glob(f"erol_ai-{version}-*.whl"))
     if len(wheels) != 1:
         raise ValueError("Expected exactly one EROL wheel; build the current version first")
@@ -29,18 +38,35 @@ def smoke() -> int:
             env=env,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=60,
         )
         if install.returncode:
             print(install.stderr)
             return install.returncode
-        code = (
-            "import json; import erol; "
-            "from erol.registry import Registry; from erol.orchestration import routing_eval; "
-            "from erol.demo import learning_demo; "
-            "print(json.dumps({'module':erol.__file__,'version':erol.__version__,"
-            "'pack_count':len(Registry().list()),'routing_passed':routing_eval()['passed'],"
-            "'learning_passed':learning_demo()['passed']}))"
+        code = textwrap.dedent(
+            """
+            import hashlib, json
+            from pathlib import Path
+            import erol
+            from erol.cli import qualify_pack
+            from erol.registry import Registry
+            from erol.orchestration import Orchestrator, routing_eval
+            from erol.demo import learning_demo
+            registry = Registry()
+            metadata = registry.list()
+            plans = [Orchestrator(registry).plan(item['triggers'][0]) for item in metadata]
+            data = Path(erol.__file__).parent / 'data'
+            print(json.dumps({
+                'module': erol.__file__, 'version': erol.__version__,
+                'pack_count': len(metadata), 'pack_passed': qualify_pack(registry)['passed'],
+                'plans_checked': len(plans), 'routing_passed': routing_eval()['passed'],
+                'learning_passed': learning_demo()['passed'],
+                'data_digests': {name: hashlib.sha256((data / name).read_bytes()).hexdigest()
+                                 for name in ('registry.json', 'agents.json')}
+            }))
+            """
         )
         check = subprocess.run(
             [str(executable), "-c", code],
@@ -58,7 +84,12 @@ def smoke() -> int:
         print(json.dumps({"wheel": wheels[0].name, "clean_install": True, **result}, indent=2))
         return (
             0
-            if result["pack_count"] == 24 and result["routing_passed"] and result["learning_passed"]
+            if result["pack_count"] == expected_pack
+            and result["plans_checked"] == expected_pack
+            and result["pack_passed"]
+            and result["data_digests"] == expected_data
+            and result["routing_passed"]
+            and result["learning_passed"]
             else 1
         )
 

@@ -11,6 +11,27 @@ model-success benchmark.
 
 ## Evidence
 
+The curated-catalog expansion passes 126 Python tests (two Windows platform skips),
+ten Node tests and 289 routing fixtures across 96 builtin skills. English, Turkish
+and ASCII Turkish cases exercise all skills; adjacent-domain negatives cover SEO
+versus ingestion and frontend query caches versus backend Redis. Ruff, formatting,
+mypy, adapter drift, static pack qualification and context lint pass.
+
+An independent review agent inspected all 72 new skill bodies and the changed
+runtime. Findings about missing advisory roles, ambiguous phrases and installed
+wheel validation were corrected. Its old/new router comparison covered 294 tasks
+against 97 builtin/project metadata entries with identical scores. Two limited
+forward trials produced a hypothetical paid-search draft and a PostgreSQL recovery
+runbook using the selected skill bodies. They distinguished assumptions from
+evidence and identified budget/recovery prerequisites. Neither trial launched ads,
+spent money or restored a database; these are not measured outcome improvements.
+
+Fresh wheel installation qualifies all 96 bodies, checks canonical registry and
+role digests, creates 96 advisory plans, and runs routing and learning fixtures.
+The npm archive runs the 289-case eval through all four isolated launchers.
+
+Earlier validation records follow for comparison.
+
 The Turkish-routing follow-up passes 121 Python tests (two Windows platform skips),
 ten Node tests, and 68 routing fixtures. New cases cover all 24 builtin skills,
 the Tahakkuk screen/date-filter request, uppercase dotted İ, ASCII typing, and
@@ -26,7 +47,7 @@ and packaged execution, not a live model's ability to repair that application's 
 - The launchers have executable tests for interpreter discovery, argument
   boundaries, inherited-environment isolation, exit codes and safe temporary setup.
   Direct Python fallback tests exclude Node entirely and require isolated startup.
-- All 24 built-in skills pass static quality checks. All 32 golden routing
+- In the original baseline, all 24 built-in skills pass static quality checks. All 32 golden routing
   fixtures pass, including negative triggers.
 - Context lint passes: four active skills maximum and a default budget estimated
   at 4,000 tokens using characters/4. This is not a tokenizer measurement.
@@ -78,7 +99,8 @@ the bridge and cross-harness task completion still require live acceptance tests
 During initial development no plugins were installed into user settings. At the
 user's subsequent request, local EROL 0.1.1 was installed and enabled in Codex and
 Claude Code. See installation-check.md for that machine's acceptance results.
-No packages have been published.
+GitHub releases now distribute the native plugins and archives. No npm or PyPI
+registry publication is claimed here.
 
 ## Security scope
 

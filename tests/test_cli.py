@@ -28,6 +28,16 @@ class CliTests(unittest.TestCase):
         path.write_text(json.dumps(value), encoding="utf-8")
         return str(path)
 
+    def test_domain_catalog_filter_and_invalid_category(self):
+        catalog = self.cli("skills", "list", "--category", "marketing")
+        names = {entry["name"] for entry in catalog["skills"]}
+        self.assertIn("paid-search-campaign", names)
+        self.assertIn("marketing-copywriting", names)
+        self.assertNotIn("incident-debugging", names)
+        self.assertTrue(all(entry["category"] == "marketing" for entry in catalog["skills"]))
+        self.assertFalse(catalog["bodies_loaded"])
+        self.cli("skills", "list", "--category", "unknown-domain", expected_exit=2)
+
     def cli(self, *arguments, expected_exit=0):
         environment = {**os.environ, "PYTHONPATH": str(self.source), "PYTHONUTF8": "1"}
         process = subprocess.run(

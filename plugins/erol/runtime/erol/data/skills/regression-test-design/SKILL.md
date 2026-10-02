@@ -2,7 +2,7 @@
 name: regression-test-design
 description: "Select focused tests that demonstrate behavioral changes and protect meaningful boundaries."
 metadata:
-  version: "1.0.1"
+  version: "1.0.2"
 ---
 # Regression Test Design
 
