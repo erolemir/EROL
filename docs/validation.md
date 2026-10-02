@@ -6,6 +6,10 @@ for six explicit RunStore path fields; arbitrary text and credential components
 remain rejected. Two added regression tests pass locally, alongside Ruff and Mypy.
 The prior 180-test delivery record below predates these two tests. Remote platform
 results must be read from the PR/main validation runs, not inferred from this fix.
+The subsequent Linux run passed 181 tests and exposed a cleanup assertion that
+confused an orphan zombie PID with a running descendant. The assertion now accepts
+only a reaped PID or observed Linux zombie state; an executing child still fails.
+Production unknown-process handling remains conservative.
 
 ## Autonomous work follow-up: 2026-10-03 (Istanbul)
 

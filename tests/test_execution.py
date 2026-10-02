@@ -562,7 +562,19 @@ class ExecutionTests(unittest.TestCase):
         )
         outcome = observe([sys.executable, "-c", program], self.repo, timeout=2)
         self.assertEqual("timeout", outcome["reason"])
-        self.assertFalse(pid_alive(int(child_file.read_text())))
+        child_pid = int(child_file.read_text())
+        if sys.platform.startswith("linux") and pid_alive(child_pid):
+            # Linux init may retain an orphan's zombie entry after SIGKILL.
+            # The duplicate-worker guard conservatively treats an existing PID
+            # as alive; cleanup evidence requires that no descendant can execute.
+            try:
+                stat = Path(f"/proc/{child_pid}/stat").read_text()
+            except FileNotFoundError:
+                pass  # already reaped
+            else:
+                self.assertEqual("Z", stat.rsplit(")", 1)[1].split()[0])
+        else:
+            self.assertFalse(pid_alive(child_pid))
 
     def test_public_cli_reads_and_cancels_external_run_records(self):
         completed = self.start()

@@ -126,3 +126,7 @@ RunStore now applies the existing absolute-path/component scanner only to its si
 explicit filesystem fields. Model text, nested fields, credential patterns and
 random secret components retain rejection. Two cross-platform regression tests
 cover both acceptance and rejection; release still requires the complete CI matrix.
+Linux CI also showed that a killed orphan can remain a zombie until init reaps it.
+The descendant-cleanup test now verifies Linux terminal state when a PID remains;
+the conservative production duplicate-worker guard continues to reject uncertain
+process state. This changes the test's evidence interpretation, not cancellation.
