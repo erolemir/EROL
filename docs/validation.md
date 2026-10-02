@@ -1,5 +1,12 @@
 # Local validation
 
+Release preparation: the first PR #6 Linux run rejected legitimate slash-joined
+execution metadata as high entropy. The correction reuses component-aware scanning
+for six explicit RunStore path fields; arbitrary text and credential components
+remain rejected. Two added regression tests pass locally, alongside Ruff and Mypy.
+The prior 180-test delivery record below predates these two tests. Remote platform
+results must be read from the PR/main validation runs, not inferred from this fix.
+
 ## Autonomous work follow-up: 2026-10-03 (Istanbul)
 
 Windows / Python 3.12.4 / Node 20.15.0. The final full unittest command ran

@@ -119,3 +119,10 @@ and contained execution of third-party candidates.
 See validation.md for measured local results and delivery-report.md for the full
 implementation report. The current milestone does not claim completion of the
 entire long-term architecture or tested compatibility across the CI matrix.
+
+Release preparation exposed a POSIX false positive in run metadata: joined
+filesystem components containing a run UUID were scanned as one entropy token.
+RunStore now applies the existing absolute-path/component scanner only to its six
+explicit filesystem fields. Model text, nested fields, credential patterns and
+random secret components retain rejection. Two cross-platform regression tests
+cover both acceptance and rejection; release still requires the complete CI matrix.

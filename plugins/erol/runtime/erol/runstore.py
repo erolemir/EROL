@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from .common import ErolError, canonical, identifier, reject_links
-from .security import assert_secret_safe
+from .security import assert_project_path_safe, assert_secret_safe
 
 
 def pid_alive(pid: int | None) -> bool:
@@ -111,7 +111,23 @@ class RunStore:
         identifier(record["task_id"])
         if record.get("project_id") != self.project_id:
             raise ErolError("Execution project identity mismatch")
-        assert_secret_safe(record)
+        # These fields are generated filesystem metadata. On POSIX a slash-joined
+        # path with a run UUID can resemble one high-entropy base64 credential.
+        # Keep full-pattern and per-component checks for these exact fields;
+        # arbitrary model text, context and nested fields retain full-value scans.
+        path_fields = {
+            "project_root",
+            "worktree",
+            "directory",
+            "checks_path",
+            "patch",
+            "delta_patch",
+        }
+        for key in path_fields & record.keys():
+            if not isinstance(record[key], str):
+                raise ErolError("Execution path must be an absolute string")
+            assert_project_path_safe(Path(record[key]))
+        assert_secret_safe({key: value for key, value in record.items() if key not in path_fields})
         if len(canonical(record).encode("utf-8")) > 1048576:
             raise ErolError("Execution record exceeds storage limit")
 

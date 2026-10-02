@@ -9,7 +9,7 @@ import sys
 import tempfile
 import unittest
 from dataclasses import replace
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from unittest.mock import patch
 
 from test_learning import incident, verification
@@ -184,6 +184,45 @@ class ExecutionTests(unittest.TestCase):
 
     def start(self, harness="codex", **kwargs):
         return self.runner.start("Repair arithmetic", harness, self.manifest, **kwargs)
+
+    def test_run_path_metadata_does_not_join_components_into_false_secret(self):
+        path = "/private/var/folders/q7/z8r9wm4xc6sgd2fkv5qbh3p00000gn/T/runs/"
+        path += "run-0cb91d3213644e348b7912889c9536e0/worktree"
+        self.assertIn("high-entropy-value", scan_secrets(path))
+        record = {
+            "id": "run-path-fixture",
+            "task_id": "task-path-fixture",
+            "project_id": self.project.id,
+            "task": "Repair arithmetic",
+            **dict.fromkeys(
+                ("project_root", "worktree", "directory", "checks_path", "patch", "delta_patch"),
+                path,
+            ),
+        }
+        with patch("erol.runstore.Path", PurePosixPath):
+            self.runs.create(record)
+            self.runs.save(record)
+        self.assertEqual(path, self.runs.get(record["id"])["worktree"])
+
+    def test_run_path_exception_keeps_credentials_and_arbitrary_text_rejected(self):
+        record = {
+            "id": "run-path-guard",
+            "task_id": "task-path-guard",
+            "project_id": self.project.id,
+        }
+        unsafe_path = "/home/aB3dE7fG9hJ2kL4mN6pQ8rS0tU5vW1xY/worktree"
+        joined = "/home/runner/work/_temp/run-0cb91d3213644e348b7912889c9536e0/worktree"
+        with patch("erol.runstore.Path", PurePosixPath):
+            for fields in (
+                {"worktree": unsafe_path},
+                {"worktree": "/home/password=private-fixture/src"},
+                {"worktree": "relative/project"},
+                {"worktree": 123},
+                {"task": joined},
+                {"context": {"worktree": joined}},
+            ):
+                with self.subTest(fields=fields), self.assertRaises(ErolError):
+                    self.runs.create({**record, **fields})
 
     def test_both_harnesses_observe_repair_review_and_usage(self):
         for harness in ("codex", "claude"):
