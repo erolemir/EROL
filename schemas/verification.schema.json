@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EROL local verification attestation v1",
+  "type": "object",
+  "required": ["implementer", "reviewer", "tests"],
+  "properties": {
+    "implementer": {"type": "string", "minLength": 1, "maxLength": 120},
+    "reviewer": {"type": "string", "minLength": 1, "maxLength": 120},
+    "tests": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "required": ["name", "passed", "reference"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1, "maxLength": 200},
+          "passed": {"const": true},
+          "reference": {"type": "string", "minLength": 1, "maxLength": 1000}
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object", "required": ["severity", "resolved"],
+        "properties": {
+          "severity": {"enum": ["critical", "high", "medium", "low"]},
+          "resolved": {"type": "boolean"}
+        }
+      }
+    }
+  },
+  "$comment": "Runtime also checks independent reviewer identity and refuses unresolved high/critical findings. References are caller-provided attestations, not authenticated test receipts."
+}

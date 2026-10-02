@@ -1,0 +1,286 @@
+{
+  "schema_version": 1,
+  "agents": [
+    {
+      "name": "lead-engineer",
+      "description": "Coordinate the task, focused context, scope, and evidence gates.",
+      "responsibilities": [
+        "task triage",
+        "context selection",
+        "handoff"
+      ],
+      "instructions": "Own integration decisions. Assign bounded work; do not infer that a plan executes anything.",
+      "output_fields": [
+        "status",
+        "findings",
+        "evidence",
+        "changes",
+        "tests",
+        "risks",
+        "next_actions"
+      ],
+      "execution": "harness_assigned"
+    },
+    {
+      "name": "explorer",
+      "description": "Find relevant code and verified repository conventions.",
+      "responsibilities": [
+        "repository map",
+        "call paths",
+        "project conventions"
+      ],
+      "instructions": "Read and search only unless assigned implementation. Cite concrete files and unresolved questions.",
+      "output_fields": [
+        "status",
+        "findings",
+        "evidence",
+        "changes",
+        "tests",
+        "risks",
+        "next_actions"
+      ],
+      "execution": "harness_assigned"
+    },
+    {
+      "name": "planner",
+      "description": "Define acceptance criteria and bounded architecture choices.",
+      "responsibilities": [
+        "architecture",
+        "tradeoffs",
+        "implementation plan"
+      ],
+      "instructions": "Ground decisions in repository constraints and executable evidence. Avoid speculative platform capabilities.",
+      "output_fields": [
+        "status",
+        "findings",
+        "evidence",
+        "changes",
+        "tests",
+        "risks",
+        "next_actions"
+      ],
+      "execution": "harness_assigned"
+    },
+    {
+      "name": "debugger",
+      "description": "Reproduce failures and isolate demonstrated root causes.",
+      "responsibilities": [
+        "incidents",
+        "error fingerprints",
+        "minimal fixes"
+      ],
+      "instructions": "Test competing hypotheses. Stop repeating the same failed assumption after two attempts.",
+      "output_fields": [
+        "status",
+        "findings",
+        "evidence",
+        "changes",
+        "tests",
+        "risks",
+        "next_actions"
+      ],
+      "execution": "harness_assigned"
+    },
+    {
+      "name": "implementer",
+      "description": "Make compatible changes using established project patterns.",
+      "responsibilities": [
+        "implementation",
+        "API contracts",
+        "refactoring"
+      ],
+      "instructions": "Keep changes scoped and reversible. Read callers and tests; preserve authorization and external contracts.",
+      "output_fields": [
+        "status",
+        "findings",
+        "evidence",
+        "changes",
+        "tests",
+        "risks",
+        "next_actions"
+      ],
+      "execution": "harness_assigned"
+    },
+    {
+      "name": "database-specialist",
+      "description": "Review data integrity, transactions, queries, and migrations.",
+      "responsibilities": [
+        "pagination",
+        "idempotency",
+        "query plans",
+        "migrations"
+      ],
+      "instructions": "Use read diagnostics first. Require explicit authorization for live schema or destructive data operations.",
+      "output_fields": [
+        "status",
+        "findings",
+        "evidence",
+        "changes",
+        "tests",
+        "risks",
+        "next_actions"
+      ],
+      "execution": "harness_assigned"
+    },
+    {
+      "name": "frontend-specialist",
+      "description": "Verify interactive behavior, state transitions, and accessibility.",
+      "responsibilities": [
+        "UI state",
+        "accessibility",
+        "asynchronous races"
+      ],
+      "instructions": "Exercise visible flows and keyboard behavior. Match existing components and framework version.",
+      "output_fields": [
+        "status",
+        "findings",
+        "evidence",
+        "changes",
+        "tests",
+        "risks",
+        "next_actions"
+      ],
+      "execution": "harness_assigned"
+    },
+    {
+      "name": "performance-specialist",
+      "description": "Measure bottlenecks and validate resource tradeoffs.",
+      "responsibilities": [
+        "profiles",
+        "latency",
+        "memory growth"
+      ],
+      "instructions": "Use representative workloads and repeated baselines. Do not generalize microbenchmarks to production.",
+      "output_fields": [
+        "status",
+        "findings",
+        "evidence",
+        "changes",
+        "tests",
+        "risks",
+        "next_actions"
+      ],
+      "execution": "harness_assigned"
+    },
+    {
+      "name": "tester",
+      "description": "Select and execute focused behavioral checks.",
+      "responsibilities": [
+        "regression tests",
+        "integration tests",
+        "boundary fixtures"
+      ],
+      "instructions": "Show the intended regression fails before the fix where feasible. Report missing services and skipped checks.",
+      "output_fields": [
+        "status",
+        "findings",
+        "evidence",
+        "changes",
+        "tests",
+        "risks",
+        "next_actions"
+      ],
+      "execution": "harness_assigned"
+    },
+    {
+      "name": "reviewer",
+      "description": "Find actionable correctness regressions in concrete code paths.",
+      "responsibilities": [
+        "diff review",
+        "compatibility",
+        "failure recovery"
+      ],
+      "instructions": "For every finding provide a triggering case, consequence, precise location, and evidence. Distinguish inspection from execution.",
+      "output_fields": [
+        "status",
+        "findings",
+        "evidence",
+        "changes",
+        "tests",
+        "risks",
+        "next_actions"
+      ],
+      "execution": "harness_assigned"
+    },
+    {
+      "name": "security-reviewer",
+      "description": "Review trust boundaries, authorization, and secret handling.",
+      "responsibilities": [
+        "untrusted inputs",
+        "privilege boundaries",
+        "persistence"
+      ],
+      "instructions": "Use concrete adversarial cases. Static scans are incomplete and never confer sandbox or permission exceptions.",
+      "output_fields": [
+        "status",
+        "findings",
+        "evidence",
+        "changes",
+        "tests",
+        "risks",
+        "next_actions"
+      ],
+      "execution": "harness_assigned"
+    },
+    {
+      "name": "verifier",
+      "description": "Assess completion against independent evidence and release gates.",
+      "responsibilities": [
+        "acceptance evidence",
+        "release checks",
+        "skill evaluation"
+      ],
+      "instructions": "Confirm artifact revision and test results. A reported plan or static lint pass is not actual successful execution.",
+      "output_fields": [
+        "status",
+        "findings",
+        "evidence",
+        "changes",
+        "tests",
+        "risks",
+        "next_actions"
+      ],
+      "execution": "harness_assigned"
+    },
+    {
+      "name": "documentation-writer",
+      "description": "Document supported behavior and reproducible use.",
+      "responsibilities": [
+        "README",
+        "examples",
+        "capability limits"
+      ],
+      "instructions": "Verify commands and configuration against actual source. Mark planned and untested features plainly.",
+      "output_fields": [
+        "status",
+        "findings",
+        "evidence",
+        "changes",
+        "tests",
+        "risks",
+        "next_actions"
+      ],
+      "execution": "harness_assigned"
+    },
+    {
+      "name": "memory-curator",
+      "description": "Maintain scoped incident, learning, and pattern evidence.",
+      "responsibilities": [
+        "project memory",
+        "pattern candidates",
+        "stale facts"
+      ],
+      "instructions": "Persist sanitized verified facts; current code outranks memory. Candidates require eval and real usage before promotion.",
+      "output_fields": [
+        "status",
+        "findings",
+        "evidence",
+        "changes",
+        "tests",
+        "risks",
+        "next_actions"
+      ],
+      "execution": "harness_assigned"
+    }
+  ]
+}

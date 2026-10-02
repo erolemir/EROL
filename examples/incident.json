@@ -1,0 +1,20 @@
+{
+  "id": "import-incident-1",
+  "task_id": "repair-import-1",
+  "symptom": "Import skips rows at batch boundaries",
+  "error": "ImportCursorError skipped rows request=abc123 at 14:32",
+  "exception": "ImportCursorError",
+  "component": "contact-import",
+  "root_category": "nonunique-cursor",
+  "root_cause": "Version alone is not a unique pagination key",
+  "solution": "Use a stable composite Version and ID cursor",
+  "confidence": 0.95,
+  "files": ["src/import.py", "tests/test_import.py"],
+  "regression_risk": "Check equal-version rows and resume boundaries",
+  "verification": {
+    "implementer": "worker-a",
+    "reviewer": "reviewer-b",
+    "tests": [{"name": "equal-version-batch-boundary", "passed": true, "reference": "local-test-report@revision"}],
+    "findings": []
+  }
+}

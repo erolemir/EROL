@@ -1,0 +1,299 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "task": "RabbitMQ consumer processes duplicate delivery after timeout",
+      "expected": [
+        "message-idempotency",
+        "incident-debugging"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Fix missing rows at pagination batch import boundary",
+      "expected": [
+        "stable-pagination"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "CSS cursor color and z-index adjustment",
+      "expected": [],
+      "forbidden": [
+        "stable-pagination",
+        "database-query-performance"
+      ],
+      "expect_empty": true,
+      "limit": 4
+    },
+    {
+      "task": "API endpoint request validation",
+      "expected": [
+        "api-contract-design"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Plan a backward compatible schema migration",
+      "expected": [
+        "database-migration-safety"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Profile latency and memory leak in worker",
+      "expected": [
+        "performance-profiling"
+      ],
+      "forbidden": [
+        "memory-hygiene"
+      ],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Review diff for authorization security boundaries",
+      "expected": [
+        "security-boundary-review"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Code review this PR",
+      "expected": [
+        "evidence-code-review"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Design regression test for boundary input",
+      "expected": [
+        "regression-test-design"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "CI failure: build failed on Linux",
+      "expected": [
+        "ci-failure-triage"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Update README documentation",
+      "expected": [
+        "documentation-maintenance"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Explore repository codebase before onboarding",
+      "expected": [
+        "repository-exploration"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Refactor parser and rename symbol",
+      "expected": [
+        "safe-refactoring"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "React hydration stale UI state",
+      "expected": [
+        "frontend-state-correctness"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Keyboard navigation and screen reader accessibility",
+      "expected": [
+        "accessibility-audit"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "MCP tool routing and harness capability selection",
+      "expected": [
+        "tool-capability-selection"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Project memory cleanup and stale learning",
+      "expected": [
+        "memory-hygiene"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Repeated error pattern discovery creates skill candidate",
+      "expected": [
+        "learning-pattern-discovery"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Skill eval with negative trigger examples",
+      "expected": [
+        "skill-quality-evaluation"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Context budget and handoff for session transfer",
+      "expected": [
+        "context-handoff"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Upgrade package dependency after CVE",
+      "expected": [
+        "dependency-upgrade"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Prepare release and deploy rollout",
+      "expected": [
+        "release-verification"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Write ADR for architecture constraints",
+      "expected": [
+        "architecture-decision"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Inspect slow query and SQL performance index",
+      "expected": [
+        "database-query-performance"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Bu serviste duplicate kayıt oluşuyor, hata nedenini düzelt",
+      "expected": [
+        "message-idempotency",
+        "incident-debugging"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Sayfalama sırasında kayıt kaçırıyor",
+      "expected": [
+        "stable-pagination"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Güvenlik ve yetki sınırlarını incele",
+      "expected": [
+        "security-boundary-review"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Clean duplicate wording in restaurant review",
+      "expected": [],
+      "forbidden": [
+        "message-idempotency",
+        "evidence-code-review"
+      ],
+      "expect_empty": true,
+      "limit": 4
+    },
+    {
+      "task": "Explore city and architecture tourism",
+      "expected": [],
+      "forbidden": [
+        "repository-exploration",
+        "architecture-decision"
+      ],
+      "expect_empty": true,
+      "limit": 4
+    },
+    {
+      "task": "Prepare press release about performance art",
+      "expected": [],
+      "forbidden": [
+        "release-verification",
+        "performance-profiling"
+      ],
+      "expect_empty": true,
+      "limit": 4
+    },
+    {
+      "task": "Hello there",
+      "expected": [],
+      "forbidden": [],
+      "expect_empty": true,
+      "limit": 4
+    },
+    {
+      "task": "Fix metadata duplication in note",
+      "expected": [],
+      "forbidden": [
+        "message-idempotency"
+      ],
+      "expect_empty": true,
+      "limit": 4
+    }
+  ]
+}

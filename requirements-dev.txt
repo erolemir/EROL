@@ -1,0 +1,4 @@
+# Tools used for local validation. EROL runtime itself has no dependencies.
+ruff==0.16.10
+mypy==2.4.0
+build==1.6.1

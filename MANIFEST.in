@@ -1,0 +1,14 @@
+include LICENSE COPYRIGHT README.md CHANGELOG.md SECURITY.md requirements-dev.txt
+recursive-include docs *.md
+recursive-include tests *.py
+recursive-include examples *.json
+recursive-include schemas *.json
+recursive-include scripts *.py
+recursive-include adapters *.md
+recursive-include plugins *.json *.md *.yaml *.py *.mjs
+include plugins/erol/LICENSE plugins/erol/COPYRIGHT scripts/update-plugins.ps1
+include .agents/plugins/marketplace.json
+include .claude-plugin/marketplace.json package.json package-lock.json
+recursive-include bin *.mjs *.py
+recursive-include tests/node *.mjs
+recursive-include src/erol/data *.md *.json

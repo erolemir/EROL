@@ -1,0 +1,10 @@
+{
+  "positive_tasks": ["contact-import importcursorerror skipped rows at"],
+  "negative_tasks": ["CSS button spacing", "contact-import importcursorerror skipped rows at different root cause"],
+  "behavior": {
+    "implementer": "workflow-runner-a",
+    "reviewer": "reviewer-b",
+    "tests": [{"name": "candidate-fixed-heldout-equal-version-import", "passed": true, "reference": "heldout-fixture-run@revision"}],
+    "findings": []
+  }
+}

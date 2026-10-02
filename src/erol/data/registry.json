@@ -1,0 +1,521 @@
+{
+  "schema_version": 1,
+  "skills": [
+    {
+      "name": "incident-debugging",
+      "description": "Investigate reproducible failures and preserve verified causes and regression evidence.",
+      "triggers": [
+        "debug",
+        "bug",
+        "hata",
+        "exception",
+        "root cause",
+        "incident",
+        "timeout"
+      ],
+      "avoid_when": [
+        "copy editing only",
+        "yalnızca yazım"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "debugger",
+      "path": "skills/incident-debugging/SKILL.md",
+      "digest": "8c550b0fbe39fbac69bc1033043374d7e2ed4950f94f2d0996c9c52c3bb95b24"
+    },
+    {
+      "name": "message-idempotency",
+      "description": "Prevent duplicate side effects in retried requests and at-least-once message consumers.",
+      "triggers": [
+        "duplicate",
+        "idempotency",
+        "idempotent",
+        "rabbitmq",
+        "tekrar işleme"
+      ],
+      "avoid_when": [
+        "duplicate wording",
+        "duplicate CSS",
+        "metin tekrarı"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "database-specialist",
+      "path": "skills/message-idempotency/SKILL.md",
+      "digest": "ae28ddaa59f6833d67bf5082473126b3c5501ac67031d18e4ca61c4d07655b51"
+    },
+    {
+      "name": "stable-pagination",
+      "description": "Diagnose missing or repeated rows at pagination and batch-import boundaries.",
+      "triggers": [
+        "pagination",
+        "cursor",
+        "batch import",
+        "sayfalama",
+        "kayıt kaçırıyor"
+      ],
+      "avoid_when": [
+        "CSS cursor",
+        "mouse cursor",
+        "imleç rengi"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "database-specialist",
+      "path": "skills/stable-pagination/SKILL.md",
+      "digest": "0a9ffa3f7f56ca04c9d8cbfc22714a5a5c5e4781f62c4b5c77febfbe0c1078b1"
+    },
+    {
+      "name": "database-query-performance",
+      "description": "Measure and improve slow SQL through query plans and representative workload evidence.",
+      "triggers": [
+        "slow query",
+        "query plan",
+        "SQL performance",
+        "index",
+        "sorgu yavaş"
+      ],
+      "avoid_when": [
+        "book index",
+        "CSS z-index",
+        "kitap dizini",
+        "z-index"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "database-specialist",
+      "path": "skills/database-query-performance/SKILL.md",
+      "digest": "b2b2ab0dcfc9d04b65f5aa4fe1c347705ee75a1edd0680f639d708419fc2ca62"
+    },
+    {
+      "name": "database-migration-safety",
+      "description": "Prepare compatible schema changes with recovery and data-integrity verification.",
+      "triggers": [
+        "migration",
+        "schema change",
+        "migrate database",
+        "şema değişikliği"
+      ],
+      "avoid_when": [
+        "bird migration",
+        "kuş göçü"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "database-specialist",
+      "path": "skills/database-migration-safety/SKILL.md",
+      "digest": "6dcdefeaca13df5e31c6eb2d62f811ba2a3797edc14d4f6d5fdb87e1a5bd7af5"
+    },
+    {
+      "name": "api-contract-design",
+      "description": "Evolve service contracts with compatibility, validation, and failure semantics.",
+      "triggers": [
+        "API contract",
+        "endpoint",
+        "REST",
+        "request validation",
+        "API tasarımı"
+      ],
+      "avoid_when": [
+        "endpoint in geometry",
+        "geometri uç noktası"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "implementer",
+      "path": "skills/api-contract-design/SKILL.md",
+      "digest": "2f10169d1db82ea2e36317e8e726c312aba37e6a6a664e134bffccf308b744b5"
+    },
+    {
+      "name": "regression-test-design",
+      "description": "Select focused tests that demonstrate behavioral changes and protect meaningful boundaries.",
+      "triggers": [
+        "test strategy",
+        "regression test",
+        "unit test",
+        "integration test",
+        "test coverage",
+        "test yaz"
+      ],
+      "avoid_when": [
+        "statistical hypothesis test",
+        "istatistik testi"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "tester",
+      "path": "skills/regression-test-design/SKILL.md",
+      "digest": "4c70a2bd3c8b79695be7c43a22606a664499401d74899c3130c17a147a78b0fa"
+    },
+    {
+      "name": "evidence-code-review",
+      "description": "Review changes for concrete correctness risks with reproducible findings.",
+      "triggers": [
+        "code review",
+        "review diff",
+        "PR review",
+        "kod incele",
+        "reviewer"
+      ],
+      "avoid_when": [
+        "review restaurant",
+        "restaurant review",
+        "restoran değerlendirme"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "reviewer",
+      "path": "skills/evidence-code-review/SKILL.md",
+      "digest": "64e2d2ade9fa936125b1d66be0677a2fa99131d9ecebbc6eae7957ecce76138d"
+    },
+    {
+      "name": "security-boundary-review",
+      "description": "Examine untrusted inputs, authorization boundaries, secret handling, and dangerous side effects.",
+      "triggers": [
+        "security",
+        "authorization",
+        "authentication",
+        "secret",
+        "prompt injection",
+        "güvenlik",
+        "yetki"
+      ],
+      "avoid_when": [
+        "fictional secret",
+        "roman sırrı"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "security-reviewer",
+      "path": "skills/security-boundary-review/SKILL.md",
+      "digest": "1589a04bc419e2485a42ae9bc12cba3a1c1b488aee5057ffe707a3f7347552a3"
+    },
+    {
+      "name": "dependency-upgrade",
+      "description": "Upgrade dependencies through compatibility research, reproducible resolution, and rollback evidence.",
+      "triggers": [
+        "dependency",
+        "upgrade package",
+        "package update",
+        "bağımlılık",
+        "CVE"
+      ],
+      "avoid_when": [
+        "project dependency diagram",
+        "iş bağımlılığı"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "implementer",
+      "path": "skills/dependency-upgrade/SKILL.md",
+      "digest": "81822b662e2a23a5bd63f7e362b7c18186dbae1e98313675b4fc50235509bd7b"
+    },
+    {
+      "name": "architecture-decision",
+      "description": "Make bounded architectural decisions backed by repository constraints and explicit tradeoffs.",
+      "triggers": [
+        "architecture",
+        "ADR",
+        "design system architecture",
+        "mimari"
+      ],
+      "avoid_when": [
+        "architecture tourism",
+        "mimari gezi"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "planner",
+      "path": "skills/architecture-decision/SKILL.md",
+      "digest": "ebff5fbc76c2583564dcae59a35e8e42719832cdbaf1b2a47d631be834a3b15d"
+    },
+    {
+      "name": "repository-exploration",
+      "description": "Find relevant code paths and project conventions before planning a change.",
+      "triggers": [
+        "explore repository",
+        "codebase",
+        "repo map",
+        "onboarding",
+        "proje yapısı"
+      ],
+      "avoid_when": [
+        "explore city",
+        "şehir gezisi"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "explorer",
+      "path": "skills/repository-exploration/SKILL.md",
+      "digest": "99d1232ed27c2a5351f0c48b0f215bebe0f1616ea561966f81c9ce0caf35735b"
+    },
+    {
+      "name": "safe-refactoring",
+      "description": "Change structure while preserving externally observable behavior and project style.",
+      "triggers": [
+        "refactor",
+        "rename symbol",
+        "extract function",
+        "yeniden düzenle"
+      ],
+      "avoid_when": [
+        "rewrite marketing copy",
+        "pazarlama metni"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "implementer",
+      "path": "skills/safe-refactoring/SKILL.md",
+      "digest": "741d0a786eb6609da078f3ff2812e5c098d710a43e0ec168c67dbeecc055b53c"
+    },
+    {
+      "name": "ci-failure-triage",
+      "description": "Diagnose build and CI failures through reproducible environment comparisons.",
+      "triggers": [
+        "CI failure",
+        "build failed",
+        "pipeline failure",
+        "lint failed",
+        "CI hatası"
+      ],
+      "avoid_when": [
+        "sales pipeline",
+        "satış hattı"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "debugger",
+      "path": "skills/ci-failure-triage/SKILL.md",
+      "digest": "c0bfb69429fcb0b5bbf8b7678151758f2f6ed94c7d98acb3c5bc02c2d34c84bf"
+    },
+    {
+      "name": "release-verification",
+      "description": "Prepare evidence-backed releases with explicit readiness gates and recoverable rollout.",
+      "triggers": [
+        "release",
+        "deploy",
+        "rollout",
+        "publish package",
+        "yayınla",
+        "dağıtım"
+      ],
+      "avoid_when": [
+        "press release",
+        "basın bülteni"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "verifier",
+      "path": "skills/release-verification/SKILL.md",
+      "digest": "e135e699ab7071a230a9255e0b5857edc90694e31fdad2f1a9d2b92e8bb3b4b7"
+    },
+    {
+      "name": "documentation-maintenance",
+      "description": "Update project documentation from observed behavior and reproducible examples.",
+      "triggers": [
+        "documentation",
+        "README",
+        "docs",
+        "document",
+        "dokümantasyon"
+      ],
+      "avoid_when": [
+        "document fraud",
+        "belge sahteciliği"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "documentation-writer",
+      "path": "skills/documentation-maintenance/SKILL.md",
+      "digest": "41d210d2a4bf1a4a34bb0a30ec16d730d65e4ce1639e3ea9118eb00aae906097"
+    },
+    {
+      "name": "accessibility-audit",
+      "description": "Improve interactive UI access through keyboard, semantics, focus, and perceivable feedback.",
+      "triggers": [
+        "accessibility",
+        "a11y",
+        "keyboard navigation",
+        "screen reader",
+        "erişilebilirlik"
+      ],
+      "avoid_when": [
+        "database accessibility",
+        "veritabanı erişimi"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "frontend-specialist",
+      "path": "skills/accessibility-audit/SKILL.md",
+      "digest": "a8b769f0c58831f85fecab1dbceef8ba94ad13876e230d63ed74dfcbd4aa6a85"
+    },
+    {
+      "name": "frontend-state-correctness",
+      "description": "Diagnose stale UI, asynchronous races, and inconsistent client state transitions.",
+      "triggers": [
+        "frontend",
+        "React",
+        "UI state",
+        "stale UI",
+        "hydration",
+        "arayüz"
+      ],
+      "avoid_when": [
+        "frontend marketing tagline",
+        "arayüz sloganı"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "frontend-specialist",
+      "path": "skills/frontend-state-correctness/SKILL.md",
+      "digest": "8de9f720e04f1120bf4dbc56e35bb96fe9569348b5d589b6c4c1f985a0a771a7"
+    },
+    {
+      "name": "performance-profiling",
+      "description": "Measure bottlenecks before optimizing CPU, memory, or end-to-end latency.",
+      "triggers": [
+        "profile",
+        "profiling",
+        "performance",
+        "latency",
+        "memory leak",
+        "performans"
+      ],
+      "avoid_when": [
+        "performance art",
+        "sahne performansı"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "performance-specialist",
+      "path": "skills/performance-profiling/SKILL.md",
+      "digest": "2dd3cba87b184a9e26a5edc1d2b4f75def7bbb05d70b3c6f01e37585033d0e02"
+    },
+    {
+      "name": "memory-hygiene",
+      "description": "Preserve small, evidence-backed project memory with redaction, staleness, and provenance.",
+      "triggers": [
+        "project memory",
+        "memory cleanup",
+        "stale learning",
+        "hafıza",
+        "memory retrieval"
+      ],
+      "avoid_when": [
+        "memory leak",
+        "memory allocation"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "memory-curator",
+      "path": "skills/memory-hygiene/SKILL.md",
+      "digest": "36857a0a054264fff5b2db3590f77f446acd4ff12de2ec85588dece494be6c1e"
+    },
+    {
+      "name": "learning-pattern-discovery",
+      "description": "Turn repeated verified incidents into bounded project workflow candidates.",
+      "triggers": [
+        "repeated error",
+        "recurring incident",
+        "pattern discovery",
+        "learning pipeline",
+        "tekrarlanan hata",
+        "skill candidate"
+      ],
+      "avoid_when": [
+        "visual pattern",
+        "görsel desen"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "memory-curator",
+      "path": "skills/learning-pattern-discovery/SKILL.md",
+      "digest": "e0c3903df446147c9473533552a00b015bfed04a0bd3b96327b41049c6d4214e"
+    },
+    {
+      "name": "skill-quality-evaluation",
+      "description": "Evaluate skill metadata, triggers, context overhead, and real usage evidence without overstating static checks.",
+      "triggers": [
+        "skill eval",
+        "skill evaluation",
+        "negative trigger",
+        "skill quality",
+        "skill lint"
+      ],
+      "avoid_when": [
+        "evaluate employee skill",
+        "çalışan yetkinliği"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "verifier",
+      "path": "skills/skill-quality-evaluation/SKILL.md",
+      "digest": "fee617cd24b18f82aca51f1a5d229c6748a9009c11a17eea7dd3738abee09030"
+    },
+    {
+      "name": "context-handoff",
+      "description": "Prepare bounded task and agent handoffs with evidence and explicit unresolved work.",
+      "triggers": [
+        "handoff",
+        "context budget",
+        "context packet",
+        "session transfer",
+        "devir",
+        "bağlam bütçesi"
+      ],
+      "avoid_when": [
+        "sports handoff",
+        "basketbol pası"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "lead-engineer",
+      "path": "skills/context-handoff/SKILL.md",
+      "digest": "8b7e04e765f15b3e4e90230b5bcaecc004241e8392f14c2572213534f4bfd7b7"
+    },
+    {
+      "name": "tool-capability-selection",
+      "description": "Choose tools from observed capabilities and scope without inventing APIs or permissions.",
+      "triggers": [
+        "MCP",
+        "tool routing",
+        "tool selection",
+        "harness capability",
+        "araç seçimi"
+      ],
+      "avoid_when": [
+        "machine tool catalog",
+        "takım tezgahı"
+      ],
+      "version": "1.0.0",
+      "scope": "builtin",
+      "project_id": null,
+      "agent": "lead-engineer",
+      "path": "skills/tool-capability-selection/SKILL.md",
+      "digest": "2e68cd3559e30c8412bac22539072920355bcf58e98bf5594b55f33b74c90471"
+    }
+  ]
+}

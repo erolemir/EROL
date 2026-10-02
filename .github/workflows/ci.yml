@@ -1,0 +1,43 @@
+name: validate
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  core:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ['3.11', '3.14']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: npm test
+      - run: python -m pip install -e . -r requirements-dev.txt
+      - run: ruff check src tests scripts bin
+      - run: ruff format --check src tests scripts bin
+      - run: mypy --explicit-package-bases src/erol bin/erol.py
+      - run: python -m unittest discover -s tests -v
+      - run: python -m build
+      - run: python scripts/package_smoke.py
+      - run: npm pack --pack-destination dist
+      - run: python scripts/npm_package_smoke.py
+      - run: python scripts/check_adapter_drift.py --check
+      - name: Pack eval and context guard (isolated temporary home)
+        run: python scripts/validate.py
+  quality:
+    name: Quality gate
+    if: always()
+    needs: core
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every platform to pass
+        env:
+          RESULT: ${{ needs.core.result }}
+        run: test "$RESULT" = success

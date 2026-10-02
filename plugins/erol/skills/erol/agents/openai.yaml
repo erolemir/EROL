@@ -1,0 +1,4 @@
+interface:
+  display_name: "EROL"
+  short_description: "Project memory and focused orchestration"
+  default_prompt: "Use $erol to investigate this project task."
