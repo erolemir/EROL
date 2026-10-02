@@ -6,6 +6,7 @@ import os
 import queue
 import signal
 import subprocess
+import sys
 import threading
 import time
 from collections.abc import Callable
@@ -16,6 +17,33 @@ from .common import ErolError
 
 MAX_LINE = 1024 * 1024
 MAX_STREAM = 16 * 1024 * 1024
+
+
+def _darwin_group_terminated(pgid: int) -> bool:
+    """EPERM can follow SIGKILL for a Darwin group containing only zombies.
+
+    Do not swallow permissions errors on living/unknown groups. Query numeric
+    group IDs and states only; process command lines are neither read nor saved.
+    """
+    try:
+        result = subprocess.run(
+            ["/bin/ps", "-axo", "pgid=,stat="],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return False
+    if result.returncode or len(result.stdout) > MAX_LINE:
+        return False
+    for line in result.stdout.splitlines():
+        fields = line.split()
+        if len(fields) != 2 or not fields[0].isdigit():
+            return False
+        if int(fields[0]) == pgid and not fields[1].startswith("Z"):
+            return False
+    return True
 
 
 def stop_process(process: subprocess.Popen) -> None:
@@ -33,6 +61,13 @@ def stop_process(process: subprocess.Popen) -> None:
             os.killpg(process.pid, signal.SIGKILL)  # type: ignore[attr-defined]
         except ProcessLookupError:
             pass
+        except PermissionError:
+            if (
+                sys.platform != "darwin"
+                or process.poll() is None
+                or not _darwin_group_terminated(process.pid)
+            ):
+                raise
     if process.poll() is None:
         process.kill()
     process.wait(timeout=10)

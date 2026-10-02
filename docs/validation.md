@@ -10,6 +10,9 @@ The subsequent Linux run passed 181 tests and exposed a cleanup assertion that
 confused an orphan zombie PID with a running descendant. The assertion now accepts
 only a reaped PID or observed Linux zombie state; an executing child still fails.
 Production unknown-process handling remains conservative.
+Both Linux jobs then passed. macOS exposed EPERM on repeated zombie-group cleanup;
+the runtime now requires observed terminal group states before accepting that
+case. A regression covers terminal/live/mixed/unknown groups and a living leader.
 
 ## Autonomous work follow-up: 2026-10-03 (Istanbul)
 

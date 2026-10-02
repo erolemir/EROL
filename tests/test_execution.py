@@ -10,7 +10,7 @@ import tempfile
 import unittest
 from dataclasses import replace
 from pathlib import Path, PurePosixPath
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from test_learning import incident, verification
 
@@ -21,7 +21,7 @@ from erol.harness import CliHarness, EventDecoder
 from erol.identity import detect_project
 from erol.learning import LearningEngine
 from erol.registry import Registry
-from erol.runprocess import observe
+from erol.runprocess import observe, stop_process
 from erol.runstore import RunStore, pid_alive
 from erol.security import scan_secrets
 from erol.store import Store
@@ -574,7 +574,18 @@ class ExecutionTests(unittest.TestCase):
             else:
                 self.assertEqual("Z", stat.rsplit(")", 1)[1].split()[0])
         else:
-            self.assertFalse(pid_alive(child_pid))
+            if sys.platform == "darwin" and pid_alive(child_pid):
+                state = subprocess.run(
+                    ["/bin/ps", "-p", str(child_pid), "-o", "stat="],
+                    capture_output=True,
+                    text=True,
+                    timeout=5,
+                    check=False,
+                )
+                self.assertIn(state.returncode, (0, 1))
+                self.assertTrue(not state.stdout.strip() or state.stdout.strip().startswith("Z"))
+            else:
+                self.assertFalse(pid_alive(child_pid))
 
     def test_public_cli_reads_and_cancels_external_run_records(self):
         completed = self.start()
@@ -705,6 +716,48 @@ class AdapterProtocolTests(unittest.TestCase):
         )
         self.assertTrue(decoder.failed)
         self.assertIn("OAuth access token has expired", decoder.diagnostics[-1])
+
+
+class ProcessCleanupTests(unittest.TestCase):
+    def test_darwin_cleanup_permission_exception_requires_observed_terminal_group(self):
+        process = Mock(pid=1234)
+        process.poll.return_value = 0
+        for output, returncode, allowed in (
+            ("1234 Z\n5678 S\n", 0, True),
+            ("5678 S\n", 0, True),
+            ("1234 S\n", 0, False),
+            ("1234 Z\n1234 R\n", 0, False),
+            ("unknown state\n", 0, False),
+            ("", 1, False),
+        ):
+            with (
+                self.subTest(output=output, returncode=returncode),
+                patch("erol.runprocess.os.name", "posix"),
+                patch("erol.runprocess.sys.platform", "darwin"),
+                patch("erol.runprocess.signal.SIGKILL", 9, create=True),
+                patch("erol.runprocess.os.killpg", create=True, side_effect=PermissionError),
+                patch(
+                    "erol.runprocess.subprocess.run",
+                    return_value=Mock(stdout=output, returncode=returncode),
+                ) as probe,
+            ):
+                if allowed:
+                    stop_process(process)
+                else:
+                    with self.assertRaises(PermissionError):
+                        stop_process(process)
+                self.assertEqual(["/bin/ps", "-axo", "pgid=,stat="], probe.call_args.args[0])
+        process.poll.return_value = None
+        with (
+            patch("erol.runprocess.os.name", "posix"),
+            patch("erol.runprocess.sys.platform", "darwin"),
+            patch("erol.runprocess.signal.SIGKILL", 9, create=True),
+            patch("erol.runprocess.os.killpg", create=True, side_effect=PermissionError),
+            patch("erol.runprocess.subprocess.run") as probe,
+            self.assertRaises(PermissionError),
+        ):
+            stop_process(process)
+        probe.assert_not_called()
 
 
 if __name__ == "__main__":

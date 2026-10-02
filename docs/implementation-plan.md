@@ -130,3 +130,7 @@ Linux CI also showed that a killed orphan can remain a zombie until init reaps i
 The descendant-cleanup test now verifies Linux terminal state when a PID remains;
 the conservative production duplicate-worker guard continues to reject uncertain
 process state. This changes the test's evidence interpretation, not cancellation.
+Darwin can return EPERM on a second SIGKILL of a zombie-only process group.
+Cleanup accepts that case only after the owned leader exited and a bounded ps
+group/state query proves no executing group member remains. Living, malformed,
+unavailable or denied observations continue to fail; no saved PID is signalled.
