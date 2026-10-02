@@ -1,5 +1,8 @@
 name: validate
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
 permissions:
   contents: read
 jobs:
@@ -14,8 +17,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
-      - name: Use the real system temp directory (macOS /var is a symlink)
-        run: python -c "import os, pathlib, tempfile; p = pathlib.Path(tempfile.gettempdir()).resolve(); f = open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8'); f.write(''.join(str(k) + '=' + str(p) + '\n' for k in ('TMPDIR', 'TMP', 'TEMP'))); f.close()"
+      - name: Use canonical runner temp storage for isolated test homes
+        run: python -c "import os, pathlib; p = pathlib.Path(os.environ['RUNNER_TEMP']).resolve(); f = open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8'); f.write(''.join(str(k) + '=' + str(p) + '\n' for k in ('TMPDIR', 'TMP', 'TEMP'))); f.close()"
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
