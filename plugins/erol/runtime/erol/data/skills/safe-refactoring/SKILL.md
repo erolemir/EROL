@@ -2,7 +2,7 @@
 name: safe-refactoring
 description: "Change structure while preserving externally observable behavior and project style."
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 # Safe Refactoring
 

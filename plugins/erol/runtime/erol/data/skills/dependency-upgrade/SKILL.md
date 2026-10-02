@@ -2,7 +2,7 @@
 name: dependency-upgrade
 description: "Upgrade dependencies through compatibility research, reproducible resolution, and rollback evidence."
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 # Dependency Upgrade
 

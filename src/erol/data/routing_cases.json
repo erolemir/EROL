@@ -294,6 +294,314 @@
       ],
       "expect_empty": true,
       "limit": 4
+    },
+    {
+      "task": "Servis çalışmıyor, hata ayıklama yap",
+      "expected": [
+        "incident-debugging"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Aynı mesaj iki kez işlendiği için mükerrer kayıt oluşuyor",
+      "expected": [
+        "message-idempotency"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Sayfa geçişinde eksik satırlar oluşuyor",
+      "expected": [
+        "stable-pagination"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Yavaş sorgu için sorgu optimizasyonu yap",
+      "expected": [
+        "database-query-performance"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Veritabanı şeması için geri alınabilir şema geçişi hazırla",
+      "expected": [
+        "database-migration-safety"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "API sözleşmesi için istek doğrulama kurallarını belirle",
+      "expected": [
+        "api-contract-design"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Tarih sınırları için regresyon testi ve birim testi ekle",
+      "expected": [
+        "regression-test-design"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Son değişiklikler için kod incelemesi yap",
+      "expected": [
+        "evidence-code-review"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Yetkilendirme ve kimlik doğrulama akışını kontrol et",
+      "expected": [
+        "security-boundary-review"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Bağımlılıkları güncelle ve uyumluluğu kontrol et",
+      "expected": [
+        "dependency-upgrade"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Yeni servis için sistem tasarımı ve mimari karar hazırla",
+      "expected": [
+        "architecture-decision"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Projeyi incele ve ilgili dosyaları bul",
+      "expected": [
+        "repository-exploration"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Davranışı koruyarak kodu sadeleştir",
+      "expected": [
+        "safe-refactoring"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Derleme başarısız, pipeline hatası nedenini bul",
+      "expected": [
+        "ci-failure-triage"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Yeni sürümü yayınla ve canlıya al",
+      "expected": [
+        "release-verification"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Kurulum rehberi ve kullanım kılavuzu hazırla",
+      "expected": [
+        "documentation-maintenance"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Klavye ile gezinme ve ekran okuyucu desteğini kontrol et",
+      "expected": [
+        "accessibility-audit"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "SCRUM-17 Tahakkuk Gönderilenler ekranında filtreyi ve tarih aralığını düzelt",
+      "expected": [
+        "frontend-state-correctness"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Bellek sızıntısı için darboğaz analizi yap",
+      "expected": [
+        "performance-profiling"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Proje hafızası içindeki eski öğrenimler için temizlik yap",
+      "expected": [
+        "memory-hygiene"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Tekrar eden hata için skill adayı oluştur",
+      "expected": [
+        "learning-pattern-discovery"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Skill değerlendirmesi için negatif tetikleyici örneklerini kontrol et",
+      "expected": [
+        "skill-quality-evaluation"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Bağlam aktarımı hazırla ve oturumu devret",
+      "expected": [
+        "context-handoff"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Araç yetenekleri içinden uygun aracı seç",
+      "expected": [
+        "tool-capability-selection"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Tahakkuk ekranındaki filtre bugün eski veri gösteriyor",
+      "expected": [
+        "frontend-state-correctness"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Gönderilenler ekranı için filtreyi ve tarih aralığını düzelteceğim",
+      "expected": [
+        "frontend-state-correctness"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "EKRAN FİLTRESİ değişince sonuçlar yenilenmiyor",
+      "expected": [
+        "frontend-state-correctness"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Liste filtresi ve tarih araligi filtresi birlikte uygulanmiyor",
+      "expected": [
+        "frontend-state-correctness"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4
+    },
+    {
+      "task": "Tatil için tarih aralığını düzelt",
+      "expected": [],
+      "forbidden": [],
+      "expect_empty": true,
+      "limit": 4
+    },
+    {
+      "task": "Fotoğraf filtresi için filtreyi düzelt",
+      "expected": [],
+      "forbidden": [],
+      "expect_empty": true,
+      "limit": 4
+    },
+    {
+      "task": "Klima filtresini değiştir",
+      "expected": [],
+      "forbidden": [],
+      "expect_empty": true,
+      "limit": 4
+    },
+    {
+      "task": "Metindeki yazım yanlışlarını düzelt",
+      "expected": [],
+      "forbidden": [],
+      "expect_empty": true,
+      "limit": 4
+    },
+    {
+      "task": "Filtreyi ve tarih aralığını anlat",
+      "expected": [],
+      "forbidden": [],
+      "expect_empty": true,
+      "limit": 4
+    },
+    {
+      "task": "Restoran değerlendirmesi için yorum yaz",
+      "expected": [],
+      "forbidden": [],
+      "expect_empty": true,
+      "limit": 4
+    },
+    {
+      "task": "İş bağımlılığı çizelgesi hazırla",
+      "expected": [],
+      "forbidden": [],
+      "expect_empty": true,
+      "limit": 4
+    },
+    {
+      "task": "Arayüz sloganı için ekran filtresi başlığını değiştir",
+      "expected": [],
+      "forbidden": [],
+      "expect_empty": true,
+      "limit": 4
     }
   ]
 }

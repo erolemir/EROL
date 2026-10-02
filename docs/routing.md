@@ -24,7 +24,11 @@ retain standard name and description frontmatter.
 
 Routing is local, deterministic phrase matching. Unicode normalization and
 case-folding make case-insensitive matches; punctuation becomes word boundaries.
-Turkish `ı` and `i` normalize together. A trigger must match a complete phrase,
+Turkish `İ`, `ı`, and `i` normalize together without splitting dotted capital
+letters. Turkish `çğöşü` fold to `cgosu` for ASCII keyboard spellings. Explicit
+Turkish task aliases cover all 24 builtin workflows, including screen filters
+and date ranges. This adds no stemming, fuzzy matching, model calls, or universal
+"fix" trigger. A trigger must match a complete phrase,
 so `metadata` does not trigger `data`. Longer phrases receive more weight.
 An explicit `avoid_when` phrase overrides every positive trigger for that skill.
 Equal scores prefer project skills, then sort by name. Default selection is
@@ -60,6 +64,10 @@ The packet reports `selected_skills`, which is the list actually admitted into
 context. The plan's `skills` array describes routing recommendations and may
 contain workflows omitted by the budget. Actual-use accounting must use the
 admitted list. A caller must not log a skill as used solely because it was routed.
+For the task-start CLI response, use `plan.context.selected_skills` for all admitted
+builtin and project workflows. Its top-level `selected_skills` contains only learned
+project revisions eligible for usage receipts. An empty project list or memory does
+not imply that builtin routing selected nothing; bridges report these separately.
 
 `estimated_tokens` uses rounded-up characters divided by four **for the canonical
 packet text only**. This is a deterministic size heuristic, not a tokenizer,

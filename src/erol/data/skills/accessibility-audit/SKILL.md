@@ -2,7 +2,7 @@
 name: accessibility-audit
 description: "Improve interactive UI access through keyboard, semantics, focus, and perceivable feedback."
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 # Accessibility Audit
 

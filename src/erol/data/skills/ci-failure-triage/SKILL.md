@@ -2,7 +2,7 @@
 name: ci-failure-triage
 description: "Diagnose build and CI failures through reproducible environment comparisons."
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 # Ci Failure Triage
 

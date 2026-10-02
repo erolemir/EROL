@@ -2,7 +2,7 @@
 name: architecture-decision
 description: "Make bounded architectural decisions backed by repository constraints and explicit tradeoffs."
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 # Architecture Decision
 

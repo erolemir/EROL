@@ -2,7 +2,7 @@
 name: security-boundary-review
 description: "Examine untrusted inputs, authorization boundaries, secret handling, and dangerous side effects."
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 # Security Boundary Review
 

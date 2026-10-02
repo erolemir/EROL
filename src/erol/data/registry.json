@@ -11,13 +11,17 @@
         "exception",
         "root cause",
         "incident",
-        "timeout"
+        "timeout",
+        "hata ayıklama",
+        "hata ayıkla",
+        "hatasını düzelt",
+        "servis çalışmıyor"
       ],
       "avoid_when": [
         "copy editing only",
         "yalnızca yazım"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "debugger",
@@ -32,14 +36,18 @@
         "idempotency",
         "idempotent",
         "rabbitmq",
-        "tekrar işleme"
+        "tekrar işleme",
+        "mükerrer kayıt",
+        "çift kayıt",
+        "aynı mesaj iki kez",
+        "yinelenen mesaj"
       ],
       "avoid_when": [
         "duplicate wording",
         "duplicate CSS",
         "metin tekrarı"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "database-specialist",
@@ -54,14 +62,17 @@
         "cursor",
         "batch import",
         "sayfalama",
-        "kayıt kaçırıyor"
+        "kayıt kaçırıyor",
+        "sayfa geçişinde",
+        "sayfalama sorunu",
+        "eksik satırlar"
       ],
       "avoid_when": [
         "CSS cursor",
         "mouse cursor",
         "imleç rengi"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "database-specialist",
@@ -76,7 +87,10 @@
         "query plan",
         "SQL performance",
         "index",
-        "sorgu yavaş"
+        "sorgu yavaş",
+        "yavaş sorgu",
+        "sorgu optimizasyonu",
+        "sorguyu hızlandır"
       ],
       "avoid_when": [
         "book index",
@@ -84,7 +98,7 @@
         "kitap dizini",
         "z-index"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "database-specialist",
@@ -98,13 +112,16 @@
         "migration",
         "schema change",
         "migrate database",
-        "şema değişikliği"
+        "şema değişikliği",
+        "veritabanı şeması",
+        "şema geçişi",
+        "tablo yapısını değiştir"
       ],
       "avoid_when": [
         "bird migration",
         "kuş göçü"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "database-specialist",
@@ -119,13 +136,16 @@
         "endpoint",
         "REST",
         "request validation",
-        "API tasarımı"
+        "API tasarımı",
+        "istek doğrulama",
+        "api sözleşmesi",
+        "servis uç noktası"
       ],
       "avoid_when": [
         "endpoint in geometry",
         "geometri uç noktası"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "implementer",
@@ -141,13 +161,18 @@
         "unit test",
         "integration test",
         "test coverage",
-        "test yaz"
+        "test yaz",
+        "regresyon testi",
+        "birim testi",
+        "entegrasyon testi",
+        "test ekle",
+        "testleri yaz"
       ],
       "avoid_when": [
         "statistical hypothesis test",
         "istatistik testi"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "tester",
@@ -162,14 +187,18 @@
         "review diff",
         "PR review",
         "kod incele",
-        "reviewer"
+        "reviewer",
+        "kod incelemesi",
+        "kodu incele",
+        "değişiklikleri incele",
+        "pr incelemesi"
       ],
       "avoid_when": [
         "review restaurant",
         "restaurant review",
         "restoran değerlendirme"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "reviewer",
@@ -186,13 +215,17 @@
         "secret",
         "prompt injection",
         "güvenlik",
-        "yetki"
+        "yetki",
+        "yetkilendirme",
+        "kimlik doğrulama",
+        "izin kontrolü",
+        "güvenlik açığı"
       ],
       "avoid_when": [
         "fictional secret",
         "roman sırrı"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "security-reviewer",
@@ -207,13 +240,16 @@
         "upgrade package",
         "package update",
         "bağımlılık",
-        "CVE"
+        "CVE",
+        "paket güncellemesi",
+        "paketi güncelle",
+        "bağımlılıkları güncelle"
       ],
       "avoid_when": [
         "project dependency diagram",
         "iş bağımlılığı"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "implementer",
@@ -227,13 +263,16 @@
         "architecture",
         "ADR",
         "design system architecture",
-        "mimari"
+        "mimari",
+        "mimari karar",
+        "sistem tasarımı",
+        "mimarisini planla"
       ],
       "avoid_when": [
         "architecture tourism",
         "mimari gezi"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "planner",
@@ -248,13 +287,16 @@
         "codebase",
         "repo map",
         "onboarding",
-        "proje yapısı"
+        "proje yapısı",
+        "projeyi incele",
+        "kod tabanını",
+        "depoyu incele"
       ],
       "avoid_when": [
         "explore city",
         "şehir gezisi"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "explorer",
@@ -268,13 +310,16 @@
         "refactor",
         "rename symbol",
         "extract function",
-        "yeniden düzenle"
+        "yeniden düzenle",
+        "kodu sadeleştir",
+        "fonksiyonu ayır",
+        "davranışı koruyarak"
       ],
       "avoid_when": [
         "rewrite marketing copy",
         "pazarlama metni"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "implementer",
@@ -289,13 +334,17 @@
         "build failed",
         "pipeline failure",
         "lint failed",
-        "CI hatası"
+        "CI hatası",
+        "derleme hatası",
+        "derleme başarısız",
+        "pipeline hatası",
+        "kontroller başarısız"
       ],
       "avoid_when": [
         "sales pipeline",
         "satış hattı"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "debugger",
@@ -311,13 +360,17 @@
         "rollout",
         "publish package",
         "yayınla",
-        "dağıtım"
+        "dağıtım",
+        "sürüm yayınla",
+        "sürümü yayınla",
+        "canlıya al",
+        "yayına hazırla"
       ],
       "avoid_when": [
         "press release",
         "basın bülteni"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "verifier",
@@ -332,13 +385,16 @@
         "README",
         "docs",
         "document",
-        "dokümantasyon"
+        "dokümantasyon",
+        "belgelendirme",
+        "kullanım kılavuzu",
+        "kurulum rehberi"
       ],
       "avoid_when": [
         "document fraud",
         "belge sahteciliği"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "documentation-writer",
@@ -353,13 +409,16 @@
         "a11y",
         "keyboard navigation",
         "screen reader",
-        "erişilebilirlik"
+        "erişilebilirlik",
+        "klavye ile gezinme",
+        "ekran okuyucu",
+        "odak yönetimi"
       ],
       "avoid_when": [
         "database accessibility",
         "veritabanı erişimi"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "frontend-specialist",
@@ -375,18 +434,34 @@
         "UI state",
         "stale UI",
         "hydration",
-        "arayüz"
+        "arayüz",
+        "ekranında filtreyi",
+        "ekranında filtre",
+        "ekrandaki filtre",
+        "ekranındaki filtre",
+        "ekran filtresi",
+        "liste filtresi",
+        "tarih filtresi",
+        "tarih aralığı filtresi",
+        "filtreyi düzelt",
+        "arayüz durumu",
+        "eski veri gösteriyor",
+        "ekranı için filtreyi"
       ],
       "avoid_when": [
         "frontend marketing tagline",
-        "arayüz sloganı"
+        "arayüz sloganı",
+        "fotoğraf filtresi",
+        "kamera filtresi",
+        "klima filtresi",
+        "su filtresi"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "frontend-specialist",
       "path": "skills/frontend-state-correctness/SKILL.md",
-      "digest": "8de9f720e04f1120bf4dbc56e35bb96fe9569348b5d589b6c4c1f985a0a771a7"
+      "digest": "e189817f6c0a88e5f8dc8a2df798cd3e9eee889b0332402125dc3c728edaddbc"
     },
     {
       "name": "performance-profiling",
@@ -397,13 +472,16 @@
         "performance",
         "latency",
         "memory leak",
-        "performans"
+        "performans",
+        "bellek sızıntısı",
+        "gecikmeyi ölç",
+        "darboğaz analizi"
       ],
       "avoid_when": [
         "performance art",
         "sahne performansı"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "performance-specialist",
@@ -418,13 +496,16 @@
         "memory cleanup",
         "stale learning",
         "hafıza",
-        "memory retrieval"
+        "memory retrieval",
+        "proje hafızası",
+        "hafızayı temizle",
+        "eski öğrenimler"
       ],
       "avoid_when": [
         "memory leak",
         "memory allocation"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "memory-curator",
@@ -440,13 +521,16 @@
         "pattern discovery",
         "learning pipeline",
         "tekrarlanan hata",
-        "skill candidate"
+        "skill candidate",
+        "tekrar eden hata",
+        "tekrarlayan sorun",
+        "skill adayı"
       ],
       "avoid_when": [
         "visual pattern",
         "görsel desen"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "memory-curator",
@@ -461,13 +545,16 @@
         "skill evaluation",
         "negative trigger",
         "skill quality",
-        "skill lint"
+        "skill lint",
+        "skill değerlendirmesi",
+        "skill kalitesi",
+        "negatif tetikleyici"
       ],
       "avoid_when": [
         "evaluate employee skill",
         "çalışan yetkinliği"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "verifier",
@@ -483,13 +570,16 @@
         "context packet",
         "session transfer",
         "devir",
-        "bağlam bütçesi"
+        "bağlam bütçesi",
+        "bağlam aktarımı",
+        "oturumu devret",
+        "görev devri"
       ],
       "avoid_when": [
         "sports handoff",
         "basketbol pası"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "lead-engineer",
@@ -504,13 +594,16 @@
         "tool routing",
         "tool selection",
         "harness capability",
-        "araç seçimi"
+        "araç seçimi",
+        "araç yönlendirme",
+        "araç yetenekleri",
+        "uygun aracı seç"
       ],
       "avoid_when": [
         "machine tool catalog",
         "takım tezgahı"
       ],
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "agent": "lead-engineer",

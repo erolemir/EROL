@@ -2,7 +2,7 @@
 name: message-idempotency
 description: "Prevent duplicate side effects in retried requests and at-least-once message consumers."
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 # Message Idempotency
 
