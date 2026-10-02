@@ -71,7 +71,9 @@ checkout on **each** computer that should receive scheduled updates:
 ```
 
 The task is `EROL Plugin Updates`; its installed script and bounded logs are in
-`%LOCALAPPDATA%/EROL`. A failed refresh is recorded there and retains the installed
+`%USERPROFILE%/.erol/updater`. This avoids application-specific AppData
+virtualization hiding the script from Task Scheduler. Project databases remain
+in the separate `~/.erol/state` directory. A failed refresh is recorded and retains the installed
 version. The task cannot refresh a computer that is offline, signed out or missing
 its native client. Registration saves discovered CLI paths as a fallback when
 the login shell does not inherit the assistant's PATH; register again if those

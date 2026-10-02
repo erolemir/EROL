@@ -7,11 +7,16 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $taskName = 'EROL Plugin Updates'
-$stateDirectory = Join-Path $env:LOCALAPPDATA 'EROL'
+$stateDirectory = Join-Path $env:USERPROFILE '.erol/updater'
 
 if ($Unregister) {
     $ownedTask = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
-    if ($ownedTask) { Unregister-ScheduledTask -TaskName $taskName -Confirm:$false }
+    if ($ownedTask) {
+        if ($ownedTask.Description -ne 'Refresh installed EROL plugins from their configured marketplace.') {
+            throw 'Task name is owned by another application.'
+        }
+        Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
+    }
     Write-Output 'EROL update task removed; plugins and project memory retained.'
     exit 0
 }
@@ -33,7 +38,7 @@ if ($Register) {
     # Persist the OS shell rather than a temporary shell bundled by an agent host.
     $executable = Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'
     $arguments = '-NoProfile -NonInteractive -WindowStyle Hidden -File "' + $savedScript + '" -Harness ' + $Harness
-    $action = New-ScheduledTaskAction -Execute $executable -Argument $arguments
+    $action = New-ScheduledTaskAction -Execute $executable -Argument $arguments -WorkingDirectory $stateDirectory
     $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
     $triggers = @(
         (New-ScheduledTaskTrigger -AtLogOn -User $identity),
