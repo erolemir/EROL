@@ -57,7 +57,10 @@ class ReleaseTests(unittest.TestCase):
             git("add", "--all")
             git("commit", "-m", "fixture source")
             source = git("rev-parse", "HEAD")
-            git("tag", "v0.1.10")
+            source_version = json.loads((root / "package.json").read_text("utf-8"))["version"]
+            major, minor, _ = version_tuple(source_version)
+            expected = f"{major + 1}.{minor}.11"
+            git("tag", f"v{major + 1}.{minor}.10")
             result = subprocess.run(
                 [
                     sys.executable,
@@ -72,7 +75,7 @@ class ReleaseTests(unittest.TestCase):
                 encoding="utf-8",
                 check=True,
             )
-            self.assertIn("0.1.11", result.stdout)
+            self.assertIn(expected, result.stdout)
             self.assertEqual(git("rev-parse", "refs/heads/main"), source)
             for name in (
                 "package.json",
@@ -80,7 +83,7 @@ class ReleaseTests(unittest.TestCase):
                 "plugins/erol/plugin.json",
                 "plugins/erol/.claude-plugin/plugin.json",
             ):
-                self.assertEqual(json.loads((root / name).read_text("utf-8"))["version"], "0.1.11")
+                self.assertEqual(json.loads((root / name).read_text("utf-8"))["version"], expected)
             record = json.loads((root / "RELEASE.json").read_text("utf-8"))
             self.assertEqual(record["source_commit"], source)
             self.assertEqual(record["license"], "AGPL-3.0-only")
@@ -89,7 +92,7 @@ class ReleaseTests(unittest.TestCase):
                 "plugins/erol/runtime/erol/__init__.py",
                 "pyproject.toml",
             ):
-                self.assertIn('"0.1.11"', (root / name).read_text("utf-8"))
+                self.assertIn(f'"{expected}"', (root / name).read_text("utf-8"))
             changed = subprocess.run(
                 [
                     sys.executable,

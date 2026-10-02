@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { EventEmitter } from 'node:events';
-import { existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import test from 'node:test';
@@ -145,7 +145,7 @@ test('signals are forwarded and signal termination returns a failure status', as
 
 test('real bundled CLI preserves cwd and quoted task data even with a conflicting project erol.py', (t) => {
   if (!findPython()) return t.skip('Python 3.11+ unavailable for real CLI smoke test');
-  const directory = mkdtempSync(join(tmpdir(), 'erol-node-test-'));
+  const directory = realpathSync(mkdtempSync(join(tmpdir(), 'erol-node-test-')));
   try {
     const project = join(directory, 'project with spaces');
     const home = join(directory, 'external state');
