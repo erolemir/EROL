@@ -13,6 +13,11 @@ Production unknown-process handling remains conservative.
 Both Linux jobs then passed. macOS exposed EPERM on repeated zombie-group cleanup;
 the runtime now requires observed terminal group states before accepting that
 case. A regression covers terminal/live/mixed/unknown groups and a living leader.
+The next matrix passed all four Linux/macOS jobs. Windows 3.14 found that an
+immediate PID assertion raced asynchronous Job Object termination. The cleanup
+test now observes up to five seconds of kernel completion; living PIDs still fail.
+The local full run passed 183 tests (182 passed, one POSIX-only skip), and all
+distribution/eval checks passed after the runtime corrections.
 
 ## Autonomous work follow-up: 2026-10-03 (Istanbul)
 

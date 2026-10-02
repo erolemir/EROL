@@ -7,6 +7,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from dataclasses import replace
 from pathlib import Path, PurePosixPath
@@ -563,6 +564,12 @@ class ExecutionTests(unittest.TestCase):
         outcome = observe([sys.executable, "-c", program], self.repo, timeout=2)
         self.assertEqual("timeout", outcome["reason"])
         child_pid = int(child_file.read_text())
+        if os.name == "nt":
+            # Job close dispatches termination asynchronously. Require observed
+            # death within a bounded kernel completion window, not same-tick loss.
+            deadline = time.monotonic() + 5
+            while pid_alive(child_pid) and time.monotonic() < deadline:
+                time.sleep(0.05)
         if sys.platform.startswith("linux") and pid_alive(child_pid):
             # Linux init may retain an orphan's zombie entry after SIGKILL.
             # The duplicate-worker guard conservatively treats an existing PID

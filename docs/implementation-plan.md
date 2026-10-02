@@ -134,3 +134,5 @@ Darwin can return EPERM on a second SIGKILL of a zombie-only process group.
 Cleanup accepts that case only after the owned leader exited and a bounded ps
 group/state query proves no executing group member remains. Living, malformed,
 unavailable or denied observations continue to fail; no saved PID is signalled.
+Windows job close dispatches termination asynchronously, so descendant evidence
+waits at most five seconds for observed death and still fails for a living PID.
