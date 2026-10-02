@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 import re
 from collections import Counter
+from pathlib import PurePath
 from typing import Any
 
 from erol.common import ErolError, canonical
@@ -89,6 +90,20 @@ def assert_secret_safe(value: Any) -> None:
         raise ErolError("Persistent input must contain finite JSON-compatible values") from exc
     if findings:
         raise ErolError("Secret-like content rejected before persistence; sanitize the input")
+
+
+def assert_project_path_safe(path: PurePath) -> None:
+    """Scan a known filesystem path without mistaking joined components for base64.
+
+    Only project detection/storage calls this entry. Arbitrary memory strings and
+    credential fields retain the full-value scanner. Known credential patterns
+    still inspect the entire path; entropy checks inspect each path component.
+    """
+    if not path.is_absolute():
+        raise ErolError("Project path must be absolute")
+    if _pattern_findings(str(path)):
+        raise ErolError("Secret-like content rejected before persistence; sanitize the input")
+    assert_secret_safe(path.parts)
 
 
 def scan_instructions(body: str) -> list[str]:

@@ -2,13 +2,13 @@
 
 import tempfile
 import unittest
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from unittest.mock import patch
 
 from erol.common import ErolError, canonical
 from erol.fingerprint import fingerprint, normalize_error
 from erol.identity import detect_project, normalized_remote
-from erol.security import scan_instructions
+from erol.security import assert_project_path_safe, scan_instructions, scan_secrets
 from erol.store import Store
 
 
@@ -80,6 +80,31 @@ class MemoryTests(unittest.TestCase):
                 self.assertIsNone(self.store.get("incidents", "secret-input"))
         persisted = " ".join(row[0] for row in self.store.db.execute("SELECT payload FROM records"))
         self.assertNotIn("synthetic-password", persisted)
+
+    def test_project_paths_do_not_join_components_into_false_base64_tokens(self):
+        paths = [
+            PurePosixPath("/Users/runner/work/_temp/erol-validation-x7mpq9a6/project"),
+            PurePosixPath("/private/var/folders/q7/z8r9wm4xc6sgd2fkv5qbh3p00000gn/T/project"),
+            PureWindowsPath("C:/Users/runner/work/_temp/erol-validation-x7mpq9a6/project"),
+        ]
+        self.assertIn("high-entropy-value", scan_secrets(str(paths[1])))
+        for path in paths:
+            with self.subTest(style=type(path).__name__):
+                assert_project_path_safe(path)
+        # Arbitrary input fields named root still use the full-value scanner.
+        self.assertIn("high-entropy-value", scan_secrets({"root": str(paths[1])}))
+
+    def test_project_path_scan_still_rejects_credentials_and_random_secret_components(self):
+        values = [
+            "password=synthetic-password",
+            "ghp_" + "x" * 32,
+            "mQ7zV2pR9kT4wY8cL5nH3bD6sF1aJ0uE",
+        ]
+        for value in values:
+            with self.subTest(kind=value[:8]), self.assertRaises(ErolError):
+                assert_project_path_safe(PurePosixPath("/project") / value / "src")
+        with self.assertRaises(ErolError):
+            assert_project_path_safe(PurePosixPath("relative/project"))
 
     def test_nested_secret_and_keys_are_scanned(self):
         with self.assertRaises(ErolError):

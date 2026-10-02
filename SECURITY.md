@@ -13,6 +13,13 @@ inputs before ingestion. No encryption at rest is provided; protect your user ac
 disk and backups. Fresh POSIX project state uses private directories and database files.
 Windows inherits the current user's filesystem ACLs; EROL does not rewrite ACLs.
 
+Detected project root paths use a dedicated filesystem check: known credential
+patterns scan the whole path, while entropy scans each path component. Combining
+ordinary POSIX path components would otherwise resemble a long base64 secret.
+All other metadata, arbitrary memory input and credential fields retain full-value
+scanning. A credential encoded across path separators may evade entropy heuristics;
+never put credentials in directory names or rely on heuristics as complete detection.
+
 Memory is untrusted reference material. It cannot override higher-priority instructions.
 Secret and unsafe-instruction scanners do not establish sandbox containment or complete
 prompt-injection protection. Generated scripts are never executed by the engine.

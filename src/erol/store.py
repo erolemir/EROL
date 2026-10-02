@@ -13,7 +13,7 @@ from typing import Any
 
 from erol.common import ErolError, atomic_write, canonical, identifier, now, reject_links
 from erol.identity import Project
-from erol.security import assert_secret_safe
+from erol.security import assert_project_path_safe, assert_secret_safe
 
 MEMORY_CLASSES = (
     "state",
@@ -60,7 +60,9 @@ class Store:
         # Refuse preexisting linked parents before opening a database.
         for path in (self.home, self.home / "state", self.directory):
             reject_links(path)
-        assert_secret_safe(project.to_dict())
+        metadata = project.to_dict()
+        assert_project_path_safe(Path(metadata["root"]))
+        assert_secret_safe({key: value for key, value in metadata.items() if key != "root"})
         self.home.mkdir(parents=True, exist_ok=True, mode=0o700)
         (self.home / "state").mkdir(exist_ok=True, mode=0o700)
         self.directory.mkdir(exist_ok=True, mode=0o700)
