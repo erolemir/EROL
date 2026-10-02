@@ -211,8 +211,9 @@ python scripts/npm_package_smoke.py
 ```
 
 See [validation results](docs/validation.md) for the tested environment and
-limitations. CI declares Windows, macOS and Linux with Python 3.11 and 3.14;
-local results do not establish that the remote CI matrix has passed.
+limitations. CI validates Windows, macOS and Linux with Python 3.11 and 3.14;
+the [recorded remote matrix](https://github.com/erolemir/EROL/actions/runs/37011560028)
+passed every job before the first public release.
 
 Read more: [architecture](docs/architecture.md), [learning lifecycle](docs/learning.md),
 [plugin usage](docs/plugin.md), [capabilities](docs/capabilities.md),

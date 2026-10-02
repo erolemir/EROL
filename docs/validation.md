@@ -1,7 +1,13 @@
 # Local validation
 
 Recorded on 2026-10-02 on Windows with Python 3.14 and Node.js 24.13.0.
-The remote CI matrix has not run. macOS/Linux and Python 3.11 results are not claimed.
+This local record precedes publication. The later
+[remote validation run](https://github.com/erolemir/EROL/actions/runs/37011560028)
+passed all six Windows/macOS/Linux and Python 3.11/3.14 jobs, including 117 Python
+tests, ten Node tests, lint, types, builds, isolated package checks and EROL evals.
+Windows skips two unsupported platform checks; other platform results are visible
+in their CI jobs. This is package and deterministic behavior evidence, not a live
+model-success benchmark.
 
 ## Evidence
 
