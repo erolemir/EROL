@@ -117,7 +117,8 @@ def parser() -> argparse.ArgumentParser:
     approve.add_argument("--approve", action="store_true")
     approve.add_argument("--input", required=True, help="Cross-project evidence report")
     skills = commands.add_parser("skills").add_subparsers(dest="action", required=True)
-    skills.add_parser("list")
+    skill_list = skills.add_parser("list")
+    skill_list.add_argument("--category", help="Filter builtin domains or learned project skills")
     search_skill = skills.add_parser("search")
     search_skill.add_argument("query")
     disable = skills.add_parser("disable")
@@ -283,7 +284,19 @@ def run(args: argparse.Namespace) -> dict:
                 )
         if command == "skills":
             if args.action == "list":
-                return {"skills": registry.list(), "bodies_loaded": False}
+                entries = registry.list()
+
+                def category(entry):
+                    return entry.get(
+                        "category", "project" if entry.get("scope") == "project" else "coding"
+                    )
+
+                categories = sorted({category(entry) for entry in entries})
+                if args.category is not None:
+                    if args.category not in categories:
+                        raise ErolError("Unknown category; available: " + ", ".join(categories))
+                    entries = [entry for entry in entries if category(entry) == args.category]
+                return {"skills": entries, "categories": categories, "bodies_loaded": False}
             if args.action == "search":
                 return {"matches": registry.explain(args.query, config.max_active_skills)}
             if args.action == "disable":

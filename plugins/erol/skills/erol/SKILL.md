@@ -1,6 +1,6 @@
 ---
 name: erol
-description: Retrieve project memory and focused skills for development, debugging, and learning.
+description: Project memory and development, operations, SEO, marketing and growth workflows.
 ---
 
 Resolve <EROL_LAUNCHER> as ../../scripts/erol.mjs relative to the directory

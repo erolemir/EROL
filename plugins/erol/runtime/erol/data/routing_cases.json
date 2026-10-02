@@ -302,7 +302,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Aynı mesaj iki kez işlendiği için mükerrer kayıt oluşuyor",
@@ -311,7 +312,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Sayfa geçişinde eksik satırlar oluşuyor",
@@ -320,7 +322,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Yavaş sorgu için sorgu optimizasyonu yap",
@@ -329,7 +332,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Veritabanı şeması için geri alınabilir şema geçişi hazırla",
@@ -338,7 +342,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "API sözleşmesi için istek doğrulama kurallarını belirle",
@@ -347,7 +352,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Tarih sınırları için regresyon testi ve birim testi ekle",
@@ -356,7 +362,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Son değişiklikler için kod incelemesi yap",
@@ -365,7 +372,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Yetkilendirme ve kimlik doğrulama akışını kontrol et",
@@ -374,7 +382,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Bağımlılıkları güncelle ve uyumluluğu kontrol et",
@@ -383,7 +392,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Yeni servis için sistem tasarımı ve mimari karar hazırla",
@@ -392,7 +402,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Projeyi incele ve ilgili dosyaları bul",
@@ -401,7 +412,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Davranışı koruyarak kodu sadeleştir",
@@ -410,7 +422,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Derleme başarısız, pipeline hatası nedenini bul",
@@ -419,7 +432,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Yeni sürümü yayınla ve canlıya al",
@@ -428,7 +442,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Kurulum rehberi ve kullanım kılavuzu hazırla",
@@ -437,7 +452,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Klavye ile gezinme ve ekran okuyucu desteğini kontrol et",
@@ -446,7 +462,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "SCRUM-17 Tahakkuk Gönderilenler ekranında filtreyi ve tarih aralığını düzelt",
@@ -455,7 +472,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Bellek sızıntısı için darboğaz analizi yap",
@@ -464,7 +482,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Proje hafızası içindeki eski öğrenimler için temizlik yap",
@@ -473,7 +492,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Tekrar eden hata için skill adayı oluştur",
@@ -482,7 +502,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Skill değerlendirmesi için negatif tetikleyici örneklerini kontrol et",
@@ -491,7 +512,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Bağlam aktarımı hazırla ve oturumu devret",
@@ -500,7 +522,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Araç yetenekleri içinden uygun aracı seç",
@@ -509,7 +532,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Tahakkuk ekranındaki filtre bugün eski veri gösteriyor",
@@ -518,7 +542,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Gönderilenler ekranı için filtreyi ve tarih aralığını düzelteceğim",
@@ -527,7 +552,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "EKRAN FİLTRESİ değişince sonuçlar yenilenmiyor",
@@ -536,7 +562,8 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Liste filtresi ve tarih araligi filtresi birlikte uygulanmiyor",
@@ -545,63 +572,2293 @@
       ],
       "forbidden": [],
       "expect_empty": false,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Tatil için tarih aralığını düzelt",
       "expected": [],
       "forbidden": [],
       "expect_empty": true,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Fotoğraf filtresi için filtreyi düzelt",
       "expected": [],
       "forbidden": [],
       "expect_empty": true,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Klima filtresini değiştir",
       "expected": [],
       "forbidden": [],
       "expect_empty": true,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Metindeki yazım yanlışlarını düzelt",
       "expected": [],
       "forbidden": [],
       "expect_empty": true,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Filtreyi ve tarih aralığını anlat",
       "expected": [],
       "forbidden": [],
       "expect_empty": true,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Restoran değerlendirmesi için yorum yaz",
       "expected": [],
       "forbidden": [],
       "expect_empty": true,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "İş bağımlılığı çizelgesi hazırla",
       "expected": [],
       "forbidden": [],
       "expect_empty": true,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
     },
     {
       "task": "Arayüz sloganı için ekran filtresi başlığını değiştir",
       "expected": [],
       "forbidden": [],
       "expect_empty": true,
-      "limit": 4
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Implement a corporate API integration for creating and listing payment requests",
+      "expected": [
+        "service-api-integration"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Ödeme sağlayıcısı için servis entegrasyonu uygula ve hata dönüşlerini eşleştir",
+      "expected": [
+        "service-api-integration"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Explain integration calculus rather than service integration",
+      "expected": [],
+      "forbidden": [
+        "service-api-integration"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Design database transaction boundaries for concurrent inventory reservations",
+      "expected": [
+        "transaction-boundaries"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Stok rezervasyonunda eşzamanlı yazma için işlem sınırı belirle",
+      "expected": [
+        "transaction-boundaries"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Summarize a bank transaction statement without database transaction changes",
+      "expected": [],
+      "forbidden": [
+        "transaction-boundaries"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Implement webhook signature verification and replay-safe delivery acknowledgements",
+      "expected": [
+        "webhook-delivery"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Webhook teslimatı için webhook imzası ve tekrar gönderim kontrollerini uygula",
+      "expected": [
+        "webhook-delivery"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Compare a fishing hook to a webhook signature in an analogy only",
+      "expected": [],
+      "forbidden": [
+        "webhook-delivery"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Make a queue worker recover after a crash without repeating completed effects",
+      "expected": [
+        "background-job-reliability"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Kuyruk işçisi çökünce arka plan işi güvenli biçimde devam etsin",
+      "expected": [
+        "background-job-reliability"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Prepare a job interview question about a background job title",
+      "expected": [],
+      "forbidden": [
+        "background-job-reliability"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Design a cache strategy that avoids a cache stampede after expiry",
+      "expected": [
+        "caching-strategy"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Kullanıcıya özel veriler için önbellek stratejisi ve önbellek geçersizleştirme tasarla",
+      "expected": [
+        "caching-strategy"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Write browser cache instructions only mentioning cache invalidation",
+      "expected": [],
+      "forbidden": [
+        "caching-strategy"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Implement a rate limit shared across API replicas",
+      "expected": [
+        "rate-limit-design"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "API istemcileri için istek kotası ve hız sınırlama ekle",
+      "expected": [
+        "rate-limit-design"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Discuss a currency rate change rather than a request quota",
+      "expected": [],
+      "forbidden": [
+        "rate-limit-design"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Build a resumable upload pipeline with asynchronous document processing",
+      "expected": [
+        "file-upload-pipeline"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Büyük belgeler için dosya yükleme akışı ve devam edebilir yükleme tasarla",
+      "expected": [
+        "file-upload-pipeline"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Explain how to upload screenshot manually without changing an upload pipeline",
+      "expected": [],
+      "forbidden": [
+        "file-upload-pipeline"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Audit tenant isolation for account listing and background exports",
+      "expected": [
+        "multi-tenant-isolation"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Rapor sorguları ve kuyruk işlerindeki müşteri izolasyonu sınırlarını doğrula",
+      "expected": [
+        "multi-tenant-isolation"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Explain an apartment tenant lease and not multi tenant software",
+      "expected": [],
+      "forbidden": [
+        "multi-tenant-isolation"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Implement a websocket service with reconnect and bounded outgoing buffers",
+      "expected": [
+        "realtime-service"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Bildirimler için websocket servisi ve gerçek zamanlı kanal kur",
+      "expected": [
+        "realtime-service"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Describe a live concert using a realtime channel as a metaphor",
+      "expected": [],
+      "forbidden": [
+        "realtime-service"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Design a distributed workflow for reservation, charge and fulfilment",
+      "expected": [
+        "distributed-workflow"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Sipariş sürecinde dağıtık iş akışı ve telafi işlemi sınırlarını tasarla",
+      "expected": [
+        "distributed-workflow"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Review a literary saga rather than saga orchestration",
+      "expected": [],
+      "forbidden": [
+        "distributed-workflow"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Fix a responsive layout that clips long labels on mobile",
+      "expected": [
+        "responsive-layout"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Dar ekranlar için mobil yerleşim ve duyarlı tasarım uygula",
+      "expected": [
+        "responsive-layout"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Write about responsive customer support rather than responsive layout",
+      "expected": [],
+      "forbidden": [
+        "responsive-layout"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Create a component library button with accessible loading and disabled states",
+      "expected": [
+        "design-system-components"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Bileşen kütüphanesi için tasarım tokenları ve buton durumlarını tanımla",
+      "expected": [
+        "design-system-components"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Index an electronic component library, not a UI component library",
+      "expected": [],
+      "forbidden": [
+        "design-system-components"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Implement form validation with server field errors and duplicate-submit protection",
+      "expected": [
+        "form-validation"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Kayıt ekranında form doğrulama ve form gönderimi hata durumlarını düzelt",
+      "expected": [
+        "form-validation"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Organize paper form filing rather than form validation code",
+      "expected": [],
+      "forbidden": [
+        "form-validation"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Fix client query cache keys when account filters change during frontend data fetching",
+      "expected": [
+        "frontend-data-fetching"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Filtre değişince veri çekme akışı ve istemci veri eşitleme davranışını düzelt",
+      "expected": [
+        "frontend-data-fetching"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Explain fetch dog training, not data fetching",
+      "expected": [],
+      "forbidden": [
+        "frontend-data-fetching"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Set a bundle budget and measure web performance on a low-end mobile profile",
+      "expected": [
+        "web-performance-budget"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Web performansı için paket boyutu bütçesi oluştur ve etkileşim gecikmesini ölç",
+      "expected": [
+        "web-performance-budget"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Prepare a stage performance review rather than web performance work",
+      "expected": [],
+      "forbidden": [
+        "web-performance-budget"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Create an e2e test for checkout recovery after a rejected payment",
+      "expected": [
+        "frontend-e2e-testing"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Sipariş akışı için uçtan uca tarayıcı testi ve tarayıcı akış testi hazırla",
+      "expected": [
+        "frontend-e2e-testing"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Write a travel journey diary rather than a browser journey test",
+      "expected": [],
+      "forbidden": [
+        "frontend-e2e-testing"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Implement internationalization for plural messages and currency display",
+      "expected": [
+        "internationalization"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Çok dilli arayüz için yerel biçimlendirme ve çoğul mesaj kurallarını uygula",
+      "expected": [
+        "internationalization"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Plan an international travel itinerary instead of internationalization",
+      "expected": [],
+      "forbidden": [
+        "internationalization"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Design a metric dashboard for settlement exceptions and investigation",
+      "expected": [
+        "dashboard-design"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Ödeme operasyonları için gösterge paneli ve dashboard tasarımı hazırla",
+      "expected": [
+        "dashboard-design"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Describe car dashboard repair instead of dashboard design for software",
+      "expected": [],
+      "forbidden": [
+        "dashboard-design"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Define acceptance criteria for scheduled invoice export and failure recovery",
+      "expected": [
+        "requirements-acceptance"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Fatura dışa aktarımı için kabul kriterleri ve özellik gereksinimleri çıkar",
+      "expected": [
+        "requirements-acceptance"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Write a college acceptance letter, not software acceptance criteria",
+      "expected": [],
+      "forbidden": [
+        "requirements-acceptance"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Create an implementation plan for adding refunds without breaking existing callers",
+      "expected": [
+        "repository-change-planning"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "İade desteği için uygulama planı ve değişiklik etki analizi hazırla",
+      "expected": [
+        "repository-change-planning"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Create a wedding plan rather than a code change plan",
+      "expected": [],
+      "forbidden": [
+        "repository-change-planning"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Pull both branches and merge main into dev while keeping dev-only commits",
+      "expected": [
+        "git-branch-integration"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Main dev birleştir ve branch eşitle; dev üzerindeki özgün commitleri koru",
+      "expected": [
+        "git-branch-integration"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Explain tree branch pruning rather than branch integration in Git",
+      "expected": [],
+      "forbidden": [
+        "git-branch-integration"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Define an error contract for upstream timeout versus rejected payment",
+      "expected": [
+        "error-handling-contracts"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Sağlayıcı hata dönüşleri için hata sözleşmesi ve istisna yönetimi uygula",
+      "expected": [
+        "error-handling-contracts"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Explain a grammar exception, not exception handling in code",
+      "expected": [],
+      "forbidden": [
+        "error-handling-contracts"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Add config validation for provider URLs and required credentials at startup",
+      "expected": [
+        "configuration-management"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Ortam yapılandırması için yapılandırma doğrulama ve güvenli varsayılanlar ekle",
+      "expected": [
+        "configuration-management"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Discuss desk configuration rather than environment configuration",
+      "expected": [],
+      "forbidden": [
+        "configuration-management"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Remove a circular import by defining a module boundary around payment providers",
+      "expected": [
+        "dependency-boundaries"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Ödeme modüllerinde döngüsel import sorununu modül sınırı ile çöz",
+      "expected": [
+        "dependency-boundaries"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Explain parcel import customs rather than a circular import",
+      "expected": [],
+      "forbidden": [
+        "dependency-boundaries"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Design a test fixture for duplicate delivery with isolated clock and database state",
+      "expected": [
+        "test-fixture-design"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Deterministik test için test verisi izolasyonu ve kontrollü saat hazırla",
+      "expected": [
+        "test-fixture-design"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Choose a lighting fixture rather than a test fixture",
+      "expected": [],
+      "forbidden": [
+        "test-fixture-design"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Plan legacy modernization for a payment service without a big-bang rewrite",
+      "expected": [
+        "legacy-modernization"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Eski kodu modernleştir ve legacy dönüşümü için uyumluluk geçişi hazırla",
+      "expected": [
+        "legacy-modernization"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Plan heritage building restoration rather than legacy modernization code",
+      "expected": [],
+      "forbidden": [
+        "legacy-modernization"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Build a threat model for a tenant-scoped document sharing service",
+      "expected": [
+        "threat-modeling"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Belge paylaşımı için tehdit modeli ve kötüye kullanım senaryosu çıkar",
+      "expected": [
+        "threat-modeling"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Outline a fictional villain plot rather than a threat model for software",
+      "expected": [],
+      "forbidden": [
+        "threat-modeling"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Audit session security for refresh token rotation and logout revocation",
+      "expected": [
+        "authentication-session-security"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Oturum güvenliği için token yaşam döngüsü ve çıkış sonrası iptali doğrula",
+      "expected": [
+        "authentication-session-security"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Plan therapy session scheduling rather than session security",
+      "expected": [],
+      "forbidden": [
+        "authentication-session-security"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Plan credential rotation without interrupting both current and pending requests",
+      "expected": [
+        "secrets-rotation"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Servis anahtarları için anahtar rotasyonu ve kimlik bilgisi yenileme planı hazırla",
+      "expected": [
+        "secrets-rotation"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Write a fictional secret plot rather than a secret rotation plan",
+      "expected": [],
+      "forbidden": [
+        "secrets-rotation"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Perform a supply chain review of a new package and its install scripts",
+      "expected": [
+        "dependency-supply-chain-review"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Yeni bağımlılık için tedarik zinciri güvenliği ve paket kaynağı incelemesi yap",
+      "expected": [
+        "dependency-supply-chain-review"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Review a grocery supply chain rather than package provenance",
+      "expected": [],
+      "forbidden": [
+        "dependency-supply-chain-review"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Review secure file handling for archive extraction and oversized documents",
+      "expected": [
+        "secure-file-handling"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Arşiv açma işleminde güvenli dosya işleme ve dizin geçişi kontrollerini doğrula",
+      "expected": [
+        "secure-file-handling"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Describe hiking path traversal rather than secure file handling",
+      "expected": [],
+      "forbidden": [
+        "secure-file-handling"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Perform CVE assessment for the exact deployed library and reachable endpoints",
+      "expected": [
+        "vulnerability-triage"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Güvenlik bulgusu için zafiyet değerlendirmesi ve düzeltme önceliği hazırla",
+      "expected": [
+        "vulnerability-triage"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Describe a fictional vulnerability without vulnerability triage of a real application",
+      "expected": [],
+      "forbidden": [
+        "vulnerability-triage"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Build an audit log detection for unexpected privilege grants",
+      "expected": [
+        "security-log-detection"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Şüpheli yetki artışı için siem kuralı ve güvenlik tespiti hazırla",
+      "expected": [
+        "security-log-detection"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Compare a metal detector hobby with security detection metaphorically",
+      "expected": [],
+      "forbidden": [
+        "security-log-detection"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Prepare a penetration test plan for an owned staging application",
+      "expected": [
+        "authorized-security-testing"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Kendi test ortamımız için yetkili güvenlik testi ve sızma testi planı hazırla",
+      "expected": [
+        "authorized-security-testing"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Request a penetration test plan for an unauthorized target",
+      "expected": [],
+      "forbidden": [
+        "authorized-security-testing"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Diagnose a systemd service that exits after startup without restarting unrelated services",
+      "expected": [
+        "linux-service-operations"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Linux servisi için sunucu servis sağlığı ve yeniden başlama nedenini incele",
+      "expected": [
+        "linux-service-operations"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Compare restaurant service with a server service health metaphor",
+      "expected": [],
+      "forbidden": [
+        "linux-service-operations"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Fix reverse proxy timeouts and TLS certificate renewal for an API",
+      "expected": [
+        "reverse-proxy-tls"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Ters proxy üzerinde tls sertifikası yenileme ve upstream zaman aşımını düzelt",
+      "expected": [
+        "reverse-proxy-tls"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Explain proxy voting rather than reverse proxy configuration",
+      "expected": [],
+      "forbidden": [
+        "reverse-proxy-tls"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Review container privileges and remove unnecessary writable mounts",
+      "expected": [
+        "container-runtime-hardening"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Docker güvenliği için konteyner sıkılaştırma ve çalışma izinlerini düzenle",
+      "expected": [
+        "container-runtime-hardening"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Choose shipping container paint rather than container hardening",
+      "expected": [],
+      "forbidden": [
+        "container-runtime-hardening"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Plan a Kubernetes rollout that preserves service availability while pods drain",
+      "expected": [
+        "kubernetes-rollout"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Kubernetes dağıtımı için pod hazır olma ve geri dönüş kontrolleri hazırla",
+      "expected": [
+        "kubernetes-rollout"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Discuss poster deployment rather than k8s deployment",
+      "expected": [],
+      "forbidden": [
+        "kubernetes-rollout"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Review a terraform plan for unintended replacement of stateful resources",
+      "expected": [
+        "infrastructure-change-plan"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Altyapı değişikliği için altyapı sapması ve kaynak değiştirme etkisini incele",
+      "expected": [
+        "infrastructure-change-plan"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Write a city infrastructure essay rather than an infrastructure plan for cloud resources",
+      "expected": [],
+      "forbidden": [
+        "infrastructure-change-plan"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Run an isolated restore drill for a database backup and verify recovered records",
+      "expected": [
+        "database-backup-restore"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Veritabanı yedeği için izole geri yükleme provası ve veri doğrulaması hazırla",
+      "expected": [
+        "database-backup-restore"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Explain phone photo backup instead of a database backup procedure",
+      "expected": [],
+      "forbidden": [
+        "database-backup-restore"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Design distributed tracing and service level objectives for payment processing",
+      "expected": [
+        "observability-design"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Ödeme akışı için gözlemlenebilirlik ve servis seviyesi hedefi belirle",
+      "expected": [
+        "observability-design"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Plan astronomy observation rather than observability design for software",
+      "expected": [],
+      "forbidden": [
+        "observability-design"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Triage a production incident with rising errors after a deployment",
+      "expected": [
+        "production-incident-response"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Üretim kesintisi için canlı ortam olayı incelemesi ve geri kazanım planı hazırla",
+      "expected": [
+        "production-incident-response"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Write a fictional disaster story rather than incident response for a system",
+      "expected": [],
+      "forbidden": [
+        "production-incident-response"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Prepare disaster recovery with an isolated failover rehearsal and failback checks",
+      "expected": [
+        "disaster-recovery"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Felaket kurtarma için failover provası ve geri dönüş planı oluştur",
+      "expected": [
+        "disaster-recovery"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Review a movie disaster review rather than disaster recovery engineering",
+      "expected": [],
+      "forbidden": [
+        "disaster-recovery"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Analyze cloud cost per successful request before resizing worker instances",
+      "expected": [
+        "cloud-cost-optimization"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Bulut maliyeti ve atıl bulut kaynakları için tasarruf planı çıkar",
+      "expected": [
+        "cloud-cost-optimization"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Estimate a cloud painting price rather than cloud cost for infrastructure",
+      "expected": [],
+      "forbidden": [
+        "cloud-cost-optimization"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Run a technical SEO audit on filtered product pages and canonical URLs",
+      "expected": [
+        "seo-technical-audit"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Ürün sayfaları için teknik seo ve seo denetimi yap",
+      "expected": [
+        "seo-technical-audit"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Write an SEO acronym joke rather than an SEO audit",
+      "expected": [],
+      "forbidden": [
+        "seo-technical-audit"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Create an SEO content brief answering real customer questions about settlements",
+      "expected": [
+        "seo-content-brief"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Arama niyeti üzerinden seo içerik briefi ve kaynak planı hazırla",
+      "expected": [
+        "seo-content-brief"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Make a keyword stuffing request instead of a useful SEO content brief",
+      "expected": [],
+      "forbidden": [
+        "seo-content-brief"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Add schema markup to product pages using visible offers and actual availability",
+      "expected": [
+        "seo-structured-data"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Ürün sayfasına yapılandırılmış veri ve şema işaretlemesi ekle",
+      "expected": [
+        "seo-structured-data"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Draw a database schema diagram rather than schema markup for search",
+      "expected": [],
+      "forbidden": [
+        "seo-structured-data"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Audit hreflang for regional pages with inconsistent alternate URLs",
+      "expected": [
+        "seo-international-sites"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Uluslararası seo için dil alternatifi URL eşleşmelerini doğrula",
+      "expected": [
+        "seo-international-sites"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Complete language homework only mentioning international SEO",
+      "expected": [],
+      "forbidden": [
+        "seo-international-sites"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Plan an SEO migration from old product URLs to a new domain",
+      "expected": [
+        "seo-migration"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Alan adı değişimi için seo geçişi ve site url taşıma planı hazırla",
+      "expected": [
+        "seo-migration"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Handle database migration only rather than an SEO migration",
+      "expected": [],
+      "forbidden": [
+        "seo-migration"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Compare organic search analysis before and after a template fix with seasonality controls",
+      "expected": [
+        "seo-performance-measurement"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Seo ölçümü için organik arama analizi ve dönüşüm karşılaştırması hazırla",
+      "expected": [
+        "seo-performance-measurement"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Write an organic farming report rather than organic search analysis",
+      "expected": [],
+      "forbidden": [
+        "seo-performance-measurement"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Do market research on payment tools for small merchants using primary sources",
+      "expected": [
+        "market-research"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Küçük işletmeler için pazar araştırması ve rakip analizi hazırla",
+      "expected": [
+        "market-research"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Give a stock trade recommendation rather than market research for a product",
+      "expected": [],
+      "forbidden": [
+        "market-research"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Build customer segmentation for onboarding messages using observed account behavior",
+      "expected": [
+        "customer-segmentation"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Müşteri segmentasyonu ile hedef müşteri profili ve ihtiyaçlarını belirle",
+      "expected": [
+        "customer-segmentation"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Implement image segmentation rather than customer segmentation",
+      "expected": [],
+      "forbidden": [
+        "customer-segmentation"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Draft a value proposition for a developer tool with evidence-backed differentiation",
+      "expected": [
+        "brand-positioning"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Geliştirici aracımız için marka konumlandırma ve değer önerisi hazırla",
+      "expected": [
+        "brand-positioning"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Fix CSS positioning rather than brand positioning",
+      "expected": [],
+      "forbidden": [
+        "brand-positioning"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Write marketing copy for a trial signup page without invented customer claims",
+      "expected": [
+        "marketing-copywriting"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Ücretsiz deneme için reklam metni ve pazarlama metni varyantları yaz",
+      "expected": [
+        "marketing-copywriting"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Copy code verbatim rather than writing marketing copy",
+      "expected": [],
+      "forbidden": [
+        "marketing-copywriting"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Build a content marketing plan and editorial calendar for a developer product launch",
+      "expected": [
+        "content-distribution-plan"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Ürün tanıtımı için içerik takvimi ve içerik dağıtımı planı oluştur",
+      "expected": [
+        "content-distribution-plan"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Solve calendar date arithmetic rather than an editorial calendar",
+      "expected": [],
+      "forbidden": [
+        "content-distribution-plan"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Draft a paid search campaign with a capped budget and verified conversion event",
+      "expected": [
+        "paid-search-campaign"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Google ads kampanyası için arama reklamı grupları ve ölçüm planı hazırla",
+      "expected": [
+        "paid-search-campaign"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Create an unpaid search tutorial rather than a paid search campaign",
+      "expected": [],
+      "forbidden": [
+        "paid-search-campaign"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Plan a paid social creative test for a product launch with a fixed spend cap",
+      "expected": [
+        "paid-social-campaign"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Ürün lansmanı için sosyal medya reklamı ve meta reklamı test taslağı hazırla",
+      "expected": [
+        "paid-social-campaign"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Prepare social studies homework instead of a paid social campaign",
+      "expected": [],
+      "forbidden": [
+        "paid-social-campaign"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Design a lifecycle email flow for trial onboarding with suppression rules",
+      "expected": [
+        "lifecycle-email-marketing"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Deneme kullanıcıları için e-posta pazarlama akışı ve yaşam döngüsü e-postası hazırla",
+      "expected": [
+        "lifecycle-email-marketing"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Write personal email only rather than a drip campaign",
+      "expected": [],
+      "forbidden": [
+        "lifecycle-email-marketing"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Design a growth experiment for qualified trial acquisition with explicit stop rules",
+      "expected": [
+        "growth-experiment-design"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "İş büyütme planı için ölçülebilir büyüme deneyi ve başarı koşulları hazırla",
+      "expected": [
+        "growth-experiment-design"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Design a plant growth experiment rather than a business growth experiment",
+      "expected": [],
+      "forbidden": [
+        "growth-experiment-design"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Analyze conversion funnel dropoff without counting duplicate visits as new users",
+      "expected": [
+        "conversion-funnel-analysis"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Aktivasyon hunisi için dönüşüm hunisi kayıplarını ve paydaları incele",
+      "expected": [
+        "conversion-funnel-analysis"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Choose a kitchen funnel rather than a conversion funnel",
+      "expected": [],
+      "forbidden": [
+        "conversion-funnel-analysis"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Run a CRO audit of a trial landing page and propose a bounded variant",
+      "expected": [
+        "landing-page-optimization"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Açılış sayfası optimizasyonu ve dönüşüm optimizasyonu için varyant hazırla",
+      "expected": [
+        "landing-page-optimization"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Prepare an aircraft landing plan rather than landing page optimization",
+      "expected": [],
+      "forbidden": [
+        "landing-page-optimization"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Research pricing packaging for a developer tool with transparent assumptions",
+      "expected": [
+        "pricing-packaging-research"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Geliştirici aracı için fiyatlandırma araştırması ve paket fiyatlandırma önerisi hazırla",
+      "expected": [
+        "pricing-packaging-research"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Make a stock price prediction rather than pricing research for a product",
+      "expected": [],
+      "forbidden": [
+        "pricing-packaging-research"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Prepare a customer discovery interview about settlement reconciliation pain",
+      "expected": [
+        "customer-discovery"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Ürün fikri için müşteri keşfi ve müşteri görüşmesi soru seti hazırla",
+      "expected": [
+        "customer-discovery"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Do job interview preparation rather than a customer interview",
+      "expected": [],
+      "forbidden": [
+        "customer-discovery"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Analyze retention cohorts without comparing mature users to incomplete new cohorts",
+      "expected": [
+        "retention-cohort-analysis"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Kayıp müşteri analizi ve müşteri tutma analizi için cohort karşılaştırması yap",
+      "expected": [
+        "retention-cohort-analysis"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Discuss memory retention psychology rather than retention cohort analytics",
+      "expected": [],
+      "forbidden": [
+        "retention-cohort-analysis"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Design a sales pipeline with deal qualification and explicit stage exit evidence",
+      "expected": [
+        "sales-pipeline-design"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Satış süreci için satış hunisi aşamaları ve fırsat değerlendirme kuralları hazırla",
+      "expected": [
+        "sales-pipeline-design"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Fix a software pipeline failure rather than a sales pipeline",
+      "expected": [],
+      "forbidden": [
+        "sales-pipeline-design"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Evaluate a channel partnership with a measurable partner pilot before committing",
+      "expected": [
+        "partnership-strategy"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Kanal ortaklığı için iş ortaklığı stratejisi ve pilot başarı koşulları hazırla",
+      "expected": [
+        "partnership-strategy"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Write a fictional romance partnership rather than a partnership strategy",
+      "expected": [],
+      "forbidden": [
+        "partnership-strategy"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Create a tracking plan with deduplicated signup and purchase analytics events",
+      "expected": [
+        "analytics-event-contracts"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Analitik olay için ölçüm olay planı ve tekrar kayıt kurallarını tanımla",
+      "expected": [
+        "analytics-event-contracts"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Create a concert event schedule rather than an analytics event tracking plan",
+      "expected": [],
+      "forbidden": [
+        "analytics-event-contracts"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Validate a data pipeline with late records and reconciliation totals",
+      "expected": [
+        "data-pipeline-integrity"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Veri hattı için geç gelen kayıtlar ve veri mutabakatı kontrolleri ekle",
+      "expected": [
+        "data-pipeline-integrity"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Plan water pipeline repair instead of data pipeline work",
+      "expected": [],
+      "forbidden": [
+        "data-pipeline-integrity"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Evaluate an A/B experiment with sample ratio mismatch and uncertain conversion uplift",
+      "expected": [
+        "experiment-statistics"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Ab testi için deney istatistiği ve örneklem dengesini incele",
+      "expected": [
+        "experiment-statistics"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Describe a school chemistry experiment rather than experiment statistics for product conversion",
+      "expected": [],
+      "forbidden": [
+        "experiment-statistics"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Create an LLM evaluation set for support-answer correctness and refusal to invent data",
+      "expected": [
+        "llm-feature-evaluation"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Destek yanıtları için llm değerlendirme ve yapay zeka özellik testi hazırla",
+      "expected": [
+        "llm-feature-evaluation"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Write a fictional AI character rather than an AI feature eval",
+      "expected": [],
+      "forbidden": [
+        "llm-feature-evaluation"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Design a data deletion workflow across primary storage, jobs and backups",
+      "expected": [
+        "privacy-data-retention"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Veri saklama politikası için veri silme akışı ve kopya envanteri çıkar",
+      "expected": [
+        "privacy-data-retention"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Discuss a memory retention study rather than data retention in software",
+      "expected": [],
+      "forbidden": [
+        "privacy-data-retention"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Do product prioritization for competing onboarding and reliability improvements",
+      "expected": [
+        "product-prioritization"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Ürün önceliklendirme için özellik önceliği ve etki varsayımlarını değerlendir",
+      "expected": [
+        "product-prioritization"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Set a personal chore priority rather than product prioritization",
+      "expected": [],
+      "forbidden": [
+        "product-prioritization"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Plan and implement Hoppa Money Catch corporate API creation and listing with authentication, merchant isolation, expiry, regression tests and independent code review.",
+      "expected": [
+        "api-contract-design",
+        "regression-test-design",
+        "evidence-code-review",
+        "security-boundary-review"
+      ],
+      "forbidden": [],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Validate structured data ingestion into a PostgreSQL analytics warehouse",
+      "expected": [
+        "data-pipeline-integrity"
+      ],
+      "forbidden": [
+        "seo-structured-data"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Sadece veri hattı içindeki yapılandırılmış veri türlerini doğrula",
+      "expected": [
+        "data-pipeline-integrity"
+      ],
+      "forbidden": [
+        "seo-structured-data"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "tr"
+    },
+    {
+      "task": "Fix a query cache bug in Redis backend",
+      "expected": [
+        "incident-debugging"
+      ],
+      "forbidden": [
+        "frontend-data-fetching"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
+    },
+    {
+      "task": "Server data fetching needs cache invalidation",
+      "expected": [
+        "caching-strategy"
+      ],
+      "forbidden": [
+        "frontend-data-fetching"
+      ],
+      "expect_empty": false,
+      "limit": 4,
+      "language": "en"
     }
   ]
 }

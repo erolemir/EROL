@@ -1,1 +1,1 @@
-{"metadata":{"description":"EROL project memory and evidence-based learning."},"name":"erol","owner":{"name":"EROL contributors"},"plugins":[{"description":"Local project memory and evidence-gated skill learning for coding tasks.","name":"erol","source":"./plugins/erol"}]}
+{"metadata":{"description":"EROL project memory and evidence-based learning."},"name":"erol","owner":{"name":"EROL contributors"},"plugins":[{"description":"Project memory, focused development and business workflows, and evidence-gated skill learning.","name":"erol","source":"./plugins/erol"}]}

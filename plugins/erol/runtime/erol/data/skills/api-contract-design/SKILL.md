@@ -2,7 +2,7 @@
 name: api-contract-design
 description: "Evolve service contracts with compatibility, validation, and failure semantics."
 metadata:
-  version: "1.0.1"
+  version: "1.0.2"
 ---
 # Api Contract Design
 

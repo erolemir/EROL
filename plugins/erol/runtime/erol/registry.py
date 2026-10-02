@@ -198,7 +198,10 @@ def evaluate_skill(skill: Skill, cases: list[dict[str, Any]] | None = None) -> d
     )
     check(
         "verification",
-        any(marker in skill.body.casefold() for marker in ("verify", "test", "evidence")),
+        any(
+            marker in skill.body.casefold()
+            for marker in ("verify", "verification", "test", "evidence")
+        ),
         "verification guidance present",
     )
     check(
