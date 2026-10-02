@@ -136,3 +136,18 @@ group/state query proves no executing group member remains. Living, malformed,
 unavailable or denied observations continue to fail; no saved PID is signalled.
 Windows job close dispatches termination asynchronously, so descendant evidence
 waits at most five seconds for observed death and still fails for a living PID.
+
+The public README now provides Turkish end-to-end onboarding with an English
+summary. It distinguishes native plugins from the standalone CLI, gives a
+versioned/checksummed Windows user install and macOS/Linux virtualenv path,
+documents exact project/home ordering, meaningful check manifests and research
+scope grading, recovery/queues/memory, updates/removal and troubleshooting.
+Commands are grounded in current CLI contracts; desktop/live-model limitations
+remain explicit. v0.1.6 main/release links document the observed remote matrix.
+Local validation passed the 183-test Python suite (one POSIX test skipped on
+Windows), 12 Node tests, Ruff lint/format, Mypy, adapter drift, pack/context
+evaluation and both package build/smoke paths. Documentation checks verified
+54 CLI examples, 12 PowerShell blocks, local links/anchors, both check manifests,
+positive/negative research scope fixtures and read-only commands in Turkish-path
+projects with external temporary homes. The Windows hash snippet matched the
+release wheel; macOS/Linux shell installs and live harness tasks were not rerun.
