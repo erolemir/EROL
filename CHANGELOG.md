@@ -6,6 +6,8 @@
 - Automatic versioned stable releases after the complete validation matrix passes.
 - Optional Windows native-client plugin refresh task; memory remains outside plugin caches.
 - Canonical runner temp storage for macOS tests and version-independent release fixtures.
+- Project path metadata scans filesystem components without false base64 matches;
+  known credential patterns and full-value scans of arbitrary input remain enforced.
 
 ## 0.1.1 — 2026-10-02
 
