@@ -8,6 +8,7 @@ from unittest.mock import patch
 from erol.common import digest
 from erol.orchestration import routing_eval
 from erol.registry import Registry, Skill, evaluate_skill, matches
+from erol.router import contains_phrase, normalize
 
 
 class FakeStore:
@@ -70,8 +71,52 @@ class RoutingTests(unittest.TestCase):
     def test_golden_positive_negative_routing(self):
         report = routing_eval()
         self.assertTrue(report["passed"], [c for c in report["cases"] if not c["passed"]])
-        self.assertEqual(32, report["total"])
+        self.assertGreaterEqual(report["total"], 32)
         self.assertFalse(report["behavior_verified"])
+
+    def test_turkish_screen_filter_task_loads_builtin_without_project_memory(self):
+        task = "SCRUM-17 Tahakkuk Gönderilenler ekranında filtreyi ve tarih aralığını düzelt"
+        registry = Registry()
+        self.assertEqual(
+            ["frontend-state-correctness"], [skill.name for skill in registry.route(task)]
+        )
+        self.assertTrue(registry.explain(task)[0]["matched_triggers"])
+
+    def test_turkish_case_diacritics_and_ascii_typing_preserve_words(self):
+        for task in ("KOD İNCELEMESİ", "kod incelemesi", "KOD INCELEMESI", "kod i\u0307ncelemesi"):
+            with self.subTest(task=task):
+                self.assertTrue(contains_phrase(task, "kod incelemesi"))
+                self.assertEqual(normalize(task), "kod incelemesi")
+        self.assertFalse(contains_phrase("kod incelemesinin sonucu", "kod incelemesi"))
+        self.assertTrue(contains_phrase("SORGuyu hızlandır", "sorguyu hizlandir"))
+        self.assertTrue(contains_phrase("ŞEMA GEÇİŞİ", "sema gecisi"))
+
+    def test_turkish_exclusions_and_unrelated_tasks_do_not_load_skills(self):
+        registry = Registry()
+        for task in (
+            "Filtreyi ve tarih aralığını anlat",
+            "Tatil için tarih aralığını düzelt",
+            "Fotoğraf filtresi için filtreyi düzelt",
+            "Klima filtresini değiştir",
+            "Metindeki yazım yanlışlarını düzelt",
+        ):
+            with self.subTest(task=task):
+                self.assertEqual([], registry.route(task))
+        self.assertFalse(registry.explain("ARAYÜZ SLOGANI için EKRAN FİLTRESİ yazısını düzenle"))
+
+    def test_natural_turkish_fixtures_cover_pack_and_ascii_keyboard_spelling(self):
+        registry = Registry()
+        report = routing_eval(registry)
+        turkish_cases = report["cases"][32:]
+        covered = {name for case in turkish_cases for name in case["expected"]}
+        self.assertEqual({skill["name"] for skill in registry.list()}, covered)
+        for case in turkish_cases:
+            task = case["task"].translate(str.maketrans("çğıöşüÇĞİÖŞÜ", "cgiosuCGIOSU"))
+            with self.subTest(task=task):
+                selected = [entry["name"] for entry in registry.explain(task)]
+                self.assertTrue(set(case["expected"]).issubset(selected))
+                if case["expect_empty"]:
+                    self.assertEqual([], selected)
 
     def test_whole_word_and_negative_precedence(self):
         skill = project_skill()

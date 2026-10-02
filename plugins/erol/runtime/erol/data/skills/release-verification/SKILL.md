@@ -2,7 +2,7 @@
 name: release-verification
 description: "Prepare evidence-backed releases with explicit readiness gates and recoverable rollout."
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 # Release Verification
 

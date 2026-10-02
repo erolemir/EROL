@@ -20,6 +20,12 @@ against the current version before applying them. The plan includes bounded role
 delegate only when the harness supports it and the task warrants it. Execute the work,
 tests, and review through normal harness tools; the CLI never executes plan commands.
 
+Report builtin skill selection separately from learned project skills and memory.
+For plan results, plan.context.selected_skills names all skills admitted into context;
+the top-level selected_skills field tracks learned project revisions for usage receipts.
+Empty project memory or learned skills does not mean the builtin pack is unavailable.
+Use the admitted skill names and routing matched_triggers to explain a selection.
+
 When a significant failure is repaired and verified, prepare sanitized structured JSON
 matching `node <EROL_LAUNCHER> incident record --help`, including symptom, root cause, solution,
 evidence, files, and tests. Run `node <EROL_LAUNCHER> --project <PROJECT_ROOT> --home <EROL_HOME> incident record

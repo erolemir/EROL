@@ -11,6 +11,14 @@ model-success benchmark.
 
 ## Evidence
 
+The Turkish-routing follow-up passes 121 Python tests (two Windows platform skips),
+ten Node tests, and 68 routing fixtures. New cases cover all 24 builtin skills,
+the Tahakkuk screen/date-filter request, uppercase dotted İ, ASCII typing, and
+unrelated holiday/photo/physical-filter requests. A copied native plugin selects
+`frontend-state-correctness` from an unrelated project with empty learned skills.
+The original regression failed before the fix. This verifies deterministic routing
+and packaged execution, not a live model's ability to repair that application's code.
+
 - Python unit, integration and adversarial lifecycle checks pass. Two checks are
   skipped locally: a Windows real-symlink case unavailable to the process and a
   POSIX-only permission check.

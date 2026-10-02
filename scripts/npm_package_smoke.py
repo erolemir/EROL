@@ -14,6 +14,11 @@ from pathlib import Path
 
 
 def smoke(archive: Path) -> None:
+    canonical_root = Path(__file__).resolve().parents[1]
+    fixtures = json.loads(
+        (canonical_root / "src/erol/data/routing_cases.json").read_text(encoding="utf-8")
+    )["cases"]
+    expected_count = len(fixtures)
     node = shutil.which("node")
     if node is None:
         raise RuntimeError("Node.js is required for npm archive validation")
@@ -69,9 +74,15 @@ def smoke(archive: Path) -> None:
             if result.returncode != 0:
                 raise RuntimeError(f"Packaged launcher failed: {launcher}")
             report = json.loads(result.stdout)
-            if not report["passed"] or report["routing"]["passed_count"] != 32:
+            if (
+                not report["passed"]
+                or report["routing"]["total"] != expected_count
+                or report["routing"]["passed_count"] != expected_count
+            ):
                 raise RuntimeError("Packaged runtime routing failed")
-        print(json.dumps({"passed": True, "launchers": launchers, "routing_fixtures": 32}))
+        print(
+            json.dumps({"passed": True, "launchers": launchers, "routing_fixtures": expected_count})
+        )
 
 
 if __name__ == "__main__":

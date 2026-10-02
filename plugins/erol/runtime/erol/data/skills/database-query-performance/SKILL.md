@@ -2,7 +2,7 @@
 name: database-query-performance
 description: "Measure and improve slow SQL through query plans and representative workload evidence."
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 # Database Query Performance
 

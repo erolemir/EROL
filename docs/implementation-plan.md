@@ -18,6 +18,11 @@ evidence-gated learning, immutable skill revisions, registry/router, bounded con
 advisory role plans, safe project bridge setup, generated native plugin bundles,
 local Node entry point, deterministic evals and isolated package checks.
 
+Turkish routing now includes explicit task aliases across the builtin pack,
+dotted-capital/ASCII normalization, and screen/date-filter regression fixtures.
+Bridges distinguish admitted builtin workflows from learned project revisions.
+Negative precedence, lazy body loading, and the four-skill context cap remain in force.
+
 Acceptance criteria are defined in eval-plan.md before implementation. Test fixtures
 use temporary homes outside their projects. Native installations change user
 configuration only at the user's explicit request.

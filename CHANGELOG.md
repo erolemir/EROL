@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Turkish task aliases for all 24 builtin skills, including screen and date filters.
+- Dotted capital İ and ASCII Turkish spelling normalize without breaking words.
+- Bridges distinguish builtin selection from empty learned-project skill receipts.
+- Routing fixtures cover natural Turkish tasks and unrelated filter/date requests.
+
 - Windows updater files live in `~/.erol/updater` so Task Scheduler can see them
   when registration runs from a packaged desktop application.
 - Unregister refuses to remove another application's task with the same name.

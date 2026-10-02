@@ -2,7 +2,7 @@
 name: learning-pattern-discovery
 description: "Turn repeated verified incidents into bounded project workflow candidates."
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 # Learning Pattern Discovery
 
