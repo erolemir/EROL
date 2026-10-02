@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EROL explicit local project policy v1",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "project_id", "limits", "rules"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "project_id": {"type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$"},
+    "limits": {
+      "type": "object", "additionalProperties": false,
+      "required": ["max_tasks", "max_total_seconds", "task_seconds", "session_seconds", "check_seconds", "reviewers"],
+      "properties": {
+        "max_tasks": {"type": "integer", "minimum": 1, "maximum": 20},
+        "max_total_seconds": {"type": "integer", "minimum": 1, "maximum": 14400},
+        "task_seconds": {"type": "integer", "minimum": 1, "maximum": 3600},
+        "session_seconds": {"type": "integer", "minimum": 1, "maximum": 900},
+        "check_seconds": {"type": "integer", "minimum": 1, "maximum": 300},
+        "reviewers": {"type": "integer", "minimum": 1, "maximum": 3}
+      }
+    },
+    "rules": {
+      "type": "array", "minItems": 1, "maxItems": 20,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "kinds", "paths", "harness", "review_harness", "mode", "checks"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$"},
+          "kinds": {"type": "array", "minItems": 1, "items": {"enum": ["todo", "check", "issue"]}},
+          "paths": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"type": "string", "maxLength": 500}},
+          "harness": {"enum": ["codex", "claude"]},
+          "review_harness": {"enum": ["codex", "claude"]},
+          "mode": {"enum": ["development", "research"]},
+          "checks": {"type": "string", "minLength": 1, "maxLength": 2000, "description": "Absolute path to caller-reviewed check JSON"}
+        }
+      }
+    }
+  }
+}

@@ -330,7 +330,7 @@ class LearningEngine:
         self.registry.refresh_project()
         plan = Orchestrator(self.registry).plan(
             task,
-            memory=self.store.search(task),
+            memory=self.store.search(task, mode="hybrid"),
             token_budget=self.config.context_tokens,
             max_skills=self.config.max_active_skills,
         )

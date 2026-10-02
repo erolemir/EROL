@@ -36,7 +36,44 @@ Behavior evaluation checks that evidence is provided and bound to the draft. A l
 
 `tests/test_memory.py` exercises external state, credential-free identity, relevance/budgets, stale history, transactional rollback, secret rejection, repeated contradiction revisions, and error-family normalization. `tests/test_learning.py` exercises incident repetition, independent-task deduplication, conflicting remedies, duplicate suppression, eval/context/security gates, project isolation, revision-bound task usage, failure disabling, rollback, and controlled generalization approval. `tests/test_cli.py` repeats the full persisted lifecycle through separate CLI subprocesses, including paths containing spaces, error exit statuses, rejected draft activation, replay refusal, and sanitized error output. All evidence in these tests is explicitly synthetic local attestation.
 
-Actual global skill installation is deliberately absent. Approval produces review material for a future portable revision; it does not install the project-specific body into a global registry. No global auto-promotion is claimed. The CLI bridge still depends on the calling harness to execute repairs/tests and supply their evidence.
+Actual global skill installation is deliberately absent. Approval produces review
+material for a future portable revision; it does not install the project-specific
+body into a global registry. No global auto-promotion is claimed. The advisory CLI
+bridge still depends on the calling harness to execute repairs/tests and supply
+their evidence. Opt-in `run` observes its own check processes separately.
+
+## Execution and research acceptance
+
+Follow-up gates: discovery must not persist secret lines or execute repository
+instructions; changed source/checks/policy must prevent queue launch; duplicate and
+cyclic dependencies must be rejected; dependent work may consume only completed,
+unchanged predecessor patches; interruption cannot launch a duplicate model session.
+Parallel reviewer IDs must be distinct, results bound to one digest, and any failure
+or high finding blocks success. Search indexes must reject stale/withdrawn revisions,
+preserve budgets and project isolation. Source receipts must reject private addresses,
+unsafe redirects and oversized content; a fetched page does not establish factual
+truth. Benchmark fixtures/checks must be identical across paired arms; incomplete
+native usage cannot become invented cost/savings. Panel endpoints are read-only,
+loopback-bound, escaped and omit raw prompts/conversations.
+
+| ID | Trigger | Required result |
+| --- | --- | --- |
+| RUN-01 | Clean Git source, both fake CLI protocols | Baseline fails, repaired acceptance passes, distinct review session passes, same source/check digests and retained applicable patch. |
+| RUN-02 | Failing acceptance or high review finding | At most three implementer attempts, two matching failures request replan, no success credit. |
+| RUN-03 | Malformed/truncated/secret event stream | Bounded sanitized record, attention state, no raw conversation or credential persistence. |
+| RUN-04 | Native timeout, cancellation or checkpoint interruption | Owned process cleanup, durable state, exact acknowledged session resume; no second worker for unknown/alive state. |
+| RUN-05 | Competing caller or different external home | OS lease and shared Git marker reject duplicate/unfinished project workers without claiming a second task ID. |
+| RUN-06 | Changed checks, source or skill revision | Old evidence cannot establish completion; checks/review invalidate and revision gates revalidate. |
+| RUN-07 | Replayed task ID or context-omitted skill | Refuse replay; no omitted skill usage; atomic finalization cannot double-credit. |
+| RUN-08 | Turkish/spaced paths and public CLI lifecycle | Preserve source project identity and UTF-8 JSON; memory schema and existing learning commands remain compatible. |
+| RES-01 | Research mode | Explicit native web capability/tool policy; no editing tools on reviewer; default model/config remains native. |
+| RES-02 | Invalid dates, URLs, citations or claim references | Static artifact failure; cannot substitute it for mandatory acceptance behavior. |
+| RES-03 | Missing/unavailable/contradicted source review | High finding blocks completion despite passing local checks; model source assertions labelled separately. |
+| RES-04 | Edited research artifact after verification | Same source digest rules invalidate old acceptance and source review. |
+
+Fake CLI and ledger fixtures are deterministic contract evidence, not retrieval or
+model-accuracy evidence. Explicit live scripts use external temporary Git projects;
+their outcomes and auth/platform limits appear separately in validation.md.
 
 ## Measurement protocol
 

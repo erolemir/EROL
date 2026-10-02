@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "arithmetic-boundaries",
+      "task": "Repair calculator.add to return the sum for positive, negative and zero inputs. Preserve the signature and inspect regressions.",
+      "mode": "development",
+      "files": {
+        "calculator.py": "def add(a, b):\n    return a - b\n",
+        ".gitignore": "__pycache__/\n"
+      },
+      "checks": {
+        "schema_version": 1,
+        "checks": [
+          {
+            "name": "sum-boundaries",
+            "kind": "acceptance",
+            "argv": ["python", "-B", "-c", "from calculator import add; assert add(2,3)==5; assert add(-2,-3)==-5; assert add(0,4)==4"],
+            "timeout_seconds": 30
+          }
+        ]
+      },
+      "memory": [
+        {"id": "arithmetic-hint", "text": "Arithmetic regression: add must use the plus operator, including negative numbers.", "evidence": ["synthetic-reviewed-fixture"]}
+      ]
+    }
+  ]
+}

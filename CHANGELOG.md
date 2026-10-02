@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+- Add bounded TODO/check/imported-issue discovery and explicit project-policy queues
+  with unique tasks, durable cancellation, recovery and verified dependency deltas.
+- Add concurrent read-only specialist review while preserving one implementer per project.
+- Add revision-indexed BM25/bilingual memory retrieval and optional current-file bindings.
+- Record bounded public HTTPS access receipts separately from model source review.
+- Add paired native context-ablation suites and a read-only loopback evidence panel.
+- Verify live Codex queued repair/review resume, source access and one behavior pair;
+  skip further Claude live trials at the user's request, retaining protocol coverage.
+
+- Add opt-in worktree execution, Codex/Claude CLI adapters, observed acceptance
+  checks, separate review, bounded correction turns and exact native-session resume.
+- Keep versioned run records external; bind completed usage to tested/reviewed
+  source digests and admitted skill revisions, with replay and duplicate-worker gates.
+- Add technical/product/competitor research mode with native web tools, dated
+  sources, claim references, uncertainty and independent source-review gates.
+- Correct UTF-8 project-path discovery and piped JSON output on Windows.
+- Exercise real Codex repair/resume and report the expired-OAuth Claude trial separately.
+
 - Expand the curated builtin pack to 96 skills across nine technical/business domains.
 - Add four advisory roles and metadata-only category filtering for catalog discovery.
 - Cover common API creation/plural test phrases and adjacent-domain routing exclusions.

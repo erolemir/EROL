@@ -3,8 +3,9 @@
 Checked against official documentation on **2026-10-02**. Documentation-supported
 features and EROL's implementation are separate facts. A local installed Codex CLI
 trial verified skill loading, status, planning and a persisted task receipt.
-Codex desktop selection and live Claude execution remain unverified; Claude requires
-login on this host. Local file generation, ownership, rollback, and shared-home
+Codex desktop selection remains unverified. Live Codex execution has a narrow
+repair/resume trial; Claude's live execution was blocked by expired OAuth despite
+its local login probe. Local file generation, ownership, rollback, and shared-home
 integration are covered by automated tests. See [installation acceptance](installation-check.md).
 
 | Capability | Codex documented native surface | Claude Code documented native surface | EROL implementation |
@@ -35,8 +36,30 @@ them on. Codex `AGENTS.override.md` can supersede the installed root `AGENTS.md`
 Claude's newer `AGENTS.md` support may make both instruction files visible; they
 point to the same home and should lead to one plan per task.
 
-The CLI returns plans, memories, and skill references. It does not launch models,
-spawn native agents, execute stored snippets, run tests, or certify that a host
-followed the plan. Harness execution evidence and real-use outcomes must be supplied
-explicitly. Remote/cloud clients need their own installed CLI and accessible home;
+The default bridge returns plans, memories and skill references; plans launch no
+models or tests. The separate opt-in `run` command launches native CLI sessions,
+executes supplied check argv, and records independent review with revision-bound
+outcomes. It does not execute stored skill snippets or certify reviewer correctness.
+See [execution](execution.md) for restrictions, capability probes and live evidence.
+
+Research mode explicitly uses Codex live `--search`, checked in installed help,
+or Claude `WebSearch`/`WebFetch` with existing tool/permission restrictions.
+The report/source contract and separate source review target technical, product
+and competitor decisions. Structural validity and native model source-review
+assertions are different evidence layers; see [research](research-execution.md).
+Execution/resume use documented [Codex CLI](https://learn.chatgpt.com/docs/non-interactive-mode)
+and [Claude CLI](https://code.claude.com/docs/en/headless) surfaces; tool restrictions
+use [Claude permissions](https://code.claude.com/docs/en/permissions).
+Remote/cloud clients need their own installed CLI and accessible home;
 local cross-harness storage does not imply cloud synchronization.
+
+The canonical core now also supports bounded work discovery and explicit
+project-policy queue execution, verified dependency delta composition, two/three
+parallel read-only specialist reviewers, indexed bilingual BM25 retrieval with
+freshness checks, paired native context-ablation suites, public HTTPS access
+receipts and a loopback-only evidence panel. These do not change native model
+defaults or saved user configuration. See [autonomous work](autonomous-work.md).
+One implementer writes per project. Native plugin/user instructions remain active
+in benchmark arms; only injected EROL context varies. Neural embeddings and
+simultaneous writing agents are not implemented. The user waived further Claude
+live trials; protocol tests remain active and no live Claude success is claimed.
