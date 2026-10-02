@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Expand the curated builtin pack to 96 skills across nine technical/business domains.
+- Add four advisory roles and metadata-only category filtering for catalog discovery.
+- Cover common API creation/plural test phrases and adjacent-domain routing exclusions.
+- Reuse task normalization within builtin ranking while preserving explainable scores.
+- Independently review the new workflows and exercise two bounded drafting trials.
+
 - Turkish task aliases for all 24 builtin skills, including screen and date filters.
 - Dotted capital İ and ASCII Turkish spelling normalize without breaking words.
 - Bridges distinguish builtin selection from empty learned-project skill receipts.

@@ -52,7 +52,7 @@ def managed_instruction_block(
         runtime = "Runtime argv (literal arguments): " + json.dumps(["node", str(launcher)]) + "\n"
     return f"""{BEGIN_MARKER}
 EROL supplies project memory, incident retrieval, focused skill routing, and learning.
-For substantive development or debugging tasks, load the erol bridge skill, then run
+For substantive development, operations or business tasks, load the erol bridge skill, then run
 EROL plan with the current task before investigation. Use only relevant returned context;
 verify historical fixes against current code. Follow existing project instructions.
 The shared canonical EROL home is: {location}
@@ -70,7 +70,7 @@ def generated_files(harness: str, launcher: Path | None = None) -> dict[str, str
     validate_harness(harness)
     body = """---
 name: erol
-description: Retrieve project memory and focused skills for development, debugging, and learning.
+description: Project memory and development, operations, SEO, marketing and growth workflows.
 ---
 
 Read the EROL managed block in the root instructions for the canonical home.

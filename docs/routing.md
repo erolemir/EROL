@@ -1,10 +1,9 @@
 # Routing, focused context, and harness handoffs
 
-EROL ships one canonical pack of **24 original workflow skills** and **14 advisory
-agent roles**. The pack covers investigation, data integrity, implementation,
-verification, security, project memory, and learning. It is deliberately small;
-EROL does not copy the ECC catalog. ECC's harness, context budgeting, and eval
-guidance informed the implementation workflow.
+EROL ships one canonical pack of **96 original workflow skills** and **18 advisory
+agent roles**. The [catalog](skill-catalog.md) covers development, data integrity,
+verification, security, operations, SEO, marketing, growth and project learning.
+Category filtering discovers a domain without loading its skill bodies.
 
 `src/erol/data/registry.json` is the discovery index. Each workflow has one
 canonical `skills/<name>/SKILL.md` body. Agent definitions live in `agents.json`.
@@ -26,7 +25,7 @@ Routing is local, deterministic phrase matching. Unicode normalization and
 case-folding make case-insensitive matches; punctuation becomes word boundaries.
 Turkish `İ`, `ı`, and `i` normalize together without splitting dotted capital
 letters. Turkish `çğöşü` fold to `cgosu` for ASCII keyboard spellings. Explicit
-Turkish task aliases cover all 24 builtin workflows, including screen filters
+Turkish task aliases cover all builtin workflows, including screen filters
 and date ranges. This adds no stemming, fuzzy matching, model calls, or universal
 "fix" trigger. A trigger must match a complete phrase,
 so `metadata` does not trigger `data`. Longer phrases receive more weight.
@@ -98,11 +97,15 @@ verified prior findings instead of the full catalog or memory archive.
 
 ## Evaluation and its limits
 
-`routing_cases.json` contains 32 positive, negative, domain-overlap, whole-word,
+`routing_cases.json` contains 289 positive, negative, domain-overlap, whole-word,
 and Turkish task fixtures. `routing_eval()` reports which expected workflows
 were selected and which forbidden workflows were excluded. Unit tests additionally
 check lazy reads, body integrity, project isolation, digest binding, negative
 precedence, context overflow, and complete task preservation.
+The expanded catalog includes adjacent technical-domain contrasts, such as
+backend structured data versus SEO markup and Redis caches versus client UI caches.
+Task normalization is reused within builtin ranking; project-error normalization
+and explainable phrase scores remain unchanged.
 
 `evaluate_skill()` checks metadata, workflow and verification guidance, context
 size, conservative secret/instruction scan results, and deterministic trigger

@@ -1,6 +1,6 @@
 ---
 name: erol
-description: Retrieve project memory and focused skills for development, debugging, and learning.
+description: Project memory and development, operations, SEO, marketing and growth workflows.
 ---
 
 Read the EROL managed block in the root instructions for the canonical home.

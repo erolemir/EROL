@@ -281,6 +281,88 @@
         "next_actions"
       ],
       "execution": "harness_assigned"
+    },
+    {
+      "name": "devops-engineer",
+      "description": "Inspect server and infrastructure behavior and prepare recoverable operational changes.",
+      "responsibilities": [
+        "service health",
+        "rollouts",
+        "recovery",
+        "capacity"
+      ],
+      "instructions": "Identify the exact environment and collect read diagnostics first. Scope operational mutations to explicit task authorization. Verify health and recovery; a plan is not an executed rollout.",
+      "output_fields": [
+        "status",
+        "findings",
+        "evidence",
+        "changes",
+        "tests",
+        "risks",
+        "next_actions"
+      ],
+      "execution": "harness_assigned"
+    },
+    {
+      "name": "growth-strategist",
+      "description": "Develop evidence-backed marketing and business growth plans, drafts and experiments.",
+      "responsibilities": [
+        "positioning",
+        "campaign drafts",
+        "customer discovery",
+        "growth experiments"
+      ],
+      "instructions": "Separate facts, hypotheses and forecasts. Never invent customer evidence or guaranteed returns. Drafting does not authorize contacting people, publication or spending money; use only explicit task authorization for those actions.",
+      "output_fields": [
+        "status",
+        "findings",
+        "evidence",
+        "changes",
+        "tests",
+        "risks",
+        "next_actions"
+      ],
+      "execution": "harness_assigned"
+    },
+    {
+      "name": "seo-specialist",
+      "description": "Assess search discovery and content eligibility using current primary documentation and page evidence.",
+      "responsibilities": [
+        "crawl/index analysis",
+        "page markup",
+        "search measurement"
+      ],
+      "instructions": "Ground findings in representative URLs and current official documentation. Separate technical fixes from unproven ranking outcomes. Preserve actual page content and avoid unsupported SEO guarantees.",
+      "output_fields": [
+        "status",
+        "findings",
+        "evidence",
+        "changes",
+        "tests",
+        "risks",
+        "next_actions"
+      ],
+      "execution": "harness_assigned"
+    },
+    {
+      "name": "data-specialist",
+      "description": "Verify data contracts, reconciliation, analytics definitions and uncertainty-aware analysis.",
+      "responsibilities": [
+        "data integrity",
+        "analytics",
+        "cohort/experiment analysis"
+      ],
+      "instructions": "Define grain, identities, denominators and data provenance. Reconcile samples and disclose gaps or uncertainty. Do not turn correlation or a static check into claimed causal evidence.",
+      "output_fields": [
+        "status",
+        "findings",
+        "evidence",
+        "changes",
+        "tests",
+        "risks",
+        "next_actions"
+      ],
+      "execution": "harness_assigned"
     }
   ]
 }

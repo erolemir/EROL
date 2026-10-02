@@ -28,9 +28,24 @@ def score(task: str, metadata: Mapping[str, Any]) -> dict[str, Any]:
     """Only explicit trigger phrases activate a skill; exclusions win."""
     if metadata.get("scope") == "project":
         task = normalize_error(task)
-    avoided = [p for p in metadata.get("avoid_when", []) if contains_phrase(task, p)]
-    matched = [p for p in metadata.get("triggers", []) if contains_phrase(task, p)]
-    points = sum(1 + len(normalize(p).split()) for p in matched)
+    return _score_normalized(normalize(task), metadata)
+
+
+def _score_normalized(task: str, metadata: Mapping[str, Any]) -> dict[str, Any]:
+    """Reuse the normalized task across the builtin catalog without retaining task text."""
+    padded_task = f" {task} "
+    avoided = [
+        phrase
+        for phrase in metadata.get("avoid_when", [])
+        if (normalized := normalize(phrase)) and f" {normalized} " in padded_task
+    ]
+    matches = [
+        (phrase, normalized)
+        for phrase in metadata.get("triggers", [])
+        if (normalized := normalize(phrase)) and f" {normalized} " in padded_task
+    ]
+    matched = [phrase for phrase, _ in matches]
+    points = sum(1 + len(normalized.split()) for _, normalized in matches)
     return {
         "name": metadata["name"],
         "score": 0 if avoided else points,
@@ -43,7 +58,13 @@ def score(task: str, metadata: Mapping[str, Any]) -> dict[str, Any]:
 def rank(task: str, catalog: Iterable[Mapping[str, Any]], limit: int = 4) -> list[dict[str, Any]]:
     if not isinstance(limit, int) or isinstance(limit, bool) or limit < 0:
         raise ValueError("limit must be a nonnegative integer")
-    results = [score(task, entry) for entry in catalog]
+    normalized_task = normalize(task)
+    results = [
+        score(task, entry)
+        if entry.get("scope") == "project"
+        else _score_normalized(normalized_task, entry)
+        for entry in catalog
+    ]
     results = [result for result in results if result["score"] > 0]
     # Prefer project expertise only at equal relevance. Stable ties are lexical.
     results.sort(key=lambda item: (-item["score"], item["scope"] != "project", item["name"]))

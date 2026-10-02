@@ -1,6 +1,6 @@
 <!-- EROL:BEGIN -->
 EROL supplies project memory, incident retrieval, focused skill routing, and learning.
-For substantive development or debugging tasks, load the erol bridge skill, then run
+For substantive development, operations or business tasks, load the erol bridge skill, then run
 EROL plan with the current task before investigation. Use only relevant returned context;
 verify historical fixes against current code. Follow existing project instructions.
 The shared canonical EROL home is: ~/.erol

@@ -8,7 +8,7 @@ from unittest.mock import patch
 from erol.common import digest
 from erol.orchestration import routing_eval
 from erol.registry import Registry, Skill, evaluate_skill, matches
-from erol.router import contains_phrase, normalize
+from erol.router import contains_phrase, normalize, rank, score
 
 
 class FakeStore:
@@ -49,7 +49,7 @@ class RoutingTests(unittest.TestCase):
 
         with patch.object(Path, "read_text", guarded):
             registry = Registry()
-            self.assertEqual(24, len(registry.list()))
+            self.assertGreaterEqual(len(registry.list()), 96)
             registry.explain("pagination")
         self.assertEqual(["registry.json"], reads)
 
@@ -107,7 +107,7 @@ class RoutingTests(unittest.TestCase):
     def test_natural_turkish_fixtures_cover_pack_and_ascii_keyboard_spelling(self):
         registry = Registry()
         report = routing_eval(registry)
-        turkish_cases = report["cases"][32:]
+        turkish_cases = [case for case in report["cases"] if case.get("language") == "tr"]
         covered = {name for case in turkish_cases for name in case["expected"]}
         self.assertEqual({skill["name"] for skill in registry.list()}, covered)
         for case in turkish_cases:
@@ -124,6 +124,43 @@ class RoutingTests(unittest.TestCase):
         self.assertTrue(matches(skill, "CONTACT IMPORT"))
         self.assertFalse(matches(skill, "contact import marketing contacts"))
         self.assertFalse(Registry().explain("metadata duplication"))
+
+    def test_catalog_ranking_preserves_individual_scores_and_project_normalization(self):
+        project = project_skill()
+        entries = [*Registry().list(), project.metadata()]
+        task = "contact import: request=abc123 at 14:32; regression tests and API creation"
+        actual = rank(task, entries, limit=100)
+        expected = [score(task, entry) for entry in entries]
+        expected = [entry for entry in expected if entry["score"] > 0]
+        expected.sort(key=lambda item: (-item["score"], item["scope"] != "project", item["name"]))
+        self.assertEqual(expected, actual)
+
+    def test_catalog_domains_resolve_to_known_roles_and_distinct_bodies(self):
+        from erol.orchestration import agents
+
+        registry = Registry()
+        roles = {entry["name"] for entry in agents()}
+        categories = {entry.get("category") for entry in registry.list()}
+        self.assertEqual(
+            {
+                "backend",
+                "frontend",
+                "coding",
+                "security",
+                "devops",
+                "seo",
+                "marketing",
+                "growth",
+                "data",
+            },
+            categories,
+        )
+        bodies = set()
+        for entry in registry.list():
+            self.assertIn(entry["agent"], roles)
+            body = registry.get(entry["name"]).body
+            self.assertNotIn(body, bodies, entry["name"])
+            bodies.add(body)
 
     def test_project_scope_status_and_integrity(self):
         skill = project_skill()

@@ -86,7 +86,9 @@ External reports remain trusted local attestations, not authenticated facts.
 
 ## EVAL RESULTS
 
-Static checks pass for all 24 original foundation skills and 32 routing fixtures.
+The expanded pack contains 96 original workflows and 289 routing fixtures. Its
+new bodies received independent review and two limited forward drafting trials;
+these do not certify task-success gains across the entire catalog.
 The pagination fixture reproduces three errors, retrieves increasing historical
 matches, activates one candidate, records three successful fixture uses and produces
 a promotion candidate without changing a global registry. Unit/integration and

@@ -14,21 +14,26 @@ def plugin_files(repository_root: Path | None = None) -> dict[str, str]:
         "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
         "name": "erol",
         "version": __version__,
-        "description": "Local project memory and evidence-gated skill learning for coding tasks.",
+        "description": (
+            "Project memory, focused development and business workflows, "
+            "and evidence-gated skill learning."
+        ),
         "license": "AGPL-3.0-only",
         "author": {"name": "EROL contributors"},
         "extensions": {
             "com.openai": {
                 "interface": {
                     "displayName": "EROL",
-                    "shortDescription": "Project memory and focused orchestration",
+                    "shortDescription": "Project memory and focused workflows",
                     "longDescription": (
                         "Retrieve verified incidents, select focused skills "
                         "and develop project workflows with reviewed evidence."
                     ),
                     "developerName": "EROL contributors",
                     "category": "Productivity",
-                    "defaultPrompt": ["Use EROL to investigate this project's recurring error."],
+                    "defaultPrompt": [
+                        "Use EROL to plan this task with relevant skills and evidence."
+                    ],
                 }
             }
         },
@@ -91,8 +96,8 @@ def plugin_files(repository_root: Path | None = None) -> dict[str, str]:
     )
     ui = (
         'interface:\n  display_name: "EROL"\n'
-        '  short_description: "Project memory and focused orchestration"\n'
-        '  default_prompt: "Use $erol to investigate this project task."\n'
+        '  short_description: "Project memory and focused workflows"\n'
+        '  default_prompt: "Use $erol to plan this task with relevant skills."\n'
     )
     result = {
         "plugins/erol/plugin.json": canonical(manifest) + "\n",

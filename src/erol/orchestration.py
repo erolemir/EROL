@@ -104,7 +104,7 @@ class Orchestrator:
                 specialized.append(role)
         # Roles are recommendations, not actual spawned agents. Keep testing and
         # independent review distinct for substantive implementation work.
-        risky = any(
+        risky = "security-reviewer" in specialized or any(
             contains_phrase(task, phrase)
             for phrase in (
                 "security",
@@ -122,6 +122,8 @@ class Orchestrator:
             "database-specialist",
             "frontend-specialist",
             "performance-specialist",
+            "devops-engineer",
+            "data-specialist",
         }
         implements = any(role in implementation_roles for role in specialized)
         primary_role = next(
@@ -130,7 +132,8 @@ class Orchestrator:
         )
         review_role = (
             "security-reviewer"
-            if any(contains_phrase(task, p) for p in ("security", "authorization", "güvenlik"))
+            if "security-reviewer" in specialized
+            or any(contains_phrase(task, p) for p in ("security", "authorization", "güvenlik"))
             else "verifier"
             if risky
             else "reviewer"
@@ -170,11 +173,22 @@ class Orchestrator:
         tools = {"repository_read"}
         if any(
             role in roles
-            for role in ("implementer", "frontend-specialist", "database-specialist", "debugger")
+            for role in (
+                "implementer",
+                "frontend-specialist",
+                "database-specialist",
+                "debugger",
+                "devops-engineer",
+                "data-specialist",
+            )
         ):
             tools.update(("repository_edit", "local_checks"))
         if "database-specialist" in roles:
             tools.add("database_read_diagnostics")
+        if "devops-engineer" in roles:
+            tools.add("infrastructure_read_diagnostics")
+        if any(role in roles for role in ("growth-strategist", "seo-specialist")):
+            tools.add("research_read")
         if any(contains_phrase(task, p) for p in ("dependency", "MCP", "upgrade", "harness")):
             tools.add("official_documentation")
         return {
