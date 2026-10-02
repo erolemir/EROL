@@ -4,10 +4,19 @@
   "description": "Extensible Reasoning & Orchestration Layer: local project memory and evidence-gated learning",
   "type": "module",
   "license": "AGPL-3.0-only",
-  "repository": { "type": "git", "url": "git+https://github.com/erolemir/EROL.git" },
-  "engines": { "node": ">=18" },
-  "bin": { "erol": "bin/erol.mjs" },
-  "scripts": { "test": "node --test tests/node/launcher.test.mjs" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erolemir/EROL.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "erol": "bin/erol.mjs"
+  },
+  "scripts": {
+    "test": "node --test tests/node/launcher.test.mjs"
+  },
   "files": [
     "bin/erol.mjs",
     "bin/erol.py",

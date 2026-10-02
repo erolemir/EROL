@@ -1,3 +1,3 @@
-"""EROL canonical core. Importing it performs no IO."""
+"""EROL canonical core."""
 
 __version__ = "0.1.2"
