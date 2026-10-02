@@ -2,7 +2,7 @@
 name: context-handoff
 description: "Prepare bounded task and agent handoffs with evidence and explicit unresolved work."
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 # Context Handoff
 

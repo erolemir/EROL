@@ -2,7 +2,7 @@
 name: memory-hygiene
 description: "Preserve small, evidence-backed project memory with redaction, staleness, and provenance."
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 # Memory Hygiene
 

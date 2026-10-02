@@ -2,7 +2,7 @@
 name: documentation-maintenance
 description: "Update project documentation from observed behavior and reproducible examples."
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 # Documentation Maintenance
 

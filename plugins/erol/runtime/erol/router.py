@@ -12,7 +12,10 @@ from erol.fingerprint import normalize_error
 
 def normalize(text: str) -> str:
     text = unicodedata.normalize("NFKC", text).casefold()
-    text = text.replace("ı", "i")
+    # Casefold expands dotted capital İ to i + COMBINING DOT ABOVE, which
+    # must not split a word. Fold Turkish letters for common ASCII typing;
+    # this is explicit normalization, not stemming or fuzzy matching.
+    text = text.replace("i\u0307", "i").translate(str.maketrans("ıçğöşü", "icgosu"))
     return " ".join(re.findall(r"[^\W_]+", text, flags=re.UNICODE))
 
 

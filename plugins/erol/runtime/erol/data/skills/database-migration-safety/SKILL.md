@@ -2,7 +2,7 @@
 name: database-migration-safety
 description: "Prepare compatible schema changes with recovery and data-integrity verification."
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 # Database Migration Safety
 

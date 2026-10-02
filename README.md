@@ -191,6 +191,10 @@ Windows state inherits the user's directory permissions.
 The built-in pack contains 24 original foundation skills and 14 advisory roles.
 Discovery reads metadata; selected skill bodies load on demand. Negative triggers
 override positive matches. Oversized context items are reported as omitted.
+Turkish task phrases and ASCII spellings are supported through explicit aliases.
+For example, "Tahakkuk Gönderilenler ekranında filtreyi ve tarih aralığını düzelt"
+selects `frontend-state-correctness` even when project memory is empty. Routing
+uses phrase matching; it does not infer every possible paraphrase.
 Token budgets use character estimates, not measured model token counts.
 
 ## Development and validation

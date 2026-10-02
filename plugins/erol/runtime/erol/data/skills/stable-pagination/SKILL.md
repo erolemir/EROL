@@ -2,7 +2,7 @@
 name: stable-pagination
 description: "Diagnose missing or repeated rows at pagination and batch-import boundaries."
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 # Stable Pagination
 

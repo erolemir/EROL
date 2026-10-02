@@ -2,7 +2,7 @@
 name: skill-quality-evaluation
 description: "Evaluate skill metadata, triggers, context overhead, and real usage evidence without overstating static checks."
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 # Skill Quality Evaluation
 

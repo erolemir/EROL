@@ -85,7 +85,7 @@ class PluginTests(unittest.TestCase):
                     str(base / "memory"),
                     "plan",
                     "--task",
-                    "Investigate pagination cursor error",
+                    "SCRUM-17 Tahakkuk Gönderilenler ekranında filtreyi ve tarih aralığını düzelt",
                     "--task-id",
                     "plugin-task",
                 ],
@@ -99,7 +99,10 @@ class PluginTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             output = json.loads(result.stdout)
             self.assertEqual(output["task_id"], "plugin-task")
-            self.assertTrue(output["plan"]["context"]["selected_skills"])
+            self.assertEqual(
+                ["frontend-state-correctness"], output["plan"]["context"]["selected_skills"]
+            )
+            self.assertEqual([], output["selected_skills"])
             self.assertTrue(any((base / "memory/state").glob("*/memory.db")))
             self.assertFalse((package / "state").exists())
 

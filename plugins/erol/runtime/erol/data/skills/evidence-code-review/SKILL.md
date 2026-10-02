@@ -2,7 +2,7 @@
 name: evidence-code-review
 description: "Review changes for concrete correctness risks with reproducible findings."
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 # Evidence Code Review
 
