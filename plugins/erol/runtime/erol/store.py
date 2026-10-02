@@ -161,7 +161,19 @@ class Store:
             if result.rowcount == 0:
                 raise ErolError("Memory record does not exist")
 
-    def search(self, query: str, *, max_chars: int = 6000, limit: int = 10) -> builtins.list[dict]:
+    def search(
+        self, query: str, *, max_chars: int = 6000, limit: int = 10, mode: str = "lexical"
+    ) -> builtins.list[dict]:
+        if mode == "hybrid":
+            from .retrieval import MemoryIndex
+
+            index = MemoryIndex(self)
+            try:
+                return index.search(query, max_chars=max_chars, limit=limit)
+            finally:
+                index.close()
+        if mode != "lexical":
+            raise ErolError("Unknown retrieval mode")
         if max_chars < 1 or limit < 1:
             raise ErolError("Retrieval budgets must be positive")
         words = set(query.lower().split())

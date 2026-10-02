@@ -147,5 +147,10 @@ def capabilities() -> dict[str, object]:
             "native_hooks": "documented; not installed by EROL",
             "config": ".claude/settings.json; unchanged",
         },
-        "erol": {"memory": "shared external home", "execution": "harness-driven CLI bridge"},
+        "erol": {
+            "memory": "shared external home",
+            "execution": "opt-in run command through capability-checked Codex/Claude CLI adapters",
+            "plan_executes": False,
+            "execution_checks": "local runner-observed exit status, not authenticated receipts",
+        },
     }

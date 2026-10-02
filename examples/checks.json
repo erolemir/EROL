@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "checks": [
+    {
+      "name": "acceptance-tests",
+      "kind": "acceptance",
+      "argv": ["python", "-B", "-m", "unittest", "discover", "-s", "tests", "-v"],
+      "timeout_seconds": 300
+    }
+  ]
+}

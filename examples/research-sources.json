@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "question": "Which option meets the fixture's constraints?",
+  "scope": "Synthetic format example; not real research evidence",
+  "sources": [
+    {
+      "id": "S1",
+      "url": "https://example.test/docs",
+      "title": "Synthetic documentation",
+      "publisher": "Fixture",
+      "accessed_on": "2026-10-02",
+      "published_on": null,
+      "kind": "primary"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "statement": "Synthetic claim for illustrating references",
+      "source_ids": ["S1"],
+      "kind": "fact",
+      "confidence": "low"
+    }
+  ],
+  "conflicts": [],
+  "limitations": ["Reserved example URL; no source was retrieved or verified"]
+}

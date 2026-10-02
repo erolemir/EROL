@@ -1,6 +1,6 @@
 {
   "name": "erol",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Extensible Reasoning & Orchestration Layer: local project memory and evidence-gated learning",
   "type": "module",
   "license": "AGPL-3.0-only",
@@ -15,7 +15,7 @@
     "erol": "bin/erol.mjs"
   },
   "scripts": {
-    "test": "node --test tests/node/launcher.test.mjs"
+    "test": "node --test tests/node/launcher.test.mjs tests/node/panel.test.mjs"
   },
   "files": [
     "bin/erol.mjs",

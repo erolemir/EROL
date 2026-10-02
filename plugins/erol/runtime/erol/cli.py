@@ -15,11 +15,13 @@ from erol import __version__
 from erol.adapters import capabilities
 from erol.common import ErolError, canonical
 from erol.config import Config
+from erol.execution import Runner
 from erol.identity import detect_project
 from erol.installer import Installer
 from erol.learning import LearningEngine
 from erol.orchestration import Orchestrator, agents, routing_eval
 from erol.registry import Registry, evaluate_skill
+from erol.runstore import RunStore
 from erol.security import assert_secret_safe, scan_instructions
 from erol.store import MEMORY_CLASSES, Store
 
@@ -62,11 +64,28 @@ def parser() -> argparse.ArgumentParser:
         command.add_argument(
             "--task-id", help="Persist an activation receipt for later real-use evidence"
         )
+    execute = commands.add_parser("run", help="Execute a task in an isolated Git worktree")
+    execute.add_argument("--task", required=True)
+    execute.add_argument("--harness", choices=("codex", "claude"), required=True)
+    execute.add_argument("--review-harness", choices=("codex", "claude"))
+    execute.add_argument("--mode", choices=("development", "research"), default="development")
+    execute.add_argument("--checks", required=True, help="Reviewed versioned acceptance-check JSON")
+    execute.add_argument("--task-id", help="Unique task identity; generated when omitted")
+    execute.add_argument(
+        "--reviewers", type=int, default=1, help="1..3 independent read-only reviewers"
+    )
+    executions = commands.add_parser("runs").add_subparsers(dest="action", required=True)
+    executions.add_parser("list")
+    for name in ("show", "resume", "cancel"):
+        execution = executions.add_parser(name)
+        execution.add_argument("--id", required=True)
     memory = commands.add_parser("memory").add_subparsers(dest="action", required=True)
     memory.add_parser("status")
     search = memory.add_parser("search")
     search.add_argument("query")
     search.add_argument("--max-chars", type=int, default=6000)
+    search.add_argument("--mode", choices=("lexical", "hybrid"), default="hybrid")
+    memory.add_parser("index")
     memory.add_parser("compact")
     memory.add_parser("export")
     add = memory.add_parser("add", help="Add sanitized evidence-backed memory")
@@ -156,6 +175,43 @@ def parser() -> argparse.ArgumentParser:
         "benchmark", help="Measure local routing CPU and rendered context proxies"
     )
     benchmark.add_argument("--iterations", type=int, default=20)
+    benchmark.add_argument("--suite", help="Explicit controlled behavioral suite JSON")
+    benchmark.add_argument("--harness", choices=("codex", "claude"))
+    benchmark.add_argument("--report", help="Behavioral result JSON path")
+    benchmark.add_argument("--repeat", type=int, default=1)
+    scan = commands.add_parser(
+        "scan", help="Discover bounded TODOs, imported issues and observed check failures"
+    )
+    scan.add_argument("--checks")
+    scan.add_argument("--issues")
+    queue = commands.add_parser("queue").add_subparsers(dest="action", required=True)
+    queue.add_parser("list")
+    policy = queue.add_parser(
+        "policy", help="Write an explicit project-bound check-repair policy; no execution"
+    )
+    policy.add_argument("--harness", choices=("codex", "claude"), required=True)
+    policy.add_argument("--checks", required=True)
+    policy.add_argument("--output", required=True)
+    policy.add_argument("--reviewers", type=int, default=1)
+    policy.add_argument("--max-tasks", type=int, default=1)
+    enqueue = queue.add_parser("enqueue")
+    enqueue.add_argument("--policy", required=True)
+    enqueue.add_argument("--candidate", action="append")
+    work = queue.add_parser("work", help="Run matching queued jobs within explicit policy limits")
+    work.add_argument("--policy", required=True)
+    work.add_argument(
+        "--scan", action="store_true", help="Discover TODOs and enqueue matching rules first"
+    )
+    for action in ("show", "cancel", "resume", "depend"):
+        child = queue.add_parser(action)
+        child.add_argument("--id", required=True)
+        if action == "resume":
+            child.add_argument("--policy", required=True)
+        if action == "depend":
+            child.add_argument("--on", action="append", required=True)
+    panel = commands.add_parser("panel", help="Serve a read-only local evidence panel")
+    panel.add_argument("--port", type=int, default=8765)
+    panel.add_argument("--open", action="store_true")
     return root
 
 
@@ -200,6 +256,130 @@ def run(args: argparse.Namespace) -> dict:
         registry = Registry(project_store=store)
         engine = LearningEngine(store, config, registry)
         command = args.command
+        if command == "panel":
+            from .panel import make_server
+
+            server = make_server(store.directory, store.project_id, args.port)
+            url = f"http://127.0.0.1:{server.server_port}"
+            print(json.dumps({"panel": url, "read_only": True}), file=sys.stderr, flush=True)
+            if args.open:
+                import webbrowser
+
+                webbrowser.open(url)
+            try:
+                server.serve_forever(poll_interval=0.2)
+            except KeyboardInterrupt:
+                pass
+            finally:
+                server.server_close()
+            return {"panel": url, "stopped": True}
+        if command in {"scan", "queue"}:
+            from .work import Queue, WorkStore, discover, load_policy
+
+            with (
+                WorkStore(store.directory, store.project_id) as work,
+                RunStore(store.directory, store.project_id) as runs,
+            ):
+                queue = Queue(work, Runner(store, engine, runs))
+                if command == "scan":
+                    return discover(
+                        root,
+                        work,
+                        checks_path=Path(args.checks) if args.checks else None,
+                        issues_path=Path(args.issues) if args.issues else None,
+                    )
+                if args.action == "list":
+                    return {"jobs": work.list("jobs")}
+                if args.action == "policy":
+                    from .common import atomic_write
+                    from .execution import load_checks
+
+                    checks = Path(args.checks).resolve(strict=True)
+                    load_checks(checks)
+                    if not 1 <= args.max_tasks <= 20 or not 1 <= args.reviewers <= 3:
+                        raise ErolError("Policy permits 1..20 tasks and 1..3 reviewers")
+                    data = {
+                        "schema_version": 1,
+                        "project_id": store.project_id,
+                        "limits": {
+                            "max_tasks": args.max_tasks,
+                            "max_total_seconds": 3600,
+                            "task_seconds": 3600,
+                            "session_seconds": 900,
+                            "check_seconds": 300,
+                            "reviewers": args.reviewers,
+                        },
+                        "rules": [
+                            {
+                                "id": "repair-observed-check",
+                                "kinds": ["check"],
+                                "paths": ["*"],
+                                "harness": args.harness,
+                                "review_harness": args.harness,
+                                "mode": "development",
+                                "checks": str(checks),
+                            }
+                        ],
+                    }
+                    assert_secret_safe(data)
+                    atomic_write(
+                        Path(args.output), json.dumps(data, ensure_ascii=False, indent=2) + "\n"
+                    )
+                    return {
+                        "policy": str(Path(args.output).resolve()),
+                        "project_id": store.project_id,
+                        "executes": False,
+                    }
+                if args.action == "show":
+                    return work.get("jobs", args.id)
+                if args.action == "cancel":
+                    return queue.cancel(args.id)
+                if args.action == "depend":
+                    return queue.depend(args.id, args.on)
+                policy = load_policy(Path(args.policy), store.project_id)
+                if args.action == "enqueue":
+                    return {"jobs": queue.enqueue(policy, args.candidate)}
+                if args.action == "work" and args.scan:
+                    discover(root, work)
+                    queue.enqueue(policy)
+                jobs = queue.execute(policy, resume_id=args.id if args.action == "resume" else None)
+                return {"jobs": jobs, "passed": all(job["status"] == "completed" for job in jobs)}
+        if command in {"run", "runs"}:
+            with RunStore(store.directory, store.project_id) as executions:
+                runner = Runner(store, engine, executions)
+                if command == "run":
+                    return runner.start(
+                        args.task,
+                        args.harness,
+                        Path(args.checks),
+                        task_id=args.task_id,
+                        review_harness=args.review_harness,
+                        mode=args.mode,
+                        reviewers=args.reviewers,
+                    )
+                if args.action == "list":
+                    return {
+                        "runs": [
+                            {
+                                key: record.get(key)
+                                for key in (
+                                    "id",
+                                    "task_id",
+                                    "status",
+                                    "phase",
+                                    "harness",
+                                    "created",
+                                    "worktree",
+                                )
+                            }
+                            for record in executions.list()
+                        ]
+                    }
+                if args.action == "show":
+                    return executions.get(args.id)
+                if args.action == "resume":
+                    return runner.resume(args.id)
+                return runner.cancel(args.id)
         if command == "status":
             return {
                 "version": __version__,
@@ -216,7 +396,7 @@ def run(args: argparse.Namespace) -> dict:
             assert_secret_safe(args.task)
             return Orchestrator(registry).plan(
                 args.task,
-                memory=store.search(args.task),
+                memory=store.search(args.task, mode="hybrid"),
                 token_budget=config.context_tokens,
                 max_skills=config.max_active_skills,
             )
@@ -228,7 +408,17 @@ def run(args: argparse.Namespace) -> dict:
                     "directory": str(store.directory),
                 }
             if args.action == "search":
-                return {"matches": store.search(args.query, max_chars=args.max_chars)}
+                return {
+                    "matches": store.search(args.query, max_chars=args.max_chars, mode=args.mode)
+                }
+            if args.action == "index":
+                from .retrieval import MemoryIndex
+
+                index = MemoryIndex(store)
+                try:
+                    return index.sync()
+                finally:
+                    index.close()
             if args.action == "compact":
                 return store.compact()
             if args.action == "export":
@@ -358,6 +548,31 @@ def run(args: argparse.Namespace) -> dict:
                 "estimator": "characters/4; not actual tokenizer usage",
             }
         if command == "benchmark":
+            if args.suite:
+                from .benchmark import behavioral_benchmark
+
+                if not args.harness or not args.report:
+                    raise ErolError("Behavioral suite requires --harness and --report")
+                result = behavioral_benchmark(
+                    Path(args.suite), args.harness, Path(args.report), repeat=args.repeat
+                )
+                from .work import WorkStore
+
+                with WorkStore(store.directory, store.project_id) as work:
+                    work.put(
+                        "benchmarks",
+                        {
+                            "id": result["id"],
+                            "project_id": store.project_id,
+                            "kind": result["kind"],
+                            "created": result["created"],
+                            "harness": args.harness,
+                            "passed": result["passed"],
+                            "pairs": len(result["pairs"]),
+                            "report": str(Path(args.report).resolve()),
+                        },
+                    )
+                return result
             if not 1 <= args.iterations <= 10000:
                 raise ErolError("Iterations must be between 1 and 10000")
             task = "RabbitMQ duplicate consumer at least once delivery"
@@ -382,11 +597,19 @@ def run(args: argparse.Namespace) -> dict:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # JSON pipes have a stable Unicode encoding even on Windows legacy locales.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
     args = parser().parse_args(argv)
     try:
         result = run(args)
         print(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False))
         if result.get("passed") is False or result.get("status") == "conflict":
+            return 1
+        if (
+            args.command == "run" or (args.command == "runs" and args.action == "resume")
+        ) and result.get("status") != "completed":
             return 1
         return 0
     except (ErolError, ValueError, KeyError, TypeError, OSError, sqlite3.Error) as exc:
