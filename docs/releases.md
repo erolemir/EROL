@@ -73,7 +73,9 @@ checkout on **each** computer that should receive scheduled updates:
 The task is `EROL Plugin Updates`; its installed script and bounded logs are in
 `%LOCALAPPDATA%/EROL`. A failed refresh is recorded there and retains the installed
 version. The task cannot refresh a computer that is offline, signed out or missing
-its native client. Other platforms can use the native manual refresh or Claude's
+its native client. Registration saves discovered CLI paths as a fallback when
+the login shell does not inherit the assistant's PATH; register again if those
+executables move. Other platforms can use the native manual refresh or Claude's
 auto-update setting. Updates become effective in a new/reloaded client session.
 
 ## License

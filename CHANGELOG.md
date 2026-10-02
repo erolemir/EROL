@@ -1,10 +1,13 @@
 # Changelog
 
-## 0.1.1 — 2026-10-02
+## 0.1.2 — 2026-10-02
 
 - Public GitHub distribution under AGPL-3.0-only with owner-reviewed main protection.
 - Automatic versioned stable releases after the complete validation matrix passes.
 - Optional Windows native-client plugin refresh task; memory remains outside plugin caches.
+- Canonical runner temp storage for macOS tests and version-independent release fixtures.
+
+## 0.1.1 — 2026-10-02
 
 - Direct isolated Python entry for native hosts that deny Node child-process creation.
 - Plugin and project bridge instructions select that entry without relaxing host permissions.
