@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "erol-ai"
-version = "0.1.2"
+version = "0.2.0"
 description = "Extensible Reasoning & Orchestration Layer with evidence-gated project learning"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -24,7 +24,7 @@ erol = "erol.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-erol = ["data/**/*.json", "data/**/*.md"]
+erol = ["data/**/*.json", "data/**/*.md", "data/**/*.png"]
 
 [tool.ruff]
 line-length = 100

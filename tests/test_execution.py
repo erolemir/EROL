@@ -15,6 +15,7 @@ from unittest.mock import Mock, patch
 
 from test_learning import incident, verification
 
+from erol.checktrust import CheckTrust
 from erol.common import ErolError, canonical
 from erol.config import Config
 from erol.execution import Limits, Runner, load_checks, snapshot
@@ -150,6 +151,7 @@ class ExecutionTests(unittest.TestCase):
         self.write_checks()
         self.project = detect_project(self.repo)
         self.store = Store(self.base / "external home", self.project)
+        CheckTrust(self.store.directory, self.repo).approve(self.checks)
         self.addCleanup(self.store.close)
         self.runs = RunStore(self.store.directory, self.project.id)
         self.addCleanup(self.runs.close)
@@ -182,9 +184,38 @@ class ExecutionTests(unittest.TestCase):
 
     def write_checks(self):
         self.manifest.write_text(json.dumps(self.checks), encoding="utf-8")
+        if hasattr(self, "store"):
+            CheckTrust(self.store.directory, self.repo).approve(self.checks)
 
     def start(self, harness="codex", **kwargs):
         return self.runner.start("Repair arithmetic", harness, self.manifest, **kwargs)
+
+    def test_unreviewed_runner_and_discovery_never_start_commands(self):
+        from erol.work import WorkStore, discover
+
+        CheckTrust(self.store.directory, self.repo).revoke(self.checks)
+        with patch("erol.execution.observe") as command:
+            with self.assertRaisesRegex(ErolError, "Unreviewed"):
+                self.start()
+            command.assert_not_called()
+        with WorkStore(self.store.directory, self.project.id) as work:
+            with patch("erol.work.observe") as command:
+                with self.assertRaisesRegex(ErolError, "Unreviewed"):
+                    discover(self.repo, work, checks_path=self.manifest)
+                command.assert_not_called()
+        self.assertEqual(self.calls, [])
+
+    def test_revoked_check_approval_blocks_resume_before_native_preflight(self):
+        self.scenario = "truncated"
+        pending = self.start()
+        self.assertEqual(pending["status"], "needs_attention")
+        before = len(self.calls)
+        CheckTrust(self.store.directory, self.repo).revoke(self.checks)
+        with patch.object(self.factory, "preflight") as preflight:
+            with self.assertRaisesRegex(ErolError, "Unreviewed"):
+                self.runner.resume(pending["id"])
+            preflight.assert_not_called()
+        self.assertEqual(len(self.calls), before)
 
     def test_run_path_metadata_does_not_join_components_into_false_secret(self):
         path = "/private/var/folders/q7/z8r9wm4xc6sgd2fkv5qbh3p00000gn/T/runs/"
@@ -253,6 +284,7 @@ class ExecutionTests(unittest.TestCase):
         self.scenario = "truncated"
         pending = self.start()
         with Store(self.base / "another external home", self.project) as store:
+            CheckTrust(store.directory, self.repo).approve(self.checks)
             with RunStore(store.directory, self.project.id) as runs:
                 engine = LearningEngine(store, Config(), Registry(project_store=store))
                 other = Runner(store, engine, runs, harness_factory=self.factory)

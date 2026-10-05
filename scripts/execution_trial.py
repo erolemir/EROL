@@ -9,9 +9,10 @@ import sys
 import tempfile
 from pathlib import Path
 
+from erol.checktrust import CheckTrust
 from erol.common import atomic_write, canonical
 from erol.config import Config
-from erol.execution import Runner
+from erol.execution import Runner, load_checks
 from erol.harness import CliHarness
 from erol.identity import detect_project
 from erol.learning import LearningEngine
@@ -73,6 +74,8 @@ def trial(harness: str) -> dict:
 
     project = detect_project(root)
     with Store(base / "external home", project) as store:
+        # This opt-in trial owns both the fixed manifest and generated fixture code.
+        CheckTrust(store.directory, root).approve(load_checks(checks_path))
         engine = LearningEngine(store, Config(), Registry(project_store=store))
         with RunStore(store.directory, project.id) as runs:
             runner = Runner(store, engine, runs, harness_factory=InterruptAfterWorker)

@@ -9,6 +9,8 @@ from a model's assessment of claims.
 ## Discover and authorize work
 
 ```console
+erol checks show --file /absolute/reviewed-checks.json
+erol checks trust --file /absolute/reviewed-checks.json
 erol scan --checks /absolute/reviewed-checks.json
 erol scan --issues /absolute/reviewed-issues.json
 erol queue policy --harness codex --checks /absolute/reviewed-checks.json --output /absolute/policy.json --max-tasks 2 --reviewers 2
@@ -136,11 +138,24 @@ costs are null. One pair cannot establish a general improvement. Up to ten cases
 and three repeats are allowed; results persist after every arm. Fixture homes and
 worktrees remain outside the repository for inspection.
 
+Before a benchmark, extract each case's `checks` object to a manifest JSON file,
+inspect both commands and fixture source/dependencies, and explicitly approve it
+with `checks trust` under the invoking project/home. Unapproved cases stop before
+fixture creation or native calls. The approved policy is propagated to the
+externally generated fixture roots; suite files cannot grant this authority.
+
 The read-only Turkish panel binds 127.0.0.1, polls selected evidence metadata,
 filters status/IDs and expands check/review receipts. It excludes task prompts,
 context packets, raw streams and credentials. It has no mutation API, external
-assets or CORS; loopback Host validation and a restrictive CSP protect the local
-view. Local read access is intended for the machine's user, not multiuser hosting.
+assets or CORS. Every server generates a random 256-bit bearer token; `/api/state`
+authenticates before opening evidence storage. Use the ephemeral fragment link
+printed by `panel` or `--open`. JavaScript removes the fragment from browser
+history and keeps the token in memory, not local/session storage. Refreshing
+requires reopening the original link. Static assets contain no token/evidence.
+Host and supplied Origin must match loopback; responses disable caching and
+referrers and use a restrictive CSP. Server logs omit requests, and tokens rotate
+on restart. Keep the bootstrap link private. This prevents unauthenticated local
+HTTP reads; it does not isolate browser/process memory from the same OS account.
 
 Windows deterministic and live Codex results are documented separately in
 [validation](validation.md). Claude live trials are skipped at the user's request

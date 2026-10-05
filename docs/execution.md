@@ -12,6 +12,8 @@ Pass `--project` and `--home` before the subcommand. Start from a clean local Gi
 checkout with a committed HEAD and an external EROL home:
 
 ```console
+erol --project /path/to/project --home /external/erol checks show --file /path/to/reviewed-checks.json
+erol --project /path/to/project --home /external/erol checks trust --file /path/to/reviewed-checks.json
 erol --project /path/to/project --home /external/erol run --task "Repair the failing import" --harness codex --checks /path/to/reviewed-checks.json
 erol --project /path/to/project --home /external/erol run --task "Repair the failing import" --harness claude --review-harness codex --checks /path/to/reviewed-checks.json --task-id unique-repair-42
 erol --project /path/to/project --home /external/erol runs list
@@ -32,9 +34,47 @@ The [manifest schema](../schemas/checks.schema.json) and
 check is mandatory. Select checks that exercise the requested behavior: marking
 a no-op command `acceptance` does not make it behavioral evidence. Checks execute
 without an assembled shell string, with the caller's permissions. Review the
-manifest before invoking `run`. Windows `.cmd`, `.bat` and `.ps1` executable
+manifest and invoked code before granting check authorization. Windows `.cmd`, `.bat` and `.ps1` executable
 wrappers are rejected; use native executables or Node script entry points.
 Ignored local dependencies and environment files are not copied to the worktree.
+
+## Check authorization and command environment
+
+Repository manifests never grant their own execution authority. `checks trust`
+stores a schema-versioned receipt outside the project, scoped to the normalized
+original root and canonical manifest SHA-256. Another checkout, even with the
+same remote/project ID, cannot borrow it. Identical manifest content within the
+same root shares authorization; this is content authorization, not path approval.
+Changes need another reviewed approval. `checks revoke --file PATH` removes that
+content's receipt. Keep the same project and external home across these commands.
+Isolated runners, discovery, direct terminal checks and API check tools require
+the receipt before execution; saved-run continuation revalidates it before native
+preflight and each phase. Revocation prevents subsequent starts; it does not kill
+a command already running. Model-owned native tools retain the native CLI policy.
+
+Commands inherit only PATH, PATHEXT, SYSTEMROOT, WINDIR, COMSPEC, temporary-directory,
+locale, timezone, terminal/color and Python encoding settings, plus EROL_RUN_ACTIVE.
+Credentials, HOME and arbitrary interpreter startup variables are omitted.
+Reviewed public variable names can be added with repeated `--env NAME`; actual
+values are secret-screened at execution time. Startup injection variables remain
+forbidden even when requested. Use absolute trusted executable paths if PATH is
+not trustworthy. Native CLI account/login environments are separate from checks.
+
+An optional literal executor prefix is applied to every approved check, including
+matching API `run_command` tools. For example, after provisioning a restricted
+OS account or sandbox wrapper that accepts an executable and its arguments:
+
+```console
+erol checks trust --file /path/to/reviewed-checks.json --prefix '["/absolute/restricted-check-executor","--"]'
+```
+
+The wrapper must understand the appended argv, provide its own project/dependency
+mounts and enforce isolation. EROL does not assemble a shell or install/validate
+this OS containment (`sandbox_verified` is false). Default checks still run with
+the caller's permissions. Manifest approval does not attest invoked scripts,
+dependencies, executable replacement or later source edits. Inspect these before
+approving; use an independently configured sandbox/separate account for hostile
+projects. Environment minimization is defense in depth, not filesystem isolation.
 
 ## Execution and evidence
 

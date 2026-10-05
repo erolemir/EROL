@@ -8,9 +8,10 @@ import sys
 import tempfile
 from pathlib import Path
 
+from erol.checktrust import CheckTrust
 from erol.common import atomic_write, canonical
 from erol.config import Config
-from erol.execution import Runner
+from erol.execution import Runner, load_checks
 from erol.identity import detect_project
 from erol.learning import LearningEngine
 from erol.registry import Registry
@@ -70,6 +71,8 @@ def trial(harness: str) -> dict:
         Store(base / "external home", project) as store,
         RunStore(store.directory, project.id) as runs,
     ):
+        # The opt-in trial owns the fixed manifest and generated fixture code.
+        CheckTrust(store.directory, root).approve(load_checks(manifest))
         engine = LearningEngine(store, Config(), Registry(project_store=store))
         result = Runner(store, engine, runs).start(
             "In English, compare SQLite and PostgreSQL for a local Python project-memory service "

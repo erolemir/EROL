@@ -39,6 +39,10 @@ def smoke(archive: Path) -> None:
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_bytes(stream.read())
         project = root / "unrelated project"
+        original = (canonical_root / "src/erol/data/brand/erol.png").read_bytes()
+        for directory in ("src/erol/data", "plugins/erol/runtime/erol/data"):
+            if (root / "package" / directory / "brand/erol.png").read_bytes() != original:
+                raise ValueError("Original brand image missing or modified in npm package")
         project.mkdir()
         env = {**os.environ, "EROL_PYTHON": sys.executable, "PYTHONPATH": "."}
         (project / "json.py").write_text("raise RuntimeError('import shadow executed')", "utf-8")
@@ -80,6 +84,20 @@ def smoke(archive: Path) -> None:
                 or report["routing"]["passed_count"] != expected_count
             ):
                 raise RuntimeError("Packaged runtime routing failed")
+            help_result = subprocess.run(
+                [*command[:-1], "terminal", "--command", "/help"],
+                cwd=project,
+                env=env,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                timeout=30,
+            )
+            if (
+                help_result.returncode
+                or "/connect" not in json.loads(help_result.stdout)["commands"]
+            ):
+                raise RuntimeError("Packaged terminal commands failed")
         print(
             json.dumps({"passed": True, "launchers": launchers, "routing_fixtures": expected_count})
         )

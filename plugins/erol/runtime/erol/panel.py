@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import secrets
 from datetime import UTC, datetime
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
@@ -28,7 +29,9 @@ article{margin-bottom:12px;padding:18px 22px}article button{padding:0;border:0;t
 <main><div class="stats" id="stats"></div><nav><button id="runs" class="active">Yürütmeler</button><button id="jobs">Kuyruk</button><button id="benchmarks">Ölçümler</button><input id="query" placeholder="Kimlik veya aşama ara" aria-label="Ara"><select id="status" aria-label="Durum"><option value="">Tüm durumlar</option>completed</option><option>running</option><option>queued</option><option>needs_attention</option><option>cancelled</option></select></nav><div id="items"></div><p class="note">Salt okunur yerel panel · Süreç çıkışları yerel kanıttır. Kaynak erişimi iddianın doğruluğunu onaylamaz. Worktree bir işletim sistemi sandbox’ı değildir.</p></main>
 <script src="/panel.js"></script></html>"""
 
-JS = """let state={runs:[],jobs:[],benchmarks:[]},view='runs',expanded=new Set();
+JS = """const credential=new URLSearchParams(location.hash.slice(1)).get('token')||'';
+history.replaceState(null,'',location.pathname);
+let state={runs:[],jobs:[],benchmarks:[]},view='runs',expanded=new Set();
 const $=id=>document.getElementById(id),el=(tag,text)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;return e};
 function render(){const counts=[['Yürütme',state.runs.length],['Tamamlanan',state.runs.filter(r=>r.status==='completed').length],['İlgi bekleyen',state.runs.filter(r=>r.status==='needs_attention').length],['Kuyruk',state.jobs.filter(j=>j.status==='queued').length]];
 $('stats').replaceChildren(...counts.map(([label,n])=>{let d=el('div');d.className='stat';let l=el('span',label);l.className='label';d.append(l,el('strong',n));return d}));
@@ -36,7 +39,7 @@ let rows=state[view].filter(r=>(!$('status').value||r.status===$('status').value
 $('items').replaceChildren(...rows.slice().reverse().map(r=>{let a=el('article'),b=el('button'),badge=el('span',r.status);badge.className='badge '+r.status;b.append(el('code',r.id),badge);b.onclick=()=>{expanded.has(r.id)?expanded.delete(r.id):expanded.add(r.id);render()};a.append(b,el('p',(r.phase||'')+' · '+(r.harness||r.rule?.harness||'')+' · '+(r.created||'')));
 if(expanded.has(r.id)){let d=el('div');d.className='detail';for(const key of ['worktree','tested_digest','reviewed_digest','reason','run_id','duration_seconds','attempts','cost_usd','pairs','report'])if(r[key]!==undefined&&r[key]!==null)d.append(el('p',key+': '+r[key]));if(r.usage)d.append(el('p','CLI kullanımı: '+JSON.stringify(r.usage)));if(r.review_summary)d.append(el('p',r.review_summary));let t=el('table'),head=el('tr');['Kontrol / kaynak','Sonuç','Kanıt'].forEach(s=>head.append(el('th',s)));t.append(head);for(const c of r.checks||[]){let tr=el('tr');[c.name,c.passed?'Geçti':'Başarısız',c.evidence_type].forEach(s=>tr.append(el('td',s)));t.append(tr)}for(const c of r.source_access_receipts||[]){let tr=el('tr');[c.source_id,c.status,c.evidence_type].forEach(s=>tr.append(el('td',s)));t.append(tr)}d.append(t);for(const f of r.findings||[])d.append(el('p',f.severity+': '+f.message));a.append(d)}return a}));if(!rows.length){let e=el('div','Bu filtrede kayıt yok.');e.className='empty';$('items').append(e)}}
 ['runs','jobs','benchmarks'].forEach(id=>$(id).onclick=()=>{view=id;['runs','jobs','benchmarks'].forEach(k=>$(k).classList.toggle('active',k===view));render()});$('query').oninput=render;$('status').onchange=render;
-async function refresh(){try{let r=await fetch('/api/state',{cache:'no-store'});if(!r.ok)throw Error();state=await r.json();$('connection').textContent='● Yerel bağlantı';render()}catch{$('connection').textContent='Bağlantı bekleniyor'}}refresh();setInterval(refresh,3000);
+async function refresh(){try{let r=await fetch('/api/state',{cache:'no-store',headers:{Authorization:'Bearer '+credential}});if(!r.ok)throw Error();state=await r.json();$('connection').textContent='● Yerel bağlantı';render()}catch{$('connection').textContent='Bağlantı bekleniyor'}}refresh();setInterval(refresh,3000);
 """
 
 
@@ -105,7 +108,17 @@ def panel_state(directory: Path, project_id: str) -> dict:
     }
 
 
-def make_server(directory: Path, project_id: str, port: int = 8765) -> HTTPServer:
+class PanelServer(HTTPServer):
+    def __init__(self, address, handler):
+        self.token = secrets.token_urlsafe(32)
+        super().__init__(address, handler)
+
+    @property
+    def access_url(self) -> str:
+        return f"http://127.0.0.1:{self.server_port}/#token={self.token}"
+
+
+def make_server(directory: Path, project_id: str, port: int = 8765) -> PanelServer:
     if type(port) is not int or not 0 <= port <= 65535:
         raise ErolError("Invalid panel port")
 
@@ -133,6 +146,7 @@ def make_server(directory: Path, project_id: str, port: int = 8765) -> HTTPServe
             self.send_header("Content-Length", str(len(body)))
             self.send_header("Cache-Control", "no-store")
             self.send_header("X-Content-Type-Options", "nosniff")
+            self.send_header("Referrer-Policy", "no-referrer")
             self.send_header(
                 "Content-Security-Policy",
                 "default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'",
@@ -152,11 +166,22 @@ def make_server(directory: Path, project_id: str, port: int = 8765) -> HTTPServe
             }
             if self.headers.get("Host") not in expected:
                 self.reply(403, b"Loopback host required")
+            elif self.headers.get("Origin") is not None and self.headers.get("Origin") not in {
+                f"http://{host}" for host in expected
+            }:
+                self.reply(403, b"Same origin required")
             elif self.path == "/":
                 self.reply(200, HTML.encode(), "text/html; charset=utf-8")
             elif self.path == "/panel.js":
                 self.reply(200, JS.encode(), "text/javascript; charset=utf-8")
             elif self.path == "/api/state":
+                assert isinstance(self.server, PanelServer)
+                authorization = self.headers.get("Authorization", "")
+                if not secrets.compare_digest(
+                    authorization.encode("utf-8"), ("Bearer " + self.server.token).encode()
+                ):
+                    self.reply(401, b"Panel session authorization required")
+                    return
                 try:
                     body = canonical(panel_state(directory, project_id)).encode()
                     if len(body) > 1048576:
@@ -173,4 +198,4 @@ def make_server(directory: Path, project_id: str, port: int = 8765) -> HTTPServe
             else:
                 self.reply(413, b"Request body rejected")
 
-    return HTTPServer(("127.0.0.1", port), Handler)
+    return PanelServer(("127.0.0.1", port), Handler)

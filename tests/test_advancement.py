@@ -16,6 +16,7 @@ from unittest.mock import patch
 import test_execution
 
 from erol.benchmark import behavioral_benchmark, load_suite
+from erol.checktrust import CheckTrust
 from erol.common import ErolError, canonical
 from erol.execution import git
 from erol.panel import make_server, panel_state
@@ -385,7 +386,7 @@ class AdvancementTests(unittest.TestCase):
         self.addCleanup(server.shutdown)
         connection = http.client.HTTPConnection("127.0.0.1", server.server_port)
         self.addCleanup(connection.close)
-        connection.request("GET", "/api/state")
+        connection.request("GET", "/api/state", headers={"Authorization": "Bearer " + server.token})
         response = connection.getresponse()
         self.assertEqual(200, response.status)
         self.assertTrue(json.loads(response.read())["read_only"])
@@ -422,7 +423,11 @@ class AdvancementTests(unittest.TestCase):
             return Runner(store, engine, runs, harness_factory=self.factory, **kwargs)
 
         report = behavioral_benchmark(
-            suite, "codex", self.base / "report.json", runner_factory=factory
+            suite,
+            "codex",
+            self.base / "report.json",
+            runner_factory=factory,
+            trust=CheckTrust(self.store.directory, self.repo),
         )
         self.assertTrue(report["passed"])
         self.assertEqual("paired_context_ablation", report["kind"])

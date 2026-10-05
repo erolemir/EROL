@@ -13,6 +13,7 @@ import uuid
 from functools import partial
 from pathlib import Path
 
+from .checktrust import CheckTrust, command_environment
 from .common import ErolError, canonical, digest, identifier, now, reject_links, required_text
 from .execution import Limits, Runner, git, load_checks, snapshot
 from .runprocess import observe
@@ -211,12 +212,15 @@ def discover(
     if checks_path:
         checks = load_checks(checks_path)
         checks_digest = digest(checks)
+        trust = CheckTrust(work.directory, root)
+        trust.require(checks)
         for check in checks["checks"]:
+            policy = trust.require(checks)
             outcome = observe(
-                check["argv"],
+                policy["prefix"] + check["argv"],
                 root,
                 timeout=min(300, check["timeout_seconds"]),
-                environment={**os.environ, "EROL_RUN_ACTIVE": "1"},
+                environment=command_environment(policy["environment"]),
             )
             if outcome["exit_code"] != 0 or outcome["reason"]:
                 add(

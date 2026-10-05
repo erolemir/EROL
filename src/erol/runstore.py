@@ -13,6 +13,38 @@ from .common import ErolError, canonical, identifier, reject_links
 from .security import assert_project_path_safe, assert_secret_safe
 
 
+@contextmanager
+def file_lease(path: Path):
+    """An OS-held lock released on process exit; never steal a live session."""
+    reject_links(path)
+    descriptor = os.open(path, os.O_CREAT | os.O_RDWR, 0o600)
+    held = False
+    try:
+        if os.fstat(descriptor).st_size == 0:
+            os.write(descriptor, b"0")
+        os.lseek(descriptor, 0, os.SEEK_SET)
+        module = importlib.import_module("msvcrt" if os.name == "nt" else "fcntl")
+        try:
+            if os.name == "nt":
+                module.locking(descriptor, module.LK_NBLCK, 1)
+            else:
+                module.flock(descriptor, module.LOCK_EX | module.LOCK_NB)
+            held = True
+        except OSError as exc:
+            raise ErolError("Another execution owns this session lease") from exc
+        yield
+    finally:
+        try:
+            if held:
+                os.lseek(descriptor, 0, os.SEEK_SET)
+                if os.name == "nt":
+                    module.locking(descriptor, module.LK_UNLCK, 1)
+                else:
+                    module.flock(descriptor, module.LOCK_UN)
+        finally:
+            os.close(descriptor)
+
+
 def pid_alive(pid: int | None) -> bool:
     """Unknown process state counts as alive. Never signal an unrelated Windows PID."""
     if not pid:

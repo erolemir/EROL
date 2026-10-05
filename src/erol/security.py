@@ -10,11 +10,20 @@ from typing import Any
 
 from erol.common import ErolError, canonical
 
+SENSITIVE_LABEL = (
+    r"(?:(?:[a-z0-9]+[_-])*(?:password|passwd|api[_-]?key|"
+    r"secret(?:[_-]?access[_-]?key)?|client[_-]?secret|private[_-]?key|"
+    r"(?:access|refresh|id|auth|signing|encryption)[_-]?(?:token|key)|"
+    r"token|session[_-]?cookie|cookie|authorization|credentials?)|"
+    r"(?:aws|stripe|openai|anthropic|gemini|google|github|gitlab|azure|"
+    r"slack|discord|twilio|sendgrid|supabase)[_-](?:[a-z0-9]+[_-])*key)"
+)
+SENSITIVE_FIELD = re.compile(r"(?i)^" + SENSITIVE_LABEL + r"$")
+
 SECRET_PATTERNS = (
     r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----",
     r"\b(?:sk-[A-Za-z0-9_-]{16,}|gh[pousr]_[A-Za-z0-9]{20,}|AKIA[A-Z0-9]{16})\b",
-    r"(?i)(?:password|passwd|api[_-]?key|(?:client[_-]?)?secret|(?:access[_-]?|refresh[_-]?|id[_-]?|auth[_-]?)?token|session[_-]?cookie)"
-    r"[\s\"']*[:=][\s\"']*[^\s\"',;}]+",
+    r"(?i)\b" + SENSITIVE_LABEL + r"[\s\"']*[:=][\s\"']*[^\s\"',;}]+",
     r"(?i)(?:authorization[\s\"']*[:=][\s\"']*(?:bearer|basic)\s+\S+|cookie\s*:\s*\S+)",
     r"(?i)\b(?:https?|postgres(?:ql)?|mysql|mongodb(?:\+srv)?|redis)://[^\s/@]+:[^\s/@]+@",
     r"\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b",
@@ -43,15 +52,10 @@ def scan_secrets(value: Any) -> list[str]:
         texts = [str(key) for key in value]
         assignments = [f"{key}={v}" for key, v in value.items() if isinstance(v, str)]
         # Any nonempty explicitly labelled credential is unsafe, even short/numeric ones.
-        sensitive = re.compile(
-            r"(?i)^(?:password|passwd|api[_-]?key|(?:client[_-]?)?secret|"
-            r"(?:access[_-]?|refresh[_-]?|id[_-]?|auth[_-]?)?token|"
-            r"session(?:[_-]?cookie)?|cookie|authorization)$"
-        )
         labelled = [
             "labelled-credential"
             for key, item in value.items()
-            if sensitive.fullmatch(str(key)) and item not in (None, "")
+            if SENSITIVE_FIELD.fullmatch(str(key)) and item not in (None, "")
         ]
         return sorted(
             set(

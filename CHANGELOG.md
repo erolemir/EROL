@@ -1,5 +1,34 @@
 # Changelog
 
+## 0.2.0
+
+- Add persisted auto/en/tr UI language selection using Windows display language
+  or POSIX locale, including translated command help.
+- Fix Windows DEL Backspace; add native/SGR wheel scrolling during tasks,
+  queued input, Unicode surrogate handling and stable streaming history.
+- Keep interactive connection summaries short; fingerprint oversized binary
+  assets and ignore Flutter/Gradle/Next caches without loosening text tool limits.
+- Discover the native Windows Codex desktop CLI when a standalone terminal lacks
+  its PATH entry, preserving PATH/explicit executable precedence and rejecting links.
+
+- Put the animated mantis in a responsive right sidebar with owned alternate-screen
+  rendering, fixed input/status, bounded transcript history and shell restoration.
+- Start projectless general conversation from the user's home; support global
+  connection/settings management and bounded public-HTTPS research. Add `/project PATH`
+  selection/switching while preserving external storage guards.
+- Automatically include relevant admitted builtin skills for general prompts and
+  builtin/project skills for project tasks; report only context-delivered skills.
+- Present readable connection/model/task summaries and grouped command help; add
+  command suggestions, compact view, motion controls and word/line editing.
+- Protect projectless session ownership, isolate observed check environments, require
+  explicit check-manifest trust and authenticate local panel access.
+- Add stdlib interactive EROL terminal with green mantis branding, multiline input,
+  slash commands, streaming task roles, task-relative diffs and observed checks.
+- Support independent Codex/Claude/agy CLI and OpenAI/Anthropic/Gemini/compatible
+  API connections, bounded tool loops, shared task budgets and explicit model routing.
+- Preserve dirty projects and isolated-run contracts; share single-writer leases,
+  track child cleanup, restrict review tools and retain external resumable evidence.
+
 ## Unreleased
 
 - Add bounded TODO/check/imported-issue discovery and explicit project-policy queues
