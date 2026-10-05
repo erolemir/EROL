@@ -35,13 +35,23 @@ test('panel filters, expands observed evidence, switches tabs and renders untrus
     jobs: [{ id: 'job-one', status: 'queued' }],
     benchmarks: [{ id: 'benchmark-one', status: 'completed', pairs: 1 }],
   };
+  const requests = [], historyCalls = [];
   const context = vm.createContext({
+    URLSearchParams, location: { hash: '#token=synthetic-session', pathname: '/' },
+    history: { replaceState: (...args) => historyCalls.push(args) },
     document: { getElementById: id => elements[id], createElement: tag => new Element(tag) },
-    fetch: async () => ({ ok: true, json: async () => data }),
+    fetch: async (url, options) => {
+      requests.push({ url, options });
+      return { ok: true, json: async () => data };
+    },
     setInterval() {},
   });
   vm.runInContext(script, context);
   await new Promise(resolve => setImmediate(resolve));
+  assert.deepEqual(historyCalls, [[null, '', '/']]);
+  assert.equal(requests[0].url, '/api/state');
+  assert.equal(requests[0].options.headers.Authorization, 'Bearer synthetic-session');
+  assert.equal(requests[0].options.cache, 'no-store');
   assert.match(elements.connection.textContent, /Yerel/);
   assert.equal(elements.items.children.length, 1);
   elements.items.children[0].children[0].onclick();
@@ -68,6 +78,7 @@ test('panel reports an unavailable evidence endpoint without inventing state', a
       .map(id => [id, new Element('div')])
   );
   vm.runInNewContext(script, {
+    URLSearchParams, location: { hash: '', pathname: '/' }, history: { replaceState() {} },
     document: { getElementById: id => elements[id], createElement: tag => new Element(tag) },
     fetch: async () => ({ ok: false }), setInterval() {},
   });

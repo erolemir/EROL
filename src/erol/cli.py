@@ -13,7 +13,8 @@ from pathlib import Path
 
 from erol import __version__
 from erol.adapters import capabilities
-from erol.common import ErolError, canonical
+from erol.checktrust import CheckTrust
+from erol.common import ErolError, canonical, digest
 from erol.config import Config
 from erol.execution import Runner
 from erol.identity import detect_project
@@ -48,7 +49,26 @@ def parser() -> argparse.ArgumentParser:
         default=os.environ.get("EROL_HOME", str(Path.home() / ".erol")),
         help="External state directory (default ~/.erol)",
     )
-    commands = root.add_subparsers(dest="command", required=True)
+    commands = root.add_subparsers(dest="command")
+    chat = commands.add_parser("chat", help="Open the EROL terminal or execute one prompt")
+    chat.add_argument("--prompt", help="One task with machine-readable JSON result")
+    chat.add_argument("--model", help="Explicit CONNECTION:MODEL; default automatic routing")
+    chat.add_argument("--resume", help="Saved session id (use --prompt to continue its task)")
+    chat.add_argument(
+        "--mode",
+        choices=("auto", "general", "research"),
+        default="auto",
+        help="Projectless chat/research or automatic project mode",
+    )
+    terminal_config = commands.add_parser(
+        "terminal", help="Manage external terminal connections/settings"
+    )
+    terminal_config.add_argument(
+        "--command", dest="terminal_command", default="/help", help="A terminal slash command"
+    )
+    logo = commands.add_parser("logo", help="Display the green mantis reference in the terminal")
+    logo.add_argument("--width", type=int, help="Width in terminal columns (8..160; auto up to 80)")
+    logo.add_argument("--color", choices=("auto", "always", "never"), default="auto")
     commands.add_parser("status", help="Project identity and current local lifecycle counts")
     for name in ("install", "setup", "update", "uninstall"):
         command = commands.add_parser(name, help="Inspect safe harness installation changes")
@@ -70,6 +90,18 @@ def parser() -> argparse.ArgumentParser:
     execute.add_argument("--review-harness", choices=("codex", "claude"))
     execute.add_argument("--mode", choices=("development", "research"), default="development")
     execute.add_argument("--checks", required=True, help="Reviewed versioned acceptance-check JSON")
+    checks = commands.add_parser("checks", help="Inspect and authorize reviewed host checks")
+    check_actions = checks.add_subparsers(dest="action", required=True)
+    for name in ("show", "trust", "revoke"):
+        check_action = check_actions.add_parser(name)
+        check_action.add_argument("--file", required=True)
+        if name == "trust":
+            check_action.add_argument("--env", action="append", default=[])
+            check_action.add_argument(
+                "--prefix",
+                default="[]",
+                help="Reviewed external executor argv prefix as JSON; no sandbox guarantee",
+            )
     execute.add_argument("--task-id", help="Unique task identity; generated when omitted")
     execute.add_argument(
         "--reviewers", type=int, default=1, help="1..3 independent read-only reviewers"
@@ -260,7 +292,7 @@ def run(args: argparse.Namespace) -> dict:
             from .panel import make_server
 
             server = make_server(store.directory, store.project_id, args.port)
-            url = f"http://127.0.0.1:{server.server_port}"
+            url = server.access_url
             print(json.dumps({"panel": url, "read_only": True}), file=sys.stderr, flush=True)
             if args.open:
                 import webbrowser
@@ -272,7 +304,31 @@ def run(args: argparse.Namespace) -> dict:
                 pass
             finally:
                 server.server_close()
-            return {"panel": url, "stopped": True}
+            return {"panel": f"http://127.0.0.1:{server.server_port}", "stopped": True}
+        if command == "checks":
+            from .execution import load_checks
+
+            manifest = load_checks(Path(args.file).expanduser().resolve(strict=True))
+            trust = CheckTrust(store.directory, root)
+            if args.action == "show":
+                return {
+                    "manifest": manifest,
+                    "manifest_digest": digest(manifest),
+                    "trusted": any(
+                        item["manifest_digest"] == digest(manifest) for item in trust.records()
+                    ),
+                    "execution": "host commands; review argv and invoked code before trusting",
+                }
+            if args.action == "revoke":
+                trust.revoke(manifest)
+                return {"manifest_digest": digest(manifest), "trusted": False}
+            return {
+                "approval": trust.approve(
+                    manifest, environment=args.env, prefix=json.loads(args.prefix)
+                ),
+                "original_root": str(root),
+                "sandbox_verified": False,
+            }
         if command in {"scan", "queue"}:
             from .work import Queue, WorkStore, discover, load_policy
 
@@ -554,7 +610,11 @@ def run(args: argparse.Namespace) -> dict:
                 if not args.harness or not args.report:
                     raise ErolError("Behavioral suite requires --harness and --report")
                 result = behavioral_benchmark(
-                    Path(args.suite), args.harness, Path(args.report), repeat=args.repeat
+                    Path(args.suite),
+                    args.harness,
+                    Path(args.report),
+                    repeat=args.repeat,
+                    trust=CheckTrust(store.directory, root),
                 )
                 from .work import WorkStore
 
@@ -603,6 +663,80 @@ def main(argv: list[str] | None = None) -> int:
             stream.reconfigure(encoding="utf-8")
     args = parser().parse_args(argv)
     try:
+        if args.command is None:
+            if sys.stdin.isatty() and sys.stdout.isatty():
+                from .console import launch
+
+                return launch(Path(args.project), Path(args.home))
+            parser().print_help()
+            return 2
+        if args.command in {"chat", "terminal"}:
+            from .chat import ChatEngine
+            from .console import command, launch
+            from .general import GeneralEngine
+
+            if args.command == "chat" and args.prompt is None:
+                return launch(
+                    Path(args.project),
+                    Path(args.home),
+                    model=args.model,
+                    resume=args.resume,
+                    mode=args.mode,
+                )
+            root, home = (
+                Path(args.project).expanduser().resolve(),
+                Path(args.home).expanduser().resolve(),
+            )
+            general = (
+                (args.command == "chat" and args.mode != "auto")
+                or root == home
+                or root in home.parents
+            )
+            engine = GeneralEngine(root, home) if general else ChatEngine(root, home)
+            if isinstance(engine, GeneralEngine) and args.command == "chat":
+                engine.mode = "research" if args.mode == "research" else "general"
+            if args.command == "terminal":
+                result = command(engine, args.terminal_command)
+                if result.get("select_general"):
+                    if not isinstance(engine, GeneralEngine):
+                        engine = GeneralEngine(root, home)
+                    engine.mode = result["mode"]
+                    if "general_task" in result:
+                        result = engine.execute(result["general_task"])
+            else:
+                engine.selected_model = args.model
+                if args.resume:
+                    engine.resume(args.resume)
+                if not args.prompt:
+                    result = {"session": engine.session_id, "status": engine.record.get("status")}
+                else:
+                    result = engine.execute(args.prompt, resume=bool(args.resume))
+            print(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False))
+            return (
+                1
+                if result.get("status") in {"needs_attention", "cancelled", "waiting_budget"}
+                else 0
+            )
+        if args.command == "logo":
+            import shutil
+
+            from .terminal import render_logo
+
+            width = (
+                args.width
+                if args.width is not None
+                else min(80, max(8, shutil.get_terminal_size().columns - 1))
+            )
+            if not 8 <= width <= 160:
+                raise ErolError("Logo width must be between 8 and 160 columns")
+            color = args.color == "always" or (
+                args.color == "auto"
+                and sys.stdout.isatty()
+                and "NO_COLOR" not in os.environ
+                and os.environ.get("TERM") != "dumb"
+            )
+            print(render_logo(width, color=color))
+            return 0
         result = run(args)
         print(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False))
         if result.get("passed") is False or result.get("status") == "conflict":

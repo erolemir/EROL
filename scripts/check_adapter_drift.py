@@ -23,7 +23,7 @@ from erol.common import reject_links  # noqa: E402
 from erol.plugin import plugin_files  # noqa: E402
 
 
-def expected_snapshots() -> dict[Path, str]:
+def expected_snapshots() -> dict[Path, str | bytes]:
     result = {}
     for harness in HARNESSES:
         base = ROOT / "adapters" / harness
@@ -38,7 +38,7 @@ def expected_snapshots() -> dict[Path, str]:
     return result
 
 
-def unexpected_bundle_files(expected: dict[Path, str]) -> list[Path]:
+def unexpected_bundle_files(expected: dict[Path, str | bytes]) -> list[Path]:
     extras = []
     for directory in (ROOT / "plugins/erol/runtime", ROOT / "plugins/erol/scripts"):
         reject_links(directory)
@@ -68,7 +68,7 @@ def main(argv: list[str] | None = None) -> int:
             raise ValueError("Generated snapshot escapes repository")
     extras = unexpected_bundle_files(snapshots)
     for path, content in snapshots.items():
-        expected = content.encode("utf-8")
+        expected = content.encode("utf-8") if isinstance(content, str) else content
         if options.write:
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(expected)

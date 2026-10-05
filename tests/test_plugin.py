@@ -41,7 +41,10 @@ class PluginTests(unittest.TestCase):
     def test_plugin_is_generated_and_bundles_runtime_without_global_cli(self):
         files = plugin_files()
         for relative, content in files.items():
-            self.assertEqual((ROOT / relative).read_bytes(), content.encode("utf-8"))
+            self.assertEqual(
+                (ROOT / relative).read_bytes(),
+                (content.encode("utf-8") if isinstance(content, str) else content),
+            )
         body = files["plugins/erol/skills/erol/SKILL.md"]
         self.assertIn("../../scripts/erol.mjs", body)
         self.assertIn("node <EROL_LAUNCHER>", body)
@@ -67,7 +70,9 @@ class PluginTests(unittest.TestCase):
                 if relative.startswith("plugins/erol/"):
                     path = package / relative.removeprefix("plugins/erol/")
                     path.parent.mkdir(parents=True, exist_ok=True)
-                    path.write_bytes(content.encode("utf-8"))
+                    path.write_bytes(
+                        content.encode("utf-8") if isinstance(content, str) else content
+                    )
             project = base / "working project ü"
             project.mkdir()
             # A caller package must not shadow the shipped runtime.
@@ -114,7 +119,9 @@ class PluginTests(unittest.TestCase):
                 if relative.startswith("plugins/erol/") and not relative.endswith(".mjs"):
                     path = package / relative.removeprefix("plugins/erol/")
                     path.parent.mkdir(parents=True, exist_ok=True)
-                    path.write_bytes(content.encode("utf-8"))
+                    path.write_bytes(
+                        content.encode("utf-8") if isinstance(content, str) else content
+                    )
             project = base / "unrelated project"
             project.mkdir()
             for module in ("json", "erol", "sitecustomize"):

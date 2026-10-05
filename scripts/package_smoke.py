@@ -21,7 +21,13 @@ def smoke() -> int:
     )
     expected_data = {
         name: hashlib.sha256((root / "src/erol/data" / name).read_bytes()).hexdigest()
-        for name in ("registry.json", "agents.json")
+        for name in (
+            "registry.json",
+            "agents.json",
+            "models.json",
+            "terminal-logo.json",
+            "brand/erol.png",
+        )
     }
     wheels = list((root / "dist").glob(f"erol_ai-{version}-*.whl"))
     if len(wheels) != 1:
@@ -64,7 +70,8 @@ def smoke() -> int:
                 'plans_checked': len(plans), 'routing_passed': routing_eval()['passed'],
                 'learning_passed': learning_demo()['passed'],
                 'data_digests': {name: hashlib.sha256((data / name).read_bytes()).hexdigest()
-                                 for name in ('registry.json', 'agents.json')}
+                                 for name in ('registry.json', 'agents.json', 'models.json',
+                                              'terminal-logo.json', 'brand/erol.png')}
             }))
             """
         )

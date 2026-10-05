@@ -1,0 +1,20 @@
+{
+  "checked_date": "2026-10-05",
+  "openai": [
+    {"id":"gpt-6-luna","level":1,"context_window":1050000,"source":"official_profile"},
+    {"id":"gpt-6.1-sol","level":3,"input_price":2,"output_price":10,"context_window":1050000,"source":"official_profile"},
+    {"id":"gpt-6-astra","level":4,"input_price":10,"output_price":50,"context_window":1050000,"latency_rank":3,"source":"official_profile"}
+  ],
+  "anthropic": [
+    {"id":"claude-haiku-4-5","level":1,"input_price":1,"output_price":5,"context_window":200000,"efforts":["none"],"latency_rank":1,"source":"official_profile"},
+    {"id":"claude-sonnet-5-5","level":2,"input_price":2,"output_price":10,"context_window":1000000,"source":"official_profile"},
+    {"id":"claude-opus-5-5","level":3,"input_price":4,"output_price":20,"context_window":1000000,"latency_rank":3,"source":"official_profile"}
+  ],
+  "gemini": [
+    {"id":"gemini-3.8-flash","level":2,"input_price":0.75,"output_price":3.75,"context_window":1048576,"latency_rank":1,"source":"official_profile"}
+  ],
+  "agy": [
+    {"id":"gemini-3.8-flash-medium","level":2,"context_window":1048576,"source":"official_profile"},
+    {"id":"gemini-3.1-pro-high","level":3,"context_window":1048576,"latency_rank":3,"source":"official_profile"}
+  ]
+}

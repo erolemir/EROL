@@ -46,6 +46,21 @@ def _darwin_group_terminated(pgid: int) -> bool:
     return True
 
 
+def _darwin_cleanup_complete(process: subprocess.Popen) -> bool:
+    """Allow a short reap race, then require proof that the whole group stopped."""
+    if process.poll() is None:
+        # killpg may find no signalable members while the leader's exit is still
+        # becoming visible to waitpid. Waiting is not permission to skip a live
+        # process: both the owned leader and every remaining member must be dead.
+        try:
+            process.wait(timeout=0.25)
+        except (OSError, subprocess.SubprocessError):
+            return False
+        if process.poll() is None:
+            return False
+    return _darwin_group_terminated(process.pid)
+
+
 def stop_process(process: subprocess.Popen) -> None:
     if os.name == "nt":
         # Only kill the tree of the Popen object owned by this runner, never a saved PID.
@@ -62,11 +77,7 @@ def stop_process(process: subprocess.Popen) -> None:
         except ProcessLookupError:
             pass
         except PermissionError:
-            if (
-                sys.platform != "darwin"
-                or process.poll() is None
-                or not _darwin_group_terminated(process.pid)
-            ):
+            if sys.platform != "darwin" or not _darwin_cleanup_complete(process):
                 raise
     if process.poll() is None:
         process.kill()

@@ -14,6 +14,7 @@ from contextlib import closing, contextmanager
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
+from .checktrust import CheckTrust, command_environment
 from .common import ErolError, atomic_write, canonical, digest, identifier, now, reject_links
 from .harness import CliHarness
 from .learning import LearningEngine
@@ -193,6 +194,23 @@ class Runner:
         )
         marker = common / "erol-run.json"
         with self.runs.lease(common / "erol-run.lock"), self.runs.lease():
+            chat_marker = common / "erol-chat.json"
+            reject_links(chat_marker)
+            if chat_marker.exists():
+                try:
+                    if chat_marker.stat().st_size > 16000:
+                        raise ValueError("oversized marker")
+                    chat = json.loads(chat_marker.read_text("utf-8"))
+                    if not isinstance(chat, dict) or not isinstance(chat.get("active_pids"), list):
+                        raise ValueError("invalid marker")
+                    if any(type(p) is not int or p <= 0 for p in chat["active_pids"]):
+                        raise ValueError("invalid pid")
+                    if any(pid_alive(p) for p in chat["active_pids"]):
+                        raise ErolError("An earlier terminal child may still be running")
+                except (ValueError, TypeError, OSError) as exc:
+                    raise ErolError(
+                        "Shared terminal state is invalid; inspect its session"
+                    ) from exc
             reject_links(marker)
             if marker.exists():
                 if marker.stat().st_size > 16000:
@@ -273,6 +291,7 @@ class Runner:
             raise ErolError("Nested EROL execution is unsupported")
         checks_path = checks_path.resolve(strict=True)
         checks = load_checks(checks_path)
+        CheckTrust(self.store.directory, self.root).require(checks)
         assert_secret_safe(task)
         run_id = "run-" + uuid.uuid4().hex
         task_id = identifier(task_id or run_id)
@@ -408,11 +427,15 @@ class Runner:
                 raise ErolError("Run worktree identity mismatch")
             worktree = Path(record["worktree"])
             reject_links(worktree)
-            if digest(load_checks(Path(record["checks_path"]))) != record["checks_digest"]:
+            if (
+                digest(load_checks(Path(record["checks_path"]))) != record["checks_digest"]
+                or digest(record["checks_manifest"]) != record["checks_digest"]
+            ):
                 record.update(
                     {"checks": [], "review": None, "tested_digest": None, "reviewed_digest": None}
                 )
                 return self._attention(record, "Check manifest changed; start a new task")
+            CheckTrust(self.store.directory, self.root).require(record["checks_manifest"])
             registered = git(self.root, "worktree", "list", "--porcelain").decode("utf-8")
             if f"worktree {worktree.as_posix()}\n" not in registered.replace("\\", "/"):
                 raise ErolError("Saved working tree is not registered with this repository")
@@ -491,7 +514,11 @@ class Runner:
 
     def _checks(self, record: dict) -> list[dict]:
         results = []
+        trust = CheckTrust(self.store.directory, self.root)
+        if digest(record["checks_manifest"]) != record["checks_digest"]:
+            raise ErolError("Stored check manifest changed")
         for item in record["checks_manifest"]["checks"]:
+            policy = trust.require(record["checks_manifest"])
             diagnostic = ""
 
             def output(stdout: bool, line: bytes) -> None:
@@ -510,13 +537,13 @@ class Runner:
                 ),
             )
             outcome = observe(
-                item["argv"],
+                policy["prefix"] + item["argv"],
                 Path(record["worktree"]),
                 timeout=timeout,
                 on_start=lambda pid: self._child(record, pid),
                 cancelled=lambda: self._cancelled(record["id"]),
                 on_output=output,
-                environment={**os.environ, "EROL_RUN_ACTIVE": "1"},
+                environment=command_environment(policy["environment"]),
             )
             results.append(
                 {
@@ -797,7 +824,10 @@ class Runner:
                     return self._attention(record, "Cancellation requested")
                 if self._remaining(record, self.limits.task_seconds) <= 0:
                     return self._attention(record, "Total task time budget exhausted")
-                if digest(load_checks(Path(record["checks_path"]))) != record["checks_digest"]:
+                if (
+                    digest(load_checks(Path(record["checks_path"]))) != record["checks_digest"]
+                    or digest(record["checks_manifest"]) != record["checks_digest"]
+                ):
                     record.update(
                         {
                             "checks": [],
@@ -807,6 +837,7 @@ class Runner:
                         }
                     )
                     return self._attention(record, "Check manifest changed; start a new task")
+                CheckTrust(self.store.directory, self.root).require(record["checks_manifest"])
                 phase = record["phase"]
                 if phase == "inspect":
                     before, _ = snapshot(worktree, record["base_commit"])
