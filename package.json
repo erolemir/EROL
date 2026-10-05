@@ -1,6 +1,6 @@
 {
   "name": "erol",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "Extensible Reasoning & Orchestration Layer: local project memory and evidence-gated learning",
   "type": "module",
   "license": "AGPL-3.0-only",
@@ -23,6 +23,7 @@
     "src/erol/**/*.py",
     "src/erol/data/**/*.json",
     "src/erol/data/**/*.md",
+    "src/erol/data/**/*.png",
     "plugins/erol/plugin.json",
     "plugins/erol/LICENSE",
     "plugins/erol/COPYRIGHT",
@@ -34,6 +35,7 @@
     "plugins/erol/runtime/erol/**/*.py",
     "plugins/erol/runtime/erol/data/**/*.json",
     "plugins/erol/runtime/erol/data/**/*.md",
+    "plugins/erol/runtime/erol/data/**/*.png",
     ".agents/plugins/marketplace.json",
     ".claude-plugin/marketplace.json",
     "adapters/**/*.md",

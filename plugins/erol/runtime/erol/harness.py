@@ -11,7 +11,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from .common import ErolError, atomic_write, canonical, identifier, required_text
+from .common import ErolError, atomic_write, canonical, identifier, reject_links, required_text
 from .runprocess import observe
 from .security import assert_secret_safe, scan_secrets
 
@@ -71,18 +71,57 @@ RESEARCH_REVIEW_SCHEMA = {
 }
 
 
+def windows_codex_executable() -> str | None:
+    """Inspect the observed desktop install, never recursively search user files."""
+    local = os.environ.get("LOCALAPPDATA")
+    if not local or not Path(local).is_absolute():
+        return None
+    directory = Path(local) / "OpenAI" / "Codex" / "bin"
+    try:
+        reject_links(directory)
+        if not directory.is_dir():
+            return None
+        candidates = [directory / "codex.exe"]
+        with os.scandir(directory) as entries:
+            for count, entry in enumerate(entries):
+                if count >= 64:
+                    return None
+                if re.fullmatch(r"[a-f0-9]{16}", entry.name) and entry.is_dir(
+                    follow_symlinks=False
+                ):
+                    candidates.append(directory / entry.name / "codex.exe")
+        native = []
+        for candidate in candidates:
+            try:
+                reject_links(candidate)
+                if candidate.is_file():
+                    native.append((candidate.stat().st_mtime_ns, str(candidate)))
+            except (ErolError, OSError):
+                continue
+        return max(native)[1] if native else None
+    except (ErolError, OSError):
+        return None
+
+
 def command_prefix(name: str) -> list[str]:
     executable = shutil.which(name)
+    if not executable and name == "codex" and os.name == "nt":
+        executable = windows_codex_executable()
     if not executable:
-        raise ErolError("Requested harness executable is unavailable")
+        raise ErolError(
+            "Requested harness executable is unavailable; install the native CLI or add it "
+            "to PATH. A connection can also specify an absolute native executable path."
+        )
     path = Path(executable)
     if os.name == "nt" and path.suffix.lower() in {".cmd", ".bat", ".ps1"}:
+        if name not in {"codex", "claude"}:
+            raise ErolError("Unsupported CLI shell wrapper; configure a native executable")
         package = (
             "@openai/codex/bin/codex.js" if name == "codex" else "@anthropic-ai/claude-code/cli.js"
         )
         entry = path.parent / "node_modules" / package
         node = shutil.which("node")
-        if not node or not entry.is_file():
+        if not node or Path(node).suffix.lower() in {".cmd", ".bat", ".ps1"} or not entry.is_file():
             raise ErolError("Harness shell wrapper has no supported native or Node entry point")
         return [node, str(entry)]
     return [executable]

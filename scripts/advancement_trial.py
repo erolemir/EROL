@@ -6,9 +6,10 @@ import argparse
 import tempfile
 from pathlib import Path
 
+from erol.checktrust import CheckTrust
 from erol.common import atomic_write, canonical
 from erol.config import Config
-from erol.execution import Runner, git
+from erol.execution import Runner, git, load_checks
 from erol.identity import detect_project
 from erol.learning import LearningEngine
 from erol.registry import Registry
@@ -110,6 +111,8 @@ def trial() -> dict:
         RunStore(store.directory, project.id) as runs,
         WorkStore(store.directory, project.id) as work,
     ):
+        # The opt-in trial owns the fixed manifest and generated fixture code.
+        CheckTrust(store.directory, root).approve(load_checks(checks))
         engine = LearningEngine(store, Config(), Registry(project_store=store))
         queue = Queue(work, InterruptAfterReviews(store, engine, runs))
         scan = discover(root, work, checks_path=checks)

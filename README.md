@@ -1,9 +1,11 @@
 # EROL
 
+<p align="center"><img src="src/erol/data/brand/erol.png" alt="EROL yeşil peygamberdevesi logosu" width="240"></p>
+
 **Extensible Reasoning & Orchestration Layer**
 
-Codex ve Claude Code için ortak proje hafızası, ilgili skill seçimi, kontrollü
-otonom görev yürütme ve kaynaklı araştırma katmanı.
+Codex, Claude Code, Antigravity ve API bağlantıları için ortak terminal, ekonomik
+model seçimi, proje hafızası ve kontrollü görev yürütme katmanı.
 
 EROL, geliştirme asistanının önceki doğrulanmış çözümleri kullanmasını, göreve
 uygun iş akışlarını seçmesini ve sonucu testlerle ve ayrı bir incelemeyle
@@ -28,6 +30,7 @@ ile farklı olabilir. EROL şu anda npm veya PyPI kayıtlarında yayımlanmıyor
 - [Windows: bilgisayar genelinde erol komutu](#windows-bilgisayar-genelinde-erol-komutu)
 - [macOS ve Linux: Python CLI](#macos-ve-linux-python-cli)
 - [Kaynak koddan kullanım ve proje kurulumu](#kaynak-koddan-kullanım-ve-proje-kurulumu)
+- [EROL terminali](#erol-terminali)
 - [Günlük kullanım](#günlük-kullanım)
 - [Otonom geliştirme görevi](#otonom-geliştirme-görevi)
 - [Teknik, ürün ve rakip araştırması](#teknik-ürün-ve-rakip-araştırması)
@@ -258,7 +261,207 @@ mutlak yolunu kaydeder; checkout taşınırsa setup'ı yeniden çalıştır. Pyt
 harness ortamında `erol` komutunun erişilebilir olmasını gerektirir.
 [Kurulum/sahiplik ayrıntıları](docs/installation.md).
 
+## EROL terminali
+
+Bu checkout'un 0.2.0 sürümünde proje klasöründe `erol` yazmak EROL terminalini
+başlatır. Açılışta yeşil marka logosu, proje yolu, bağlantı durumu ve görev bütçesi
+görünür. `erol chat` aynı arayüzü açar. Enter gönderir, Ctrl+J yeni satır ekler,
+Tab komutları tamamlar; ok tuşları oturum geçmişinde gezinir. Ctrl+C görevi
+iptal eder ve değişiklikleri korur. Küçük ekran, `NO_COLOR` veya desteklenmeyen
+terminalde sade giriş kullanılır. Çok satırlı yapıştırma bracketed-paste
+özelliği gönderen terminallerde desteklenir.
+
+Bağlantılar, modeller, ayarlar, durum, kullanım ve test sonuçları etkileşimli
+ekranda kısa insan-okunur özetlerdir; headless JSON sözleşmesi korunur. `/help`
+komutları sohbet, bağlantılar, doğrulama ve görünüm başlıklarıyla gruplar.
+Komut yazarken Tab önerileri görünür. Ctrl+W önceki kelimeyi, Ctrl+K satır
+sonunu siler; çok satırlı girişte yukarı/aşağı tuşları satırlar arasında gezinir.
+`/clear` yalnız görünür konuşmayı temizler. `/view compact` logo panelini kapatıp
+yanıt alanını genişletir; `/view full` geri açar. `/motion off` hareketi durdurur,
+`/motion on` geri açar. Bu görünüm tercihleri oturum içindir.
+
+Desteklenen terminalde EROL temiz bir ayrı ekran açar; önceki PowerShell yazıları
+arka planda kalmaz. Yanıtlar solda, hafifçe hareket eden marka logosu sağdadır.
+Giriş ve durum satırı altta sabittir. `/logo` sağ alanı büyütüp küçültür;
+Fare tekerleği veya PgUp/PgDn yanıt geçmişinde gezinir; görev çalışırken de
+kaydırılan konum korunur. Backspace/Delete yazıyı siler, Ctrl+U giriş alanını
+temizler. Fare raporlayan terminallerde metin seçmek için Shift+tık kullanılır.
+Logo alanı en az 72 sütun / 18 satırda açılır;
+daha küçük ekranlarda yazı ve giriş alanı korunur. Çıkışta önceki terminal ekranı
+geri gelir. `NO_COLOR` ile sade, statik görünüm kullanılır.
+
+Arayüz ilk açılışta bilgisayarın diline göre seçilir: Windows kullanıcı arayüzü
+Türkçeyse Türkçe, diğer dillerde İngilizce. POSIX ortamlarında locale değişkenleri
+kullanılır. `/language tr`, `/language en`, `/language auto` ile değiştirilebilir;
+seçim proje seçilmeden de harici ayarlara kaydedilir. Komut adları ve JSON
+alanları aynı kalır; sağlayıcı
+hata mesajları ve model yanıtları kendi dillerinde gösterilir.
+
+Kullanıcı klasöründe (örneğin `C:\Users\emirh`) açılırsa, EROL home bu klasörün
+içinde olduğunda projesiz genel sohbet açılır. `/connect`, `/providers`, model,
+dil ve ayar yönetimi için proje gerekmez. Bir soru yazarak genel sohbet,
+`/research SORU veya URL` ile araştırma başlatılır; `/general` web araçlarını
+kapatıp genel sohbete döner. Dosya işlemleri için
+`/project "C:\Users\emirh\OneDrive\Masaüstü\EROL"` kullanılır. Normal proje
+klasöründen açılış mevcut proje modunu korur; `erol chat --mode general` her
+klasörden projesiz açar. Kapsam değişince ayrı oturum kullanılır; seçili model ve
+harici bağlantı/dil/bütçe ayarları korunur.
+
+Projesiz mod proje hafızası, snapshot, kontrol komutları veya dosya araçları
+oluşturmaz. Native CLI yeni geçici çalışma klasöründe çalışır; Codex shell
+aracı kapatılır, Claude genel sohbette araçsız, araştırmada WebSearch/WebFetch
+ile çalışır. Native ayar/eklenti politikaları ayrıca geçerlidir; bu evrensel OS
+izolasyonu değildir. `agy` salt okunur role uygun olmadığı için projesiz
+modda seçilmez; proje uygulama görevleri için bağlantısı korunur.
+
+API araştırması public HTTPS HTML/metin URL'lerini okuyabilir; bir arama indeksi
+sağlamaz. Soruyla ilgili URL vermek gerekebilir. Özel/yerel adresler ve kimlik
+bilgili URL'ler reddedilir; erişim toplam sekiz kaynak ve 60 saniyeyle, yanıt
+başına 1 MiB ile sınırlıdır. Kaynak metni güvenilmeyen referanstır; kayıt yalnız
+erişim metadatasını saklar. Projesiz oturumlar harici `global/chat` altında,
+proje kimliği olmadan tutulur; model yanıtları arşivlenmez. Sohbetin `completed`
+durumu yanıtın teslimini belirtir, test veya gerçeklik doğrulaması sayılmaz.
+
+```text
+erol
+/help
+/language auto
+/connect codex
+/connect claude
+/connect antigravity
+/connect openai work OPENAI_API_KEY
+/connect anthropic review ANTHROPIC_API_KEY
+/connect gemini google GEMINI_API_KEY
+/providers
+/models refresh
+/settings api_budget_usd 5
+/model auto
+/plan Göreve uygun bir uygulama planı hazırla
+```
+
+Normal promptlarda ilgili skill'ler otomatik seçilir, gövdeleri model bağlamına
+alınır ve seçilen adlar terminalde gösterilir; ayrıca `/plan` yazmak gerekmez.
+Proje modunda hazır skill'ler, aktif öğrenilmiş proje skill'leri ve ilgili hafıza
+birlikte değerlendirilir. Projesiz mod yalnız hazır EROL skill'lerini kullanır;
+proje hafızası yüklemez. İlgisiz basit sorulara skill yüklenmez. Bağlam bütçesine
+sığmayan skill kullanılmış sayılmaz. Skill bir yönerge/referanstır; kendi başına
+ayrı komut/agent çalıştırmaz, mevcut rol ve araç izinlerini genişletmez.
+
+CLI bağlantıları kendi girişlerini kullanır. `antigravity` bağlantısı resmi
+`agy` headless CLI içindir; Antigravity IDE başlatıcısı bunun yerine geçmez.
+API anahtarı ortam değişkenine konur; ayarlarda yalnızca değişken adı saklanır.
+Aynı sağlayıcının CLI ve API bağlantıları ayrı kimliklerle birlikte kullanılabilir.
+`/connect` bağlantıyı kaydeder ve kısa bir özet gösterir; giriş/erişim durumu
+`/providers` ile kontrol edilir. Profil listelenmesi hesap erişiminin kanıtı değildir.
+Windows'ta PATH'te Codex bulunmazsa EROL, Codex masaüstü uygulamasının bilinen
+`%LOCALAPPDATA%/OpenAI/Codex/bin` klasöründeki native CLI'ı kontrol eder.
+Claude giriş istiyorsa normal terminalde `claude auth login` çalıştır ve
+EROL'da `/providers` ile tekrar kontrol et.
+Özel endpoint örneği: `/connect compatible local LOCAL_API_KEY http://localhost:8000/v1`.
+Özel bağlantıya `/models add local {"id":"model-id","level":2,"input_price":1,"output_price":5}`
+ile profil eklenir. Fiyatlar bir milyon token başına USD'dir; yerel ücretsiz
+model için iki fiyat da `0` olabilir.
+
+| Komut | İşlev |
+| --- | --- |
+| `/help` | Komutlar ve örnekler |
+| `/project` | Projeyi göster; `/project PATH` ile proje seç/değiştir |
+| `/general`, `/research` | Projesiz sohbet veya kaynak araştırması; isteğe bağlı mesaj |
+| `/providers` | Giriş/yetenek kontrolü; `enable ID`, `disable ID` |
+| `/models`, `/model` | Profiller, erişimi yenileme, `auto` veya `CONNECTION:MODEL` |
+| `/settings` | Bütçe, politika, izinli komutlar, test manifesti ve süre |
+| `/plan` | İşlem başlatmadan EROL planı |
+| `/diff`, `/tests` | Göreve ait dosya farkları ve gözlenen test çıktıları |
+| `/usage`, `/status` | Token, maliyet tahmini ve oturum durumu |
+| `/new`, `/resume`, `/exit` | Yeni oturum, kayıt yükleme/devam ve çıkış |
+| `/logo` | Sağdaki logo alanını büyüt/küçült; sade görünümde statik logo |
+| `/language` | Kalıcı arayüz dili: `auto`, `en`, `tr` |
+| `/clear`, `/view`, `/motion` | Görünür konuşmayı temizle, kompakt/tam görünüm, hareket aç/kapat |
+
+Model seçimi görev riski/kapsamını ve EROL planını değerlendirir. Belirsiz görevler
+orta düzeyden başlar; küçük, açık düzeltmeler ekonomik profillere, geniş/riskli
+işler güçlü profillere yönlenir.
+`selam`, `merhaba`, `hello` gibi açık basit sohbetler de ekonomik tier ve düşük
+reasoning ile çalışır. Hesap erişimi/bağlam/bütçe nedeniyle alt tier uygun değilse
+seçim gerekçesinde belirtilir. Büyük görevlerde önce salt okunur planlama,
+sonra tek uygulayıcı ve en fazla iki eşzamanlı salt okunur reviewer çalışır.
+Üç uygulama denemesi içinde test/review bulguları düzeltilmeye gönderilir;
+otomatik seçim gerektiğinde daha güçlü modele geçebilir. Elle seçilen model
+sessizce değiştirilmez. Seçim gerekçesi ve kullanılan rol/model ekranda gösterilir.
+Başlangıç seviyeleri kalite ve gecikme varsayımlarıdır; ölçülmüş başarı oranı değildir.
+Gerçek hesap model erişimi ayrıca kontrol edilir. Katalog kaynakları ve sınırlar
+[terminal sözleşmesinde](docs/terminal.md) yer alır. Windows'ta terminal ve yerel
+paket kontrolleri yapıldı; bu bilgisayardaki Codex sandbox proje erişimini
+engelledi, Claude giriş yapmamış ve `agy` kurulu değil. Canlı API/macOS/Linux
+çalışması bu sürümde doğrulanmadı. Gerçek ölçümler
+[uygulama raporunda](docs/implementation-plan.md#erol-terminal-milestone-020-local-unpublished).
+
+Projesiz güncellemede canlı Codex genel sohbet çağrısı da başarılı oldu; bu
+kontrol proje dosyası erişimini, canlı web araştırmasını veya diğer sağlayıcı
+hesaplarını doğrulamaz. [Güncelleme sonuçları](docs/implementation-plan.md#projectless-conversation-and-terminal-usability-2026-10-05).
+
+Değişiklikler doğrudan mevcut klasörde yapılır; önceden bulunan değişiklikler
+görev başlangıcındaki dosya durumundan ayrıştırılır. Git olmayan klasörler de
+desteklenir. Otomatik stash/reset/commit yapılmaz. Aynı projede tek yazıcı kilidi
+uygulanır. CLI'nin araç izinleri kendi desteklediği sandbox'a dayanır. API
+araçları proje okuma/arama, hash ile korunan yazma/silme ve açık izinli argv
+komutlarını içerir; review rolleri yalnızca okuma/arama yapabilir.
+
+`.next`, `.dart_tool`, `.gradle` gibi derleme önbellekleri karşılaştırmaya girmez.
+2 MiB üzerindeki ikili dosyalar belleğe yüklenmeden SHA256 ile izlenir; büyük
+kaynak metinleri dosya adıyla açıklanan bir hata verir. Toplam tarama sınırı
+64 MiB'dir. Birden fazla uygulama içeren klasörlerde `/project PATH` ile
+çalışılacak uygulamanın klasörünü seçmek bağlamı daraltır.
+
+Anlamlı testleri otomatik koşmak için mevcut
+[check manifesti](docs/execution.md) biçimini kullan:
+
+```text
+/settings checks_path C:/checks/my-project.json
+/settings allowed_commands [["python","-m","unittest","discover","-s","tests"]]
+```
+
+Manifestteki komutlar da uygulayıcı API araçlarına açılır. EROL gözlenen komut
+çıktısını kaydeder. Kabul testi ve bağımsız review birlikte geçmeden
+`completed` / doğrulanmış başarı gösterilmez; eksik doğrulama
+`implemented_unverified`, bulgu/hata `needs_attention`, iptal `cancelled` olur.
+
+Varsayılan 5 USD bütçe bütün API rollerini, araç döngülerini ve tekrarları kapsar.
+Abonelikli CLI konuşmalarında giriş/çıkış token kullanımı gösterilir; API USD hesabı
+yalnız API çağrısı veya kalan API muhasebesi olduğunda görünür. Sağlayıcı token ya da
+kota bildirmemişse değer bilinmiyor olarak kalır.
+Her çağrı öncesi tahmini giriş/çıktı maliyeti ayrılır; sağlayıcı kullanımı
+bildirmezse ayrılan tutar tüketilmiş sayılır. Bütçe yetmezse `waiting_budget`
+kaydedilir. `/settings api_budget_usd 10` ardından `/resume SESSION_ID continue`
+ile aynı toplam muhasebe ve sınırlı görev özetiyle devam edilebilir.
+`/diff` devam adımlarının farklarını da gösterir. Sayaç kesin fatura üst sınırı
+değildir; CLI abonelik kotası USD API muhasebesinden ayrı gösterilir.
+
+Ayarlar harici EROL home'daki `connections.json` içindedir; mevcut öğrenme
+ayarlarını değiştirmez. Oturumlar proje kimliğine bağlı harici kayıtlardır.
+Headless kullanım: `erol chat --prompt "GÖREV" --model codex:gpt-6.1-sol`.
+Projesiz örnek: `erol chat --mode general --prompt "Bu fikri değerlendir"`;
+araştırma: `erol chat --mode research --prompt "https://example.org kaynağını incele"`.
+`erol terminal --command "/help"` JSON döndürür. TTY olmayan alt komutsuz
+çağrı yardım gösterir; kendiliğinden sohbet/model çağrısı başlatmaz.
+
 ## Günlük kullanım
+
+Referans peygamberdevesi figürünü yeşil ve siyah terminal çıktısı olarak göster:
+
+```console
+erol logo
+erol logo --width 100
+```
+
+Kaynak checkout'unda `npx --no-install erol logo` kullan. Figür, referans görselden
+üretilmiş yarım blok karakterlerle çizilir; runtime resim kütüphanesi gerekmez.
+En iyi görünüm için eş aralıklı yazı tipi ve 24-bit ANSI renk destekleyen bir
+terminal kullan. Varsayılan genişlik terminale göre en fazla 80 sütundur;
+`--width` 8–160 sütun seçer. Yazı tipinin hücre oranı görünümü etkiler.
+`--color never` renksiz çıktıyı, `--color always` yönlendirmede de rengi seçer.
+Otomatik renk, terminal dışı çıktıda, `NO_COLOR` ile veya `TERM=dumb` olduğunda
+kapanır. Bu komut proje hafızası oluşturmaz.
 
 Terminali kendi projenin klasöründe aç. Windows örneği:
 
@@ -280,7 +483,10 @@ erol panel --open
 `status` proje kimliği/sürüm/hafızayı gösterir. `doctor` paket/ortam kontrolüdür;
 model girişinin veya görevin geçtiği anlamına gelmez. `plan` öneriyi, `explain`
 seçim gerekçesini verir. `panel` yerel görev/kuyruk/kanıt kayıtlarını gösterir;
-terminalde Ctrl+C ile kapanır.
+her açılışta yeni erişim belirteci üretir ve terminalde Ctrl+C ile kapanır.
+`--open` veya terminalde verilen belirteçli bağlantıyla aç; `/api/state` belirteçsiz
+istekleri reddeder. Belirteç tarayıcı belleğinde tutulur, URL'den kaldırılır;
+sayfayı yenilediğinde ilk bağlantıyı tekrar kullan. Bağlantıyı paylaşma.
 
 Başka klasörden `--project`, farklı harici hafıza için `--home` kullan.
 **Bu seçenekler alt komuttan önce gelmelidir:**
@@ -327,6 +533,28 @@ kurulu Python'un mutlak yolunu kullan. Windows'ta `.cmd/.bat/.ps1` wrapper yerin
 native executable kullan: Node testi için `["node", "--test", "tests/add.test.mjs"]`.
 Kontrol dosyasını projeye koyduysan inceleyip commit et; yeni dosya ağacı kirletir.
 [Şema](schemas/checks.schema.json) ve [örnek](examples/checks.json).
+
+Kontrol dosyasının repoda bulunması çalıştırma yetkisi vermez. Önce `argv`,
+çağrılan script/test kodu ve bağımlılıklarını incele; ardından açıkça onayla:
+
+```powershell
+erol checks show --file '.\checks.json'
+erol checks trust --file '.\checks.json'
+```
+
+Onay harici EROL home altında gerçek proje köküne ve manifest içerik özetine
+bağlanır. Manifest değişirse yeni onay gerekir; `erol checks revoke --file PATH`
+aynı içeriğin onayını kaldırır. `run`, `scan --checks`, terminal kontrolleri,
+API kontrol araçları ve devam işlemleri bu onayı kontrol eder. Ortam yalnızca
+PATH/sistem/geçici dizin/dil gibi temel değişkenleri aktarır; API anahtarları ve
+interpreter başlangıç değişkenleri devralınmaz. Gerekli kamuya açık değişkenler
+`checks trust --env NAME` ile eklenebilir.
+
+Onay veya worktree bir OS sandbox değildir; onay çağrılan kodun gelecekteki
+değişikliklerini güvenilir kılmaz. Güvenilmeyen projeler için önceden hazırladığın
+sandbox veya ayrı kullanıcı yürütücüsünün literal argv önekini `--prefix JSON`
+ile yapılandır; EROL bu önekin OS izolasyonunu doğrulamaz.
+[Yürütme sınırları ve örnek](docs/execution.md#check-authorization-and-command-environment).
 
 ### 2. Görevi çalıştır
 
@@ -475,11 +703,15 @@ erol panel --port 8765 --open
 ```
 
 Suite yolunu checkout'taki [örneğe](examples/behavior-suite.json) veya kendi suite'ine
-yönelt. Benchmark model çağrısı yapar; süre/kullanım tüketir. Aynı fixture'ı EROL
+yönelt. Her case'in `checks` nesnesini ayrı JSON dosyasına çıkarıp, fixture kodunu
+inceleyerek `checks trust --file PATH` ile onayla; benchmark onaysız başlamaz.
+Benchmark model çağrısı yapar; süre/kullanım tüketir. Aynı fixture'ı EROL
 bağlamıyla/bağlam olmadan karşılaştırır; iki kolda runner kontrolleri/inceleme korunur.
 Bu context ablation'dır; saf harness karşılaştırması değildir. Tek pair genel hız/token
 kazancı göstermez. Panel yalnızca 127.0.0.1 üzerinde seçilmiş read-only kanıtları
-gösterir; görev başlatmaz, raw sohbet/credentials sunmaz.
+gösterir; görev başlatmaz, raw sohbet/credentials sunmaz. API erişimi açılışa özgü
+belirteç gerektirir. Gizli bilgi taraması kısa/numerik AWS/Stripe credential
+alanlarını da reddeder; sezgisel tarama tüm gizli bilgileri bulma garantisi değildir.
 
 ## Hafıza ve öğrenme
 

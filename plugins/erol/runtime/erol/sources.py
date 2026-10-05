@@ -80,7 +80,7 @@ class PinnedHTTPS(http.client.HTTPSConnection):
             raise
 
 
-def fetch_source(url: str, *, deadline: float, cancelled=lambda: False) -> dict:
+def fetch_source(url: str, *, deadline: float, cancelled=lambda: False, include_text=False) -> dict:
     original = url
     for _ in range(4):
         if cancelled() or time.monotonic() >= deadline:
@@ -113,6 +113,7 @@ def fetch_source(url: str, *, deadline: float, cancelled=lambda: False) -> dict:
                 raise ErolError("Unsupported source content type")
             hasher = hashlib.sha256()
             size = 0
+            chunks = []
             while True:
                 if cancelled() or time.monotonic() >= deadline:
                     raise ErolError("Source access cancelled or budget exhausted")
@@ -125,7 +126,9 @@ def fetch_source(url: str, *, deadline: float, cancelled=lambda: False) -> dict:
                 if size > 1048576:
                     raise ErolError("Source body exceeds one MiB receipt budget")
                 hasher.update(chunk)
-            return {
+                if include_text:
+                    chunks.append(chunk)
+            receipt = {
                 "url": original,
                 "final_url": url,
                 "status": "accessed",
@@ -136,6 +139,38 @@ def fetch_source(url: str, *, deadline: float, cancelled=lambda: False) -> dict:
                 "fetched_at": now(),
                 "evidence_type": "runner_observed_source_access",
             }
+            if include_text:
+                if content_type == "application/pdf":
+                    raise ErolError(
+                        "PDF text extraction is unavailable; use a public HTML/text source"
+                    )
+                text = b"".join(chunks).decode("utf-8", errors="replace")
+                if content_type in {"text/html", "application/xhtml+xml"}:
+                    from html.parser import HTMLParser
+
+                    class Text(HTMLParser):
+                        def __init__(self):
+                            super().__init__()
+                            self.hidden = 0
+                            self.parts: list[str] = []
+
+                        def handle_starttag(self, tag, attrs):
+                            if tag in {"script", "style"}:
+                                self.hidden += 1
+
+                        def handle_endtag(self, tag):
+                            if tag in {"script", "style"} and self.hidden:
+                                self.hidden -= 1
+
+                        def handle_data(self, data):
+                            if not self.hidden:
+                                self.parts.append(data)
+
+                    parser = Text()
+                    parser.feed(text)
+                    text = " ".join(parser.parts)
+                receipt["text"] = " ".join(text.split())[:64000]
+            return receipt
         finally:
             connection.close()
     raise ErolError("Source redirect limit exceeded")

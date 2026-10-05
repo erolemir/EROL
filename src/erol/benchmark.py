@@ -8,6 +8,7 @@ import time
 import uuid
 from pathlib import Path
 
+from .checktrust import CheckTrust
 from .common import ErolError, atomic_write, canonical, digest, now, reject_links, required_text
 from .config import Config
 from .execution import Limits, Runner, git, load_checks
@@ -121,11 +122,20 @@ def metrics(run: dict, elapsed: float) -> dict:
 
 
 def behavioral_benchmark(
-    suite_path: Path, harness: str, report_path: Path, *, repeat: int = 1, runner_factory=Runner
+    suite_path: Path,
+    harness: str,
+    report_path: Path,
+    *,
+    repeat: int = 1,
+    runner_factory=Runner,
+    trust: CheckTrust | None = None,
 ) -> dict:
     if not 1 <= repeat <= 3:
         raise ErolError("Behavioral repeat must be 1..3")
     suite = load_suite(suite_path)
+    if trust is None:
+        raise ErolError("Behavioral suite contains unreviewed checks; use erol checks trust first")
+    approved = {case["id"]: trust.require(case["checks"]) for case in suite["cases"]}
     retained = Path(tempfile.mkdtemp(prefix="erol-behavior-"))
     report: dict = {
         "schema_version": 1,
@@ -182,6 +192,10 @@ def behavioral_benchmark(
                 with Store(
                     retained / "homes" / case["id"] / f"{iteration}-{arm}", detect_project(root)
                 ) as store:
+                    policy = approved[case["id"]]
+                    CheckTrust(store.directory, root).approve(
+                        case["checks"], environment=policy["environment"], prefix=policy["prefix"]
+                    )
                     for memory in case["memory"]:
                         store.put("learnings", memory)
                     engine = LearningEngine(store, Config(), Registry(project_store=store))

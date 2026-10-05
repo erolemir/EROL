@@ -5,10 +5,10 @@ recursive-include examples *.json
 recursive-include schemas *.json
 recursive-include scripts *.py
 recursive-include adapters *.md
-recursive-include plugins *.json *.md *.yaml *.py *.mjs
+recursive-include plugins *.json *.md *.yaml *.py *.mjs *.png
 include plugins/erol/LICENSE plugins/erol/COPYRIGHT scripts/update-plugins.ps1
 include .agents/plugins/marketplace.json
 include .claude-plugin/marketplace.json package.json package-lock.json
 recursive-include bin *.mjs *.py
 recursive-include tests/node *.mjs
-recursive-include src/erol/data *.md *.json
+recursive-include src/erol/data *.md *.json *.png

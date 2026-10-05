@@ -7,7 +7,7 @@ from erol.adapters import generated_files, skill_path
 from erol.common import canonical, reject_links
 
 
-def plugin_files(repository_root: Path | None = None) -> dict[str, str]:
+def plugin_files(repository_root: Path | None = None) -> dict[str, str | bytes]:
     """Render all owned plugin assets; copies are derived, never hand-maintained."""
     root = (repository_root or Path(__file__).resolve().parents[2]).resolve()
     manifest = {
@@ -99,7 +99,7 @@ def plugin_files(repository_root: Path | None = None) -> dict[str, str]:
         '  short_description: "Project memory and focused workflows"\n'
         '  default_prompt: "Use $erol to plan this task with relevant skills."\n'
     )
-    result = {
+    result: dict[str, str | bytes] = {
         "plugins/erol/plugin.json": canonical(manifest) + "\n",
         "plugins/erol/.claude-plugin/plugin.json": canonical(claude_manifest) + "\n",
         "plugins/erol/skills/erol/SKILL.md": body,
@@ -123,7 +123,7 @@ def plugin_files(repository_root: Path | None = None) -> dict[str, str]:
     sources.extend(
         path
         for path in (canonical_root / "data").rglob("*")
-        if path.is_file() and path.suffix in {".json", ".md"}
+        if path.is_file() and path.suffix in {".json", ".md", ".png"}
     )
     if not sources or not (canonical_root / "__main__.py").is_file():
         raise ValueError("Canonical EROL source is unavailable for plugin generation")
@@ -132,5 +132,7 @@ def plugin_files(repository_root: Path | None = None) -> dict[str, str]:
         if not source.resolve().is_relative_to(canonical_root):
             raise ValueError("Plugin source escapes canonical runtime")
         relative = source.relative_to(canonical_root).as_posix()
-        result[f"plugins/erol/runtime/erol/{relative}"] = source.read_text(encoding="utf-8")
+        result[f"plugins/erol/runtime/erol/{relative}"] = (
+            source.read_bytes() if source.suffix == ".png" else source.read_text(encoding="utf-8")
+        )
     return result
