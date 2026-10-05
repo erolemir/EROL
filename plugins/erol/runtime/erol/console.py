@@ -300,8 +300,7 @@ class Screen:
         if self.rich:
             if os.name == "nt":
                 self.title_mode = windows_console_title()
-                self.title_mode.__enter__()
-                self.owns_windows_title = True
+                self.owns_windows_title = bool(self.title_mode.__enter__())
             columns, rows = shutil.get_terminal_size()
             if rows >= 12 and columns >= 20:
                 self.active = True

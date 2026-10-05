@@ -1,9 +1,11 @@
 """Subscription tokens and API estimates stay distinct in human terminal views."""
 
+import contextlib
 import copy
 import ctypes
 import io
 import unittest
+from types import SimpleNamespace
 from unittest.mock import Mock, call, patch
 
 from erol.connections import Connection, Settings
@@ -281,3 +283,18 @@ class UsageDisplayTests(unittest.TestCase):
             screen.refresh()
             screen.write("plain fixture")
             self.assertNotIn("\x1b]2;", screen.stream.getvalue())
+
+    def test_failed_native_title_capture_does_not_take_unrestorable_ownership(self):
+        screen = self.screen()
+        screen.rich = True
+        with (
+            patch("erol.console.os", SimpleNamespace(name="nt")),
+            patch("erol.console.windows_console_title", return_value=contextlib.nullcontext(False)),
+        ):
+            try:
+                screen.setup()
+                self.assertFalse(screen.owns_windows_title)
+                screen.refresh()
+            finally:
+                screen.close()
+        self.assertNotIn("\x1b]2;", screen.stream.getvalue())
