@@ -380,7 +380,10 @@ model için iki fiyat da `0` olabilir.
 
 Model seçimi görev riski/kapsamını ve EROL planını değerlendirir. Belirsiz görevler
 orta düzeyden başlar; küçük, açık düzeltmeler ekonomik profillere, geniş/riskli
-işler güçlü profillere yönlenir. Büyük görevlerde önce salt okunur planlama,
+işler güçlü profillere yönlenir.
+`selam`, `merhaba`, `hello` gibi açık basit sohbetler de ekonomik tier ve düşük
+reasoning ile çalışır. Hesap erişimi/bağlam/bütçe nedeniyle alt tier uygun değilse
+seçim gerekçesinde belirtilir. Büyük görevlerde önce salt okunur planlama,
 sonra tek uygulayıcı ve en fazla iki eşzamanlı salt okunur reviewer çalışır.
 Üç uygulama denemesi içinde test/review bulguları düzeltilmeye gönderilir;
 otomatik seçim gerektiğinde daha güçlü modele geçebilir. Elle seçilen model
@@ -424,6 +427,9 @@ Manifestteki komutlar da uygulayıcı API araçlarına açılır. EROL gözlenen
 `implemented_unverified`, bulgu/hata `needs_attention`, iptal `cancelled` olur.
 
 Varsayılan 5 USD bütçe bütün API rollerini, araç döngülerini ve tekrarları kapsar.
+Abonelikli CLI konuşmalarında giriş/çıkış token kullanımı gösterilir; API USD hesabı
+yalnız API çağrısı veya kalan API muhasebesi olduğunda görünür. Sağlayıcı token ya da
+kota bildirmemişse değer bilinmiyor olarak kalır.
 Her çağrı öncesi tahmini giriş/çıktı maliyeti ayrılır; sağlayıcı kullanımı
 bildirmezse ayrılan tutar tüketilmiş sayılır. Bütçe yetmezse `waiting_budget`
 kaydedilir. `/settings api_budget_usd 10` ardından `/resume SESSION_ID continue`

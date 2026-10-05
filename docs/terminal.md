@@ -176,6 +176,12 @@ Catalog/model access and pricing can change; `/models refresh` checks access,
 `/models add ID JSON` updates profiles. Profile source records provider metadata;
 EROL capability levels and latency ranks remain engineering priors.
 
+Complete simple greetings/thanks in Turkish or English route as small tasks
+with low effort. Added task words retain ordinary conservative scope/risk
+assessment. Missing eligible lower tiers are explained; a manual model remains
+selected. Windows desktop Codex discovery and one automatic Luna greeting
+were verified locally, without API calls.
+
 The $5 default API task budget is shared across all roles, tool rounds and retries.
 A lock atomically reserves each payload's UTF-8 byte proxy plus configured output
 cap at nominal token prices. Reported tokens settle the estimate; absent usage
@@ -184,6 +190,15 @@ unknown. Token prices, thinking/caching/tier billing and tokenizer behavior can
 vary; this guard is not an invoice ceiling. A failed/closed HTTP stream retains
 its reservation. Budget exhaustion saves waiting_budget; continuing a saved task
 retains cumulative accounting. HTTP line/response/round/time budgets are bounded.
+
+Interactive native subscription usage shows reported input/output/total tokens
+and quota evidence, without USD when no API call/accounting was observed.
+API and mixed-role summaries preserve API estimates and separate CLI token
+counts. An allocated budget alone is not a billed call; missing token usage
+remains unknown. Structured JSON budget records remain unchanged. Enabled API
+settings may still show an explicitly labelled API budget in configuration.
+On Windows, EROL sets the console title on entry and restores the previous title
+on exit where the terminal accepts application titles.
 
 At most three model calls run concurrently; there is one writer. Large tasks get
 a planner and up to two distinct-model reviewers; a single eligible review model

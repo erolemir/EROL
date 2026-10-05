@@ -8,6 +8,7 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 from erol.chat import ChatEngine
@@ -333,12 +334,14 @@ class InputTests(unittest.TestCase):
         screen.active = True
         screen.display.append("\n".join(str(n) for n in range(100)))
         keys = self.Keys("abc\x7f\x1b[<64;1;1M\r")
+        host_platform = os.name
         with (
-            patch("erol.console.os.name", "nt"),
+            patch("erol.console.os", SimpleNamespace(name="nt")),
             patch("erol.console.windows_console_mode", return_value=contextlib.nullcontext(True)),
             patch("erol.console.WindowsKeys", return_value=keys),
             patch("erol.console.sys.stdin.fileno", return_value=0),
         ):
+            self.assertEqual(os.name, host_platform)
             self.assertEqual(read_prompt(screen, [], []), "ab")
         # Submission follows the new output; wheel did not enter the draft or history.
         self.assertIn("erol › ab\n", screen.display.text)

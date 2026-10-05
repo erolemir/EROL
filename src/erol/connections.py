@@ -288,6 +288,25 @@ class ConnectionStore:
 def classify(task: str, plan: dict | None = None) -> dict:
     """Conservative scope priors, not a calibrated model-confidence score."""
     text = normalize(task)
+    greeting = text in {
+        "selam",
+        "merhaba",
+        "hey",
+        "hi",
+        "hello",
+        "selamlar",
+        "gunaydin",
+        "iyi aksamlar",
+        "iyi geceler",
+        "good morning",
+        "good evening",
+        "nasilsin",
+        "how are you",
+        "tesekkurler",
+        "tesekkur ederim",
+        "thanks",
+        "thank you",
+    }
     risk = any(
         word in text.split()
         for word in (
@@ -317,19 +336,23 @@ def classify(task: str, plan: dict | None = None) -> dict:
             "yeniden tasarla",
         )
     )
-    small = len(task) < 300 and any(
-        phrase in text
-        for phrase in (
-            "typo",
-            "yazim hatasi",
-            "rename",
-            "isim degistir",
-            "one line",
-            "tek satir",
-            "very easy",
-            "cok kolay",
-            "small fix",
-            "kucuk duzeltme",
+    small = (
+        greeting
+        or len(task) < 300
+        and any(
+            phrase in text
+            for phrase in (
+                "typo",
+                "yazim hatasi",
+                "rename",
+                "isim degistir",
+                "one line",
+                "tek satir",
+                "very easy",
+                "cok kolay",
+                "small fix",
+                "kucuk duzeltme",
+            )
         )
     )
     complexity = "large" if large or risk else "small" if small else "medium"
@@ -337,7 +360,9 @@ def classify(task: str, plan: dict | None = None) -> dict:
         "complexity": complexity,
         "risk": risk,
         "minimum_level": 3 if large or risk else 1 if small else 2,
-        "reason": "scope/risk priors; unknown tasks use medium",
+        "reason": "explicit simple conversation"
+        if greeting
+        else "scope/risk priors; unknown tasks use medium",
         "plan_roles": len((plan or {}).get("agents", [])),
     }
 
@@ -407,6 +432,13 @@ def route(
             "prices/capabilities, or adjust the budget"
         )
     _, connection, model, cost = min(candidates, key=lambda c: c[0])
+    fallback = (
+        "; no eligible lower-level profile at current access/context/budget"
+        if not override
+        and model.level > level
+        and not any(c[2].level < model.level for c in candidates)
+        else ""
+    )
     effort = (
         "high"
         if assessment["risk"] or role == "planner"
@@ -420,12 +452,13 @@ def route(
         "connection": connection.id,
         "model": model.id,
         "role": role,
+        "transport": "cli" if connection.kind in CLI_KINDS else "api",
         "effort": effort,
         "assessment": assessment,
         "estimated_request_usd": cost,
         "reason": (
             f"{assessment['complexity']} task; eligible capability level {model.level}; "
-            f"{settings.policy} resource ranking"
+            f"{settings.policy} resource ranking{fallback}"
         ),
         "profile_source": model.source,
         "behavioral_success_rate": None,

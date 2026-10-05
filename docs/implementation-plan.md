@@ -544,3 +544,26 @@ Bounded native desktop discovery now preserves PATH/explicit override precedence
 and rejects links. A real Windows probe with PATH restricted to System32 found
 Codex 0.159.0-alpha.12.1 and passed the native login/capability check. This probe
 made no model call and does not verify other providers or platforms.
+
+Initial PR #8 CI passed both Linux versions, then macOS 3.11 exposed two
+portability issues. A Windows-keyboard fixture mutated global os.name and made
+resource loading instantiate WindowsPath on POSIX; it now replaces only the
+console module's os reference and asserts host identity stays unchanged.
+Darwin may return EPERM while an exited group leader is not yet reaped. Cleanup
+now gives the owned leader a bounded 250 ms wait, then still requires observed
+leader exit and the existing numeric process-group zombie/absence proof. Live
+or unknown groups and non-Darwin permission errors remain failures. A native
+Darwin repeated-output regression exercises 25 cleanup attempts in CI; local
+Windows deterministic fixtures do not establish native Darwin containment.
+
+The user subsequently requested economic greetings, CLI token-only display and
+correct terminal tab branding. Explicit complete greetings now classify small
+and use low effort; attached technical/risky work stays conservative. A live
+subscription Codex turn with automatic routing and System32-only PATH selected
+gpt-6-luna/low and answered the Turkish greeting: 20,214 input and 14 output tokens,
+API calls zero, verified=false, no project state. This is actual provider usage,
+not a measured general token-saving claim. External receipt:
+`erol-economic-native-turn-result.json` under OS temp.
+Interactive CLI accounting hides USD when no API call/accounting is observed;
+API and mixed-role tasks retain token/cost estimates. Windows console title is
+set to EROL and restored on exit; OS/profile settings may suppress app titles.

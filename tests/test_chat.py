@@ -99,6 +99,24 @@ class ConnectionTests(unittest.TestCase):
         with self.assertRaises(ErolError):
             route(settings, "Fix this", {"agy": [model]}, override="agy:missing")
 
+    def test_simple_conversation_uses_economic_tier_without_downgrading_real_work(self):
+        models = [Model("luna", level=1), Model("sol", level=3)]
+        settings = Settings(connections=[Connection("subscription", "codex", models=models)])
+        available = {"subscription": models}
+        for task in ("selam", "MERHABA!", "Günaydın", "hello", "Thanks!"):
+            chosen = route(settings, task, available, role="assistant", require_tools=False)
+            self.assertEqual(chosen["model"], "luna")
+            self.assertEqual(chosen["effort"], "low")
+            self.assertEqual(chosen["transport"], "cli")
+        for task in ("selam güvenlik hatasını çöz", "hello investigate this issue", "fix"):
+            self.assertNotEqual(classify(task)["complexity"], "small")
+        chosen = route(settings, "selam", {"subscription": [models[1]]}, role="assistant")
+        self.assertEqual(chosen["model"], "sol")
+        self.assertIn("no eligible lower-level profile", chosen["reason"])
+        manual = route(settings, "selam", available, override="subscription:sol")
+        self.assertEqual(manual["model"], "sol")
+        self.assertNotIn("no eligible lower-level", manual["reason"])
+
     def test_missing_prices_and_context_remove_api_candidates(self):
         connection = Connection.load({"id": "api", "kind": "openai", "models": [{"id": "a"}]})
         with self.assertRaises(ErolError):

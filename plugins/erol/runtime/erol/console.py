@@ -17,13 +17,13 @@ from pathlib import Path
 
 from .chat import ChatEngine
 from .common import ErolError, reject_links
-from .connections import KINDS, Model, Settings, read_settings
+from .connections import CLI_KINDS, KINDS, Model, Settings, read_settings
 from .console_input import InputRecord, decode_record
 from .display import Display
 from .general import GeneralEngine
 from .i18n import HELP_EN, message, resolve_language
 from .identity import detect_project
-from .presentation import STATUS_KEYS, present
+from .presentation import STATUS_KEYS, api_observed, present, usage_summary, usage_transport
 from .providers import visible
 from .terminal import render_logo
 
@@ -75,6 +75,37 @@ def windows_console_mode(kind: int, flag: int, clear: int = 0):
     finally:
         if enabled:
             kernel.SetConsoleMode(handle, mode.value)
+
+
+@contextmanager
+def windows_console_title():
+    """Apply EROL branding temporarily; restore the host's title on every exit."""
+    import ctypes
+    from ctypes import wintypes
+
+    kernel = None
+    previous = ""
+    changed = False
+    try:
+        kernel = ctypes.WinDLL("kernel32", use_last_error=True)  # type: ignore[attr-defined]
+        kernel.GetConsoleTitleW.argtypes = [wintypes.LPWSTR, wintypes.DWORD]
+        kernel.GetConsoleTitleW.restype = wintypes.DWORD
+        kernel.SetConsoleTitleW.argtypes = [wintypes.LPCWSTR]
+        kernel.SetConsoleTitleW.restype = wintypes.BOOL
+        title = ctypes.create_unicode_buffer(65536)
+        if kernel.GetConsoleTitleW(title, len(title)):
+            previous = title.value
+            changed = bool(kernel.SetConsoleTitleW("EROL"))
+    except (AttributeError, OSError):
+        pass
+    try:
+        yield changed
+    finally:
+        if changed and kernel is not None:
+            try:
+                kernel.SetConsoleTitleW(previous)
+            except (AttributeError, OSError):
+                pass
 
 
 def split_command(text: str, language: str = "en") -> list[str]:
@@ -188,6 +219,7 @@ class Screen:
         self.status = "Hazır · /help · Enter gönder · Ctrl+J yeni satır"
         self.lock = threading.RLock()
         self.console_mode = None
+        self.title_mode = None
         self.windows_keys: WindowsKeys | None = None
         self.pending_keys: list[str] = []
         self.started = 0.0
@@ -195,6 +227,12 @@ class Screen:
         self.tokens = 0
         self.estimated_cost = 0.0
         self.role_model = ""
+        self.transport = ""
+        self.usage_events: list[dict] = []
+        self.usage: dict = {}
+        self.connection_transports: dict[str, str] = {}
+        self.context_name = ""
+        self.resources = ""
         self.display = Display()
         self.preference = "auto"
         self.language = resolve_language("auto")
@@ -219,6 +257,35 @@ class Screen:
     def t(self, key: str, **values) -> str:
         return message(self.language, key, **values)
 
+    def configure_connections(self, settings: Settings, context: str = "") -> None:
+        self.connection_transports = {
+            c.id: "cli" if c.kind in CLI_KINDS else "api" for c in settings.connections
+        }
+        self.context_name = context or self.context_name
+        has_api = any(c.enabled and c.kind not in CLI_KINDS for c in settings.connections)
+        has_cli = any(c.enabled and c.kind in CLI_KINDS for c in settings.connections)
+        self.resources = settings.policy
+        if has_api:
+            self.resources += " · " + self.t("api_budget", budget=settings.api_budget_usd)
+        elif has_cli:
+            self.resources += " · " + self.t("cli_subscription")
+        self.update_context()
+
+    def update_context(self) -> None:
+        resource = self.resources
+        if self.transport == "cli" and not api_observed(self.usage, self.usage_events):
+            complete = self.usage_events and all(
+                type(item["data"].get("counts", item["data"]).get(key)) is int
+                for item in self.usage_events
+                for key in ("input_tokens", "output_tokens")
+            )
+            resource = f"CLI · {self.tokens if complete else '?'} token"
+        elif api_observed(self.usage, self.usage_events):
+            resource = "API · " + self.t("estimate") + f" ${self.usage.get('accounted_usd', 0):.4f}"
+        elif self.transport:
+            resource = "API · ? token"
+        self.display.context = [self.context_name, resource]
+
     def write(self, text: str, *, raw: bool = False) -> None:
         with self.lock:
             if self.rich and self.active and not raw:
@@ -230,6 +297,9 @@ class Screen:
 
     def setup(self) -> None:
         if self.rich:
+            if os.name == "nt":
+                self.title_mode = windows_console_title()
+                self.title_mode.__enter__()
             columns, rows = shutil.get_terminal_size()
             if rows >= 12 and columns >= 20:
                 self.active = True
@@ -264,8 +334,13 @@ class Screen:
                         raw=True,
                     )
         finally:
-            if self.console_mode is not None:
-                self.console_mode.__exit__(None, None, None)
+            try:
+                if self.console_mode is not None:
+                    self.console_mode.__exit__(None, None, None)
+            finally:
+                if self.title_mode is not None:
+                    self.title_mode.__exit__(None, None, None)
+                    self.title_mode = None
 
     def refresh(self) -> None:
         if self.rich:
@@ -278,9 +353,10 @@ class Screen:
                     self.display.running = True
                     if self.role_model and not status.startswith(self.role_model):
                         status = self.role_model + " · " + status
-                    status += f" · {time.monotonic() - self.started:.0f}s · {self.tokens} token"
-                    if self.estimated_cost:
-                        status += f" · {self.t('estimate')} ${self.estimated_cost:.4f}"
+                    status += f" · {time.monotonic() - self.started:.0f}s"
+                    status += " · " + usage_summary(
+                        self.usage, self.usage_events, self.language, self.transport
+                    )
                 else:
                     self.display.running = False
                 frame = self.display.frame(
@@ -335,6 +411,9 @@ class Screen:
                 else self.t("skills_none") + "\n"
             )
         elif kind == "routing":
+            self.transport = data.get("transport") or self.connection_transports.get(
+                data["connection"], ""
+            )
             self.status = (
                 f"{data['role']} · {data['connection']}:{data['model']} · {data['effort']}"
             )
@@ -353,20 +432,38 @@ class Screen:
         elif kind == "error":
             self.write(f"\n{self.t('error')}: {data['message']}\n")
         elif kind == "usage":
+            item = dict(item)
+            item["data"] = dict(data)
+            if usage_transport(item) == "unknown":
+                item["data"]["transport"] = self.connection_transports.get(
+                    item.get("connection", ""), self.transport
+                )
+            self.usage_events.append(item)
             counts = data.get("counts", data)
             self.tokens += counts.get("input_tokens", 0) + counts.get("output_tokens", 0)
             cost = data.get("estimated_cost_usd")
-            if cost is not None:
-                self.estimated_cost += cost
+            if usage_transport(item) == "api":
+                reserved = data.get("unreported_reserved_usd", 0)
+                self.estimated_cost += cost if cost is not None else reserved
+                self.usage["accounted_usd"] = self.estimated_cost
+                self.usage["unreported_reserved_usd"] = (
+                    self.usage.get("unreported_reserved_usd", 0) + reserved
+                )
         elif kind == "status":
             hints = (
                 "/usage /research" if data.get("project_tools") is False else "/diff /tests /usage"
             )
             outcome = self.t(data["status"]) if data["status"] in STATUS_KEYS else data["status"]
+            self.usage = data.get("usage", {})
             self.status = (
-                f"{outcome} · {self.t('accounted')} ${data['usage']['accounted_usd']:.4f} · {hints}"
+                outcome
+                + " · "
+                + usage_summary(self.usage, self.usage_events, self.language, self.transport)
+                + " · "
+                + hints
             )
             self.write(f"\n{self.status}\n")
+        self.update_context()
         self.refresh()
 
 
@@ -811,6 +908,13 @@ def execute_task(
     screen.started, screen.running, screen.tokens = time.monotonic(), True, 0
     screen.estimated_cost = 0.0
     screen.role_model = ""
+    screen.transport = ""
+    screen.usage_events = []
+    screen.usage = dict(getattr(engine, "record", {}).get("usage", {})) if resume else {}
+    screen.estimated_cost = screen.usage.get("accounted_usd", 0.0)
+    connections = getattr(engine, "connections", None)
+    if connections is not None:
+        screen.configure_connections(connections.settings)
     messages: queue.Queue = queue.Queue(maxsize=256)
     results: list[dict] = []
     errors: list[BaseException] = []
@@ -939,14 +1043,18 @@ def launch(
                 if shutil.which(executable):
                     engine.connections.connect(kind)
         screen.status = screen.t("ready_hint")
+        screen.configure_connections(
+            engine.connections.settings,
+            engine.mode if isinstance(engine, GeneralEngine) else engine.project.name,
+        )
         screen.write(
-            screen.t("general_header", budget=engine.connections.settings.api_budget_usd)
+            screen.t("general_header", resources=screen.resources)
             if engine.project is None
             else screen.t(
                 "header",
                 name=engine.project.name,
                 root=engine.root,
-                budget=engine.connections.settings.api_budget_usd,
+                resources=screen.resources,
             )
         )
         # Provider probes remain explicit in global mode; /help and exit create no state.
@@ -964,10 +1072,10 @@ def launch(
             try:
                 completions = ["/" + name for name in COMMANDS]
                 settings = engine.connections.settings
-                screen.display.context = [
+                screen.configure_connections(
+                    settings,
                     engine.mode if isinstance(engine, GeneralEngine) else engine.project.name,
-                    f"API ${settings.api_budget_usd:g} · {settings.policy}",
-                ]
+                )
                 completions += [f"/connect {kind}" for kind in KINDS]
                 completions += ["/language " + value for value in ("auto", "en", "tr")]
                 completions += ["/view compact", "/view full", "/motion on", "/motion off"]

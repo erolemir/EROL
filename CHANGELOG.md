@@ -10,6 +10,11 @@
   assets and ignore Flutter/Gradle/Next caches without loosening text tool limits.
 - Discover the native Windows Codex desktop CLI when a standalone terminal lacks
   its PATH entry, preserving PATH/explicit executable precedence and rejecting links.
+- Route explicit simple greetings to an available economic tier with low effort;
+  keep unknown/risky work conservative and explain unavailable lower tiers.
+- Show native subscription token usage separately; display USD estimates only for
+  observed API calls/accounting, including mixed-role tasks.
+- Set and restore the Windows terminal title for EROL branding.
 
 - Put the animated mantis in a responsive right sidebar with owned alternate-screen
   rendering, fixed input/status, bounded transcript history and shell restoration.

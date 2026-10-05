@@ -28,6 +28,17 @@ MESSAGES = {
     "model_selected": ("Model: {value}", "Model: {value}"),
     "usage_title": ("Observed usage", "Gözlenen kullanım"),
     "no_usage": ("No usage recorded for this task.", "Bu görev için kullanım kaydı yok."),
+    "token_counts": (
+        "tokens in {input} / out {output} / total {total}",
+        "token giriş {input} / çıkış {output} / toplam {total}",
+    ),
+    "cli_quota_unknown": ("CLI quota unknown", "CLI kotası bilinmiyor"),
+    "cli_subscription": ("CLI subscription · token usage", "CLI aboneliği · token kullanımı"),
+    "api_budget": ("API task budget ${budget:g}", "API görev bütçesi ${budget:g}"),
+    "unreported_reservation": (
+        "unreported token usage · reserved estimate ${amount:.4f}",
+        "token kullanımı bildirilmedi · ayrılan tahmin ${amount:.4f}",
+    ),
     "invoice_note": (
         "API estimate; CLI quota is separate. Not the final invoice.",
         "API tahmini; CLI kotası ayrıdır. Kesin fatura değildir.",
@@ -89,10 +100,10 @@ MESSAGES = {
         "Bu komut proje dosyalarıyla çalışır. /project PATH ile klasör seç.",
     ),
     "general_header": (
-        "EROL · General conversation · No project selected\nAPI task budget ${budget:g}\n"
+        "EROL · General conversation · No project selected\n{resources}\n"
         "/connect · /providers · /models · /language · /research · /project PATH\n"
         "No project files/context are sent. Native CLI settings/plugins retain their own policy.\n",
-        "EROL · Genel sohbet · Proje seçilmedi\nAPI görev bütçesi ${budget:g}\n"
+        "EROL · Genel sohbet · Proje seçilmedi\n{resources}\n"
         "/connect · /providers · /models · /language · /research · /project PATH\n"
         "Proje dosyaları/bağlamı gönderilmez. "
         "Native CLI ayar/eklentileri kendi politikasını korur.\n",
@@ -144,9 +155,9 @@ MESSAGES = {
         "Başka bir proje klasörü seç.\n",
     ),
     "header": (
-        "EROL · {name}\n{root}\nQuality / cost balance · API task budget ${budget:g}\n"
+        "EROL · {name}\n{root}\n{resources}\n"
         "/help commands · /connect connections · /language auto|en|tr\n",
-        "EROL · {name}\n{root}\nKalite / maliyet dengesi · API görev bütçesi ${budget:g}\n"
+        "EROL · {name}\n{root}\n{resources}\n"
         "/help komutlar · /connect bağlantılar · /language auto|en|tr\n",
     ),
     "language": (
