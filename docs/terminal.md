@@ -198,7 +198,9 @@ counts. An allocated budget alone is not a billed call; missing token usage
 remains unknown. Structured JSON budget records remain unchanged. Enabled API
 settings may still show an explicitly labelled API budget in configuration.
 On Windows, EROL sets the console title on entry and restores the previous title
-on exit where the terminal accepts application titles.
+on exit where the terminal accepts application titles. Active repaints reassert
+the fixed OSC 2 title after native provider probes; no provider-controlled title
+text is emitted. A ConPTY overwrite/repaint/restore trial confirmed this transport.
 
 At most three model calls run concurrently; there is one writer. Large tasks get
 a planner and up to two distinct-model reviewers; a single eligible review model

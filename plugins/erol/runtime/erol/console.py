@@ -220,6 +220,7 @@ class Screen:
         self.lock = threading.RLock()
         self.console_mode = None
         self.title_mode = None
+        self.owns_windows_title = False
         self.windows_keys: WindowsKeys | None = None
         self.pending_keys: list[str] = []
         self.started = 0.0
@@ -300,6 +301,7 @@ class Screen:
             if os.name == "nt":
                 self.title_mode = windows_console_title()
                 self.title_mode.__enter__()
+                self.owns_windows_title = True
             columns, rows = shutil.get_terminal_size()
             if rows >= 12 and columns >= 20:
                 self.active = True
@@ -329,6 +331,7 @@ class Screen:
             with self.lock:
                 if self.active:
                     self.active = False
+                    self.owns_windows_title = False
                     self.write(
                         "\x1b[r\x1b[?1006l\x1b[?1000l\x1b[?2004l\x1b[0m\x1b[?25h\x1b[?1049l",
                         raw=True,
@@ -366,6 +369,10 @@ class Screen:
                     pose=int(time.monotonic() * 2) % 6 if self.display.motion else 0,
                 )
                 output = ["\x1b[?25l"]
+                if self.owns_windows_title:
+                    # Native probes can rename the shared console. Reassert the owned title
+                    # through ConPTY's documented OSC 2 on every bounded repaint.
+                    output.append("\x1b]2;EROL\x07")
                 if self.dimensions != (columns, rows):
                     output.append("\x1b[2J")
                     self.previous = []

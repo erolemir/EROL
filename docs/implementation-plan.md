@@ -567,3 +567,20 @@ not a measured general token-saving claim. External receipt:
 Interactive CLI accounting hides USD when no API call/accounting is observed;
 API and mixed-role tasks retain token/cost estimates. Windows console title is
 set to EROL and restored on exit; OS/profile settings may suppress app titles.
+
+The user's fresh-session screenshot confirmed Luna/token presentation but showed
+the tab title returning to Claude after a provider turn. Native provider probes
+can rename the shared console after EROL's initial title assignment. Active
+Windows repaints now reassert a fixed, documented OSC 2 EROL title; plain/POSIX
+and closed views emit no title control. A real ConPTY trial seeded Claude,
+initialized Screen, simulated a provider overwriting the title, then repainted:
+native title became EROL and close restored Claude. External receipt:
+`erol-title-live-probe-result.json`. This tests the Windows terminal transport;
+manually pinned/profile-suppressed tab names remain terminal policy.
+
+Before this additive title repair, the complete local README sequence passed
+324 Python tests (321 passed, three platform skips), 12 Node tests, Ruff/Mypy,
+adapter drift, pack/context eval and both package builds/smokes. PR CI run
+37319948984 passed all six OS/Python jobs, including the native Darwin repeat
+cleanup regression. The title addition receives focused tests/review and a new
+complete CI run before merging; that previous run is not credited to the new head.

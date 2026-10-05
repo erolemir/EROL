@@ -240,3 +240,44 @@ class UsageDisplayTests(unittest.TestCase):
             with windows_console_title() as changed:
                 self.assertFalse(changed)
         kernel.SetConsoleTitleW.assert_not_called()
+
+    def test_windows_repaint_reasserts_owned_title_after_provider_events(self):
+        screen = self.screen()
+        screen.rich, screen.active, screen.owns_windows_title = True, True, True
+        for item in (
+            {
+                "type": "routing",
+                "data": {
+                    "role": "assistant",
+                    "connection": "fixture",
+                    "model": "small",
+                    "effort": "low",
+                    "reason": "fixture",
+                    "transport": "cli",
+                },
+            },
+            {"type": "status", "data": {"status": "completed", "usage": {}}},
+            {"type": "text_delta", "data": {"text": "\x1b]2;claude\x07answer"}},
+        ):
+            screen.stream.seek(0)
+            screen.stream.truncate()
+            screen.event(item)
+            self.assertIn("\x1b]2;EROL\x07", screen.stream.getvalue())
+            self.assertNotIn("\x1b]2;claude\x07", screen.stream.getvalue())
+        screen.stream.seek(0)
+        screen.stream.truncate()
+        screen.refresh()
+        self.assertEqual(screen.stream.getvalue().count("\x1b]2;EROL\x07"), 1)
+        screen.close()
+        screen.stream.seek(0)
+        screen.stream.truncate()
+        screen.refresh()
+        self.assertEqual(screen.stream.getvalue(), "")
+
+    def test_title_reassertion_is_absent_in_plain_or_unowned_posix_views(self):
+        for rich, active, owned in ((False, False, True), (True, True, False)):
+            screen = self.screen()
+            screen.rich, screen.active, screen.owns_windows_title = rich, active, owned
+            screen.refresh()
+            screen.write("plain fixture")
+            self.assertNotIn("\x1b]2;", screen.stream.getvalue())
