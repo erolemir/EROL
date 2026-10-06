@@ -60,8 +60,14 @@ def _date(value) -> None:
         raise ErolError("Research date is in the future")
 
 
-def load_research(root: Path) -> dict:
-    paths = [root / "research" / name for name in ("sources.json", "report.md")]
+def load_research(root: Path, directory: str | None = None, *, home: Path | None = None) -> dict:
+    if directory is not None:
+        from .artifacts import checked_directory
+
+        base = checked_directory(root, directory, home=home)
+    else:
+        base = root / "research"  # compatibility with pre-upgrade receipts and caller fixtures
+    paths = [base / name for name in ("sources.json", "report.md")]
     for path in paths:
         reject_links(path)
         if not path.is_file() or path.stat().st_size > 64000:

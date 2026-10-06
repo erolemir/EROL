@@ -123,6 +123,19 @@ class LearningTests(unittest.TestCase):
         self.assertEqual(self.store.list("incidents"), [])
         self.assertEqual(self.store.list("patterns"), [])
 
+    def test_unresolved_findings_cannot_credit_a_valid_learned_revision(self):
+        skill = self.active()
+        for severity in ("critical", "high", "medium", "low"):
+            with self.subTest(severity=severity):
+                task_id = "unresolved-" + severity
+                self.engine.begin_task(task_id, f"Investigate {skill['triggers'][0]}")
+                report = verification()
+                report["findings"] = [{"severity": severity, "resolved": False}]
+                with self.assertRaises(ErolError):
+                    self.engine.complete_task(task_id, report)
+                self.assertEqual("started", self.store.get("tasks", task_id)["status"])
+                self.assertEqual([], self.store.list("uses"))
+
     def test_same_error_with_conflicting_remedy_forms_separate_patterns(self):
         self.engine.record_incident(incident(1))
         self.engine.record_incident(
@@ -284,6 +297,37 @@ class LearningTests(unittest.TestCase):
         self.assertEqual(approved["status"], "approved_for_generalization")
         self.assertFalse(approved["global_registry_modified"])
         self.assertFalse((self.home / "skills").exists())
+
+    def test_legacy_open_finding_use_is_retained_but_blocks_promotion_and_rollback(self):
+        skill = self.active()
+        self.successful_uses(skill)
+        legacy = self.store.list("uses")[0]
+        legacy["verification"]["findings"] = [{"severity": "medium", "resolved": False}]
+        self.store.put("uses", legacy, replace=True)
+        measured = self.engine.metrics(skill["name"])
+        self.assertEqual(2, measured["successful_tasks"])
+        self.assertEqual(1, measured["failed_tasks"])
+        self.assertEqual(1, measured["invalid_success_records"])
+        with self.assertRaises(ErolError):
+            self.engine.promotion_candidate(skill["name"])
+        with self.assertRaises(ErolError):
+            self.engine.rollback(skill["name"], skill["version"])
+        self.assertEqual(legacy, self.store.get("uses", legacy["id"]))
+
+    def test_legacy_open_finding_eval_cannot_qualify_or_credit_revision(self):
+        skill = self.active()
+        legacy = self.store.get("evals", skill["eval_id"])
+        legacy["behavior"]["findings"] = [{"severity": "low", "resolved": False}]
+        self.store.put("evals", legacy, replace=True)
+        with self.assertRaises(ErolError):
+            self.engine.export_skill(skill["name"])
+        with self.assertRaises(ErolError):
+            self.engine.activate(skill["candidate_id"])
+        self.engine.begin_task("invalid-eval-use", skill["triggers"][0])
+        with self.assertRaises(ErolError):
+            self.engine.complete_task("invalid-eval-use", verification())
+        self.assertEqual([], self.store.list("uses"))
+        self.assertEqual(legacy, self.store.get("evals", legacy["id"]))
 
     def test_promotion_rechecks_stale_evaluation_at_approval_time(self):
         skill = self.active()

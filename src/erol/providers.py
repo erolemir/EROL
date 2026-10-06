@@ -66,6 +66,7 @@ class Request:
     native_session: str | None = None
     timeout: float = 900
     mode: str = "project"
+    report_directory: str | None = None
 
 
 class BudgetExhausted(ErolError):
@@ -309,6 +310,8 @@ class CLIAdapter:
                     'web_search="live"' if request.mode == "research" else 'web_search="disabled"',
                 ]
             args += ["exec"]
+            if request.report_directory and request.role == "implementer":
+                args += ["--add-dir", request.report_directory]
             if request.native_session:
                 args += ["resume", identifier(request.native_session)]
             args += ["--skip-git-repo-check", "--model", request.model.id, "--json", "-"]
@@ -342,6 +345,8 @@ class CLIAdapter:
             ]
             if request.effort != "none":
                 args += ["--effort", request.effort]
+            if request.report_directory:
+                args += ["--add-dir", request.report_directory]
             if request.native_session:
                 args += ["--resume", identifier(request.native_session)]
             if request.role == "implementer":
@@ -774,6 +779,13 @@ class APIAdapter:
                 path = "/chat/completions"
             if not tools:
                 payload.pop("tools", None)
+            if (
+                len(canonical(payload).encode("utf-8")) + request.model.output_limit
+                > request.model.context_window
+            ):
+                raise ErolError(
+                    "Accumulated API context exceeds the model profile; start a narrower task"
+                )
             reserved = budget.reserve(request.model, payload)
             counts: dict = {}
             calls: dict[Any, dict] = {}

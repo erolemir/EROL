@@ -80,11 +80,53 @@ class MemoryIndex:
         self.db.close()
 
     def sync(self) -> dict:
-        active = {(kind, item["id"]): item for kind in KINDS for item in self.store.list(kind)}
-        stored = {
-            (kind, key): revision
-            for kind, key, revision in self.db.execute("SELECT kind,id,revision FROM documents")
-        }
+        if self.store.db.in_transaction:
+            raise ErolError("Sync memory after the owning transaction commits")
+        with self.store.transaction():
+            return self._sync_revision()
+
+    def _sync_revision(self) -> dict:
+        cursor_revision = int(
+            self.store.db.execute(
+                "SELECT value FROM metadata WHERE key='record_revision'"
+            ).fetchone()[0]
+        )
+        previous = dict(self.db.execute("SELECT key,value FROM meta")).get("record_revision")
+        full = previous is None or int(previous) > cursor_revision
+        if full:
+            active = {(kind, item["id"]): item for kind in KINDS for item in self.store.list(kind)}
+            deleted = None
+        else:
+            assert previous is not None
+            active = {}
+            deleted = set()
+            for kind, key in self.store.db.execute(
+                "SELECT kind,id FROM record_changes WHERE revision>? AND revision<=?",
+                (int(previous), cursor_revision),
+            ):
+                if kind not in KINDS:
+                    continue
+                item = self.store.get(kind, key)
+                if item is not None:
+                    active[kind, key] = item
+                else:
+                    deleted.add((kind, key))
+        stored = (
+            {
+                (kind, key): revision
+                for kind, key, revision in self.db.execute("SELECT kind,id,revision FROM documents")
+            }
+            if full
+            else {
+                key: row[0]
+                for key in active
+                if (
+                    row := self.db.execute(
+                        "SELECT revision FROM documents WHERE kind=? AND id=?", key
+                    ).fetchone()
+                )
+            }
+        )
         changed = 0
         with self.db:
             for (kind, key), item in active.items():
@@ -104,15 +146,20 @@ class MemoryIndex:
                     [(word, kind, key, count) for word, count in counts.items()],
                 )
                 changed += 1
-            for kind, key in stored.keys() - active.keys():
+            for kind, key in stored.keys() - active.keys() if full else deleted:
                 self.db.execute("DELETE FROM documents WHERE kind=? AND id=?", (kind, key))
                 self.db.execute("DELETE FROM terms WHERE kind=? AND id=?", (kind, key))
                 changed += 1
+            self.db.execute(
+                "INSERT OR REPLACE INTO meta VALUES('record_revision',?)", (str(cursor_revision),)
+            )
         return {
-            "indexed": len(active),
+            "indexed": self.db.execute("SELECT count(*) FROM documents").fetchone()[0],
             "changed": changed,
             "schema_version": 2,
             "project_id": self.store.project_id,
+            "sync_mode": "full" if full else "incremental",
+            "records_examined": len(active) + (len(deleted) if deleted is not None else 0),
         }
 
     def search(self, query: str, *, max_chars: int = 6000, limit: int = 10) -> list[dict]:

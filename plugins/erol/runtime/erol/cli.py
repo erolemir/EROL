@@ -53,6 +53,7 @@ def parser() -> argparse.ArgumentParser:
     chat = commands.add_parser("chat", help="Open the EROL terminal or execute one prompt")
     chat.add_argument("--prompt", help="One task with machine-readable JSON result")
     chat.add_argument("--model", help="Explicit CONNECTION:MODEL; default automatic routing")
+    chat.add_argument("--skill", action="append", help="Explicit admitted skill; repeat per name")
     chat.add_argument("--resume", help="Saved session id (use --prompt to continue its task)")
     chat.add_argument(
         "--mode",
@@ -70,6 +71,21 @@ def parser() -> argparse.ArgumentParser:
     logo.add_argument("--width", type=int, help="Width in terminal columns (8..160; auto up to 80)")
     logo.add_argument("--color", choices=("auto", "always", "never"), default="auto")
     commands.add_parser("status", help="Project identity and current local lifecycle counts")
+    onboarding = commands.add_parser(
+        "onboard", help="Inspect first-run project, connection, budget and acceptance checks"
+    )
+    onboarding.add_argument("--wizard", action="store_true", help="Short interactive setup")
+    onboarding.add_argument(
+        "--connection", help="Existing connection ID; blank uses automatic routing"
+    )
+    onboarding.add_argument("--budget", type=float)
+    onboarding.add_argument("--checks", help="Acceptance manifest to inspect")
+    onboarding.add_argument("--apply", action="store_true", help="Save the reviewed settings")
+    onboarding.add_argument(
+        "--trust-checks",
+        action="store_true",
+        help="Explicitly authorize these exact check commands",
+    )
     for name in ("install", "setup", "update", "uninstall"):
         command = commands.add_parser(name, help="Inspect safe harness installation changes")
         command.add_argument("--harness", choices=("codex", "claude"), required=True)
@@ -81,6 +97,25 @@ def parser() -> argparse.ArgumentParser:
             name, help="Route a task and construct bounded context; no execution"
         )
         command.add_argument("--task", required=True)
+        command.add_argument("--skill", action="append", help="Explicit skill; repeat per name")
+        command.add_argument(
+            "--harness",
+            default="auto",
+            choices=(
+                "auto",
+                "codex",
+                "claude",
+                "openai",
+                "anthropic",
+                "gemini",
+                "compatible",
+                "antigravity",
+            ),
+        )
+        command.add_argument(
+            "--model", help="Preserve an explicit host model for all recommended roles"
+        )
+        command.add_argument("--effort", choices=("none", "low", "medium", "high", "max"))
         command.add_argument(
             "--task-id", help="Persist an activation receipt for later real-use evidence"
         )
@@ -211,6 +246,10 @@ def parser() -> argparse.ArgumentParser:
     benchmark.add_argument("--harness", choices=("codex", "claude"))
     benchmark.add_argument("--report", help="Behavioral result JSON path")
     benchmark.add_argument("--repeat", type=int, default=1)
+    benchmark.add_argument("--model", help="Fix both arms to one native model")
+    benchmark.add_argument(
+        "--effort", choices=("low", "medium", "high"), help="Fix both arms reasoning effort"
+    )
     scan = commands.add_parser(
         "scan", help="Discover bounded TODOs, imported issues and observed check failures"
     )
@@ -274,6 +313,22 @@ def qualify_pack(registry: Registry) -> dict:
 
 def run(args: argparse.Namespace) -> dict:
     home = Path(args.home).expanduser()
+    if args.command == "onboard":
+        from .onboarding import onboard, wizard
+
+        if args.wizard:
+            if not sys.stdin.isatty():
+                raise ErolError("--wizard needs a terminal; use explicit onboarding flags")
+            return wizard(Path(args.project), home)
+        return onboard(
+            Path(args.project),
+            home,
+            connection=args.connection,
+            budget=args.budget,
+            checks=args.checks,
+            apply=args.apply,
+            trust_checks=args.trust_checks,
+        )
     project = detect_project(Path(args.project))
     root = Path(project.root)
     # Installer dry runs must produce no memory/database side effects.
@@ -447,14 +502,28 @@ def run(args: argparse.Namespace) -> dict:
                 "capabilities": capabilities(),
             }
         if command in {"plan", "explain"}:
-            if args.task_id:
-                return engine.begin_task(args.task_id, args.task)
+            from .delegation import recommend_agents
+
             assert_secret_safe(args.task)
-            return Orchestrator(registry).plan(
+            planned = Orchestrator(registry).plan(
                 args.task,
                 memory=store.search(args.task, mode="hybrid"),
                 token_budget=config.context_tokens,
                 max_skills=config.max_active_skills,
+                skill_names=args.skill,
+            )
+            planned = recommend_agents(
+                planned,
+                store.home,
+                Path(project.root),
+                harness=args.harness,
+                model=args.model,
+                effort=args.effort,
+            )
+            return (
+                engine.begin_task(args.task_id, args.task, plan=planned)
+                if args.task_id
+                else planned
             )
         if command == "memory":
             if args.action == "status":
@@ -581,15 +650,9 @@ def run(args: argparse.Namespace) -> dict:
                     "behavior_verified": False,
                 }
             if command == "doctor":
-                return {
-                    "passed": pack["passed"],
-                    "skills": pack,
-                    "harnesses_found": {
-                        name: shutil.which(name) is not None for name in ("codex", "claude")
-                    },
-                    "capabilities": capabilities(),
-                    "memory_schema": 1,
-                }
+                from .health import health
+
+                return {**health(store, pack), "capabilities": capabilities()}
             metadata_chars = len(canonical(registry.list()))
             from erol.adapters import managed_instruction_block
 
@@ -614,7 +677,10 @@ def run(args: argparse.Namespace) -> dict:
                     args.harness,
                     Path(args.report),
                     repeat=args.repeat,
+                    model=args.model,
+                    effort=args.effort,
                     trust=CheckTrust(store.directory, root),
+                    fixture_parent=store.home / "benchmarks",
                 )
                 from .work import WorkStore
 
@@ -682,6 +748,7 @@ def main(argv: list[str] | None = None) -> int:
                     model=args.model,
                     resume=args.resume,
                     mode=args.mode,
+                    skill_names=args.skill,
                 )
             root, home = (
                 Path(args.project).expanduser().resolve(),
@@ -705,6 +772,7 @@ def main(argv: list[str] | None = None) -> int:
                         result = engine.execute(result["general_task"])
             else:
                 engine.selected_model = args.model
+                engine.skill_names = args.skill
                 if args.resume:
                     engine.resume(args.resume)
                 if not args.prompt:
@@ -718,8 +786,6 @@ def main(argv: list[str] | None = None) -> int:
                 else 0
             )
         if args.command == "logo":
-            import shutil
-
             from .terminal import render_logo
 
             width = (

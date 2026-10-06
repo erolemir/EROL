@@ -126,6 +126,15 @@ class Registry:
     def route(self, task: str, limit: int = 4) -> builtins.list[Skill]:
         return [self.get(result["name"]) for result in self.explain(task, limit)]
 
+    def select(self, task: str, limit: int = 4, names: builtins.list[str] | None = None):
+        if names is None:
+            return self.route(task, limit)
+        if not isinstance(names, list) or not names or any(not isinstance(n, str) for n in names):
+            raise ValueError("Explicit skills must be a nonempty list of names")
+        if len(names) != len(set(names)) or len(names) > limit:
+            raise ValueError("Explicit skills must be unique and fit the configured skill limit")
+        return [self.get(name) for name in names]
+
     def duplicates(self, skill: Skill) -> builtins.list[dict[str, Any]]:
         """Explicitly requested duplicate checking loads bodies; discovery does not."""
         result = []

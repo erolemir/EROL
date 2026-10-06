@@ -8,7 +8,7 @@ from typing import Any
 
 from .common import canonical
 from .registry import Registry, Skill
-from .router import contains_phrase
+from .router import contains_phrase, intent_clauses, routing_task
 
 DATA_ROOT = Path(__file__).parent / "data"
 
@@ -91,21 +91,29 @@ class Orchestrator:
         token_budget: int = 4000,
         max_skills: int = 4,
         max_agents: int = 4,
+        skill_names: list[str] | None = None,
+        previous_task: str = "",
     ) -> dict[str, Any]:
         if not isinstance(max_agents, int) or isinstance(max_agents, bool) or max_agents < 1:
             raise ValueError("max_agents must be a positive integer")
-        skills = self.registry.route(task, max_skills)
+        resolved_task, inherited = routing_task(task, previous_task)
+        active_task, excluded_clauses = intent_clauses(resolved_task)
+        skills = self.registry.select(resolved_task, max_skills, skill_names)
+        context = build_context(task, skills, memory, token_budget)
+        admitted = set(context["selected_skills"])
         catalog = {entry["name"]: entry for entry in agents()}
         metadata = {entry["name"]: entry for entry in self.registry.list()}
         specialized = []
         for skill in skills:
+            if skill.name not in admitted:
+                continue
             role = metadata[skill.name].get("agent", "implementer")
             if role != "lead-engineer" and role not in specialized:
                 specialized.append(role)
         # Roles are recommendations, not actual spawned agents. Keep testing and
         # independent review distinct for substantive implementation work.
         risky = "security-reviewer" in specialized or any(
-            contains_phrase(task, phrase)
+            contains_phrase(active_task, phrase)
             for phrase in (
                 "security",
                 "migration",
@@ -133,7 +141,9 @@ class Orchestrator:
         review_role = (
             "security-reviewer"
             if "security-reviewer" in specialized
-            or any(contains_phrase(task, p) for p in ("security", "authorization", "güvenlik"))
+            or any(
+                contains_phrase(active_task, p) for p in ("security", "authorization", "güvenlik")
+            )
             else "verifier"
             if risky
             else "reviewer"
@@ -169,7 +179,6 @@ class Orchestrator:
             model_tier = "REASONING"
         else:
             model_tier = "BALANCED"
-        context = build_context(task, skills, memory, token_budget)
         tools = {"repository_read"}
         if any(
             role in roles
@@ -198,7 +207,17 @@ class Orchestrator:
             "agents": [catalog[role] for role in roles],
             "unassigned_roles": unresolved_roles,
             "skills": [skill.metadata() for skill in skills],
-            "routing": self.registry.explain(task, max_skills),
+            "routing": self.registry.explain(resolved_task, max_skills),
+            "routing_task": resolved_task,
+            "routing_diagnostics": {
+                "mode": "explicit" if skill_names is not None else "automatic",
+                "context_inherited": inherited,
+                "excluded_clauses": excluded_clauses,
+                "unmatched": not skills,
+                "ambiguity": "No workflow matched; describe the behavior or select --skill NAME"
+                if not skills
+                else "Phrase scores are not semantic confidence",
+            },
             "context": context,
             "tool_categories": sorted(tools),
             "phases": [

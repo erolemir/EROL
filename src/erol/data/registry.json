@@ -19,9 +19,13 @@
       ],
       "avoid_when": [
         "copy editing only",
-        "yalnızca yazım"
+        "yalnızca yazım",
+        "yazım hatasını",
+        "yazım hatası",
+        "typo only",
+        "only a typo"
       ],
-      "version": "1.0.1",
+      "version": "1.0.2",
       "scope": "builtin",
       "project_id": null,
       "agent": "debugger",
@@ -283,13 +287,16 @@
         "mimari",
         "mimari karar",
         "sistem tasarımı",
-        "mimarisini planla"
+        "mimarisini planla",
+        "mimari seçenekleri",
+        "mimariyi değerlendir",
+        "architecture options"
       ],
       "avoid_when": [
         "architecture tourism",
         "mimari gezi"
       ],
-      "version": "1.0.1",
+      "version": "1.0.2",
       "scope": "builtin",
       "project_id": null,
       "agent": "planner",
@@ -308,13 +315,19 @@
         "proje yapısı",
         "projeyi incele",
         "kod tabanını",
-        "depoyu incele"
+        "depoyu incele",
+        "bu uygulamayı incele",
+        "uygulamayı analiz et",
+        "bu projeyi incele",
+        "projenin yapısını incele",
+        "inspect this application",
+        "inspect this project"
       ],
       "avoid_when": [
         "explore city",
         "şehir gezisi"
       ],
-      "version": "1.0.1",
+      "version": "1.0.2",
       "scope": "builtin",
       "project_id": null,
       "agent": "explorer",
@@ -500,13 +513,19 @@
         "performans",
         "bellek sızıntısı",
         "gecikmeyi ölç",
-        "darboğaz analizi"
+        "darboğaz analizi",
+        "daha iyi çalışmasını",
+        "daha iyi çalışsın",
+        "daha hızlı çalışsın",
+        "daha hızlı çalışmasını",
+        "make it faster",
+        "improve runtime performance"
       ],
       "avoid_when": [
         "performance art",
         "sahne performansı"
       ],
-      "version": "1.0.1",
+      "version": "1.0.2",
       "scope": "builtin",
       "project_id": null,
       "agent": "performance-specialist",
@@ -2213,7 +2232,15 @@
         "roadmap prioritization",
         "feature priority",
         "ürün önceliklendirme",
-        "özellik önceliği"
+        "özellik önceliği",
+        "üst seviyeye",
+        "geliştirme önerileri",
+        "iyileştirme öncelikleri",
+        "nasıl geliştiririz",
+        "ürün yol haritası",
+        "improvement priorities",
+        "product roadmap",
+        "take this application further"
       ],
       "avoid_when": [
         "personal chore priority",
@@ -2221,7 +2248,7 @@
       ],
       "category": "data",
       "agent": "growth-strategist",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "scope": "builtin",
       "project_id": null,
       "path": "skills/product-prioritization/SKILL.md",

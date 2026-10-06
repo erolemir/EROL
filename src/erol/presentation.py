@@ -75,6 +75,42 @@ def usage_summary(usage: dict, events: list[dict], language: str, transport: str
     return " · ".join(parts)
 
 
+def task_result(record: dict, language: str = "en") -> str:
+    """One result view based only on observed task records."""
+    tr = language == "tr"
+    selection = record.get("selection", {})
+    lines = [record.get("summary", "")]
+    lines.append(
+        ("Kullanılan skill: " if tr else "Admitted skills: ")
+        + (", ".join(record.get("selected_skills", [])) or "—")
+    )
+    if selection:
+        lines.append(
+            f"{selection['connection']}:{selection['model']} · {selection['effort']} · "
+            + selection["reason"]
+        )
+    lines.append(
+        ("Değişen dosyalar: " if tr else "Changed files: ")
+        + (", ".join(c["path"] for c in record.get("changes", [])) or "—")
+    )
+    checks, reviews = record.get("checks", []), record.get("reviews", [])
+    lines.append(
+        ("Test / review: " if tr else "Checks / review: ")
+        + f"{sum(c.get('passed') is True for c in checks)}/{len(checks)} · "
+        + f"{sum(r.get('approved') is True for r in reviews)}/{len(reviews)}"
+    )
+    if record.get("artifact_directory"):
+        lines.append(("Raporlar: " if tr else "Reports: ") + record["artifact_directory"])
+    reason = record.get("error") or (record.get("verification") or {}).get("missing_checks_reason")
+    if reason:
+        lines.append(str(reason))
+    lines.append(
+        ("Sonraki adım: " if tr else "Next step: ")
+        + ("—" if record.get("status") == "completed" else "/tests · /diff · /usage")
+    )
+    return "\n".join(line for line in lines if line)
+
+
 def present(result: dict, language: str) -> str:
     def t(key: str, **values) -> str:
         return message(language, key, **values)
@@ -83,9 +119,41 @@ def present(result: dict, language: str) -> str:
         return t(value) if value in STATUS_KEYS else str(value)
 
     lines: list[str] = []
-    if "commands" in result:
+    if "model_comparison" in result:
+        for choice in result["model_comparison"]:
+            lines.append(
+                choice["role"]
+                + " · "
+                + choice.get("model", "—")
+                + " · "
+                + choice.get("effort", "—")
+            )
+            lines.append(choice["reason"])
+            if choice.get("effort_reason"):
+                lines.append(choice["effort_reason"])
+            for profile in choice.get("eligible_alternatives", []):
+                lines.append(
+                    f"  {profile['connection']}:{profile['model']} · L{profile['level']} · "
+                    + f"context {profile['context_window']} · {profile['profile_source']}"
+                )
+        lines.append(result["note"])
+    elif "commands" in result:
         groups = [
-            ("help_conversation", ["general", "research", "project", "plan", "new", "resume"]),
+            (
+                "help_conversation",
+                [
+                    "general",
+                    "research",
+                    "project",
+                    "my-projects",
+                    "chats",
+                    "rename",
+                    "plan",
+                    "skills",
+                    "new",
+                    "resume",
+                ],
+            ),
             (
                 "help_connections",
                 ["connect", "providers", "models", "model", "settings", "language"],
@@ -127,6 +195,35 @@ def present(result: dict, language: str) -> str:
                 )
         if not result["providers"]:
             lines.append(t("no_connections"))
+    elif "projects" in result:
+        lines.append("── " + t("projects_title"))
+        for index, row in enumerate(result["projects"], 1):
+            lines.append(f"{index}. {row['name']} · {row['id']}")
+            lines.append("  " + row["root"])
+            if not row["available"]:
+                lines.append("  " + t("missing_project"))
+        if not result["projects"]:
+            lines.append(t("no_projects"))
+        lines.append(t("projects_hint"))
+    elif "saved_chat" in result:
+        record = result["saved_chat"]
+        lines.append(
+            t(
+                "chat_title",
+                title=record.get("title") or record.get("task", "")[:80] or record["id"],
+            )
+        )
+        lines.append(record["id"] + " · " + status(record["status"]))
+        lines.append(t("saved_chat_note"))
+        lines.append(task_result(record, language))
+        for change in record.get("changes", []):
+            lines.append(f"{change.get('status', 'changed')}: {change['path']}")
+            if change.get("diff"):
+                lines.append(change["diff"])
+        for check in record.get("checks", []):
+            lines.append(
+                check["name"] + " · " + t("check_passed" if check.get("passed") else "check_failed")
+            )
     elif "project" in result:
         project = result["project"]
         lines.append("── " + t("status_title"))
@@ -207,16 +304,21 @@ def present(result: dict, language: str) -> str:
                     lines.append(str(check[key]))
     elif "sessions" in result:
         lines.append("── " + t("sessions_title"))
-        for record in result["sessions"]:
+        for index, record in enumerate(result["sessions"], 1):
             lines.append(
-                f"{record['id']}  ·  {status(record['status'])}  ·  {record.get('updated', '')}"
+                f"{index}. {record.get('title') or record['id']}  ·  "
+                f"{status(record['status'])}  ·  {record.get('updated', '')}"
             )
+            lines.append("  " + record["id"])
             lines.append("  " + record.get("summary", record.get("task", ""))[:160])
         if not result["sessions"]:
             lines.append(t("no_sessions"))
+        lines.append(t("chats_hint", next=result.get("page", 1) + 1))
         lines.append("/resume SESSION_ID · /resume SESSION_ID continue")
     elif "session" in result or ("summary" in result and "id" in result):
         lines.append(t("session_label") + ": " + result.get("session", result.get("id", "")))
+        if result.get("title"):
+            lines.append(t("chat_title", title=result["title"]))
         if result.get("summary"):
             lines.append(result["summary"])
     elif "phases" in result:

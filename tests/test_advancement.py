@@ -15,7 +15,7 @@ from unittest.mock import patch
 
 import test_execution
 
-from erol.benchmark import behavioral_benchmark, load_suite
+from erol.benchmark import behavioral_benchmark, load_suite, metrics
 from erol.checktrust import CheckTrust
 from erol.common import ErolError, canonical
 from erol.execution import git
@@ -428,8 +428,10 @@ class AdvancementTests(unittest.TestCase):
             self.base / "report.json",
             runner_factory=factory,
             trust=CheckTrust(self.store.directory, self.repo),
+            fixture_parent=self.base / "external-fixtures",
         )
         self.assertTrue(report["passed"])
+        self.assertEqual(self.base / "external-fixtures", Path(report["fixture_root"]).parent)
         self.assertEqual("paired_context_ablation", report["kind"])
         control = report["pairs"][0]["arms"]["control"]
         self.assertEqual([], control["selected_skills"])
@@ -439,6 +441,31 @@ class AdvancementTests(unittest.TestCase):
         suite.write_text(canonical({"schema_version": 1, "cases": [case]}), encoding="utf-8")
         with self.assertRaisesRegex(ErolError, "Unsafe"):
             load_suite(suite)
+
+
+class BenchmarkGateTests(unittest.TestCase):
+    def test_legacy_completed_run_with_open_review_finding_is_not_success(self):
+        finding = {"severity": "medium", "resolved": False, "message": "Atomicity violated"}
+        run = {
+            "id": "legacy-run",
+            "status": "completed",
+            "attempts": [],
+            "review": {"result": {"findings": [finding]}},
+            "baseline": [],
+            "checks": [],
+            "capabilities": {},
+            "worktree": "fixture",
+            "selected_skills": [],
+            "base_commit": "fixture",
+            "checks_digest": "fixture",
+            "task": "Atomic migration",
+        }
+        measured = metrics(run, 12)
+        self.assertEqual("completed", measured["status"])
+        self.assertFalse(measured["completed"])
+        self.assertEqual([finding], measured["unresolved_findings"])
+        finding["resolved"] = True
+        self.assertTrue(metrics(run, 12)["completed"])
 
 
 class SourceReceiptTests(unittest.TestCase):
