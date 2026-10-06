@@ -783,3 +783,12 @@ stable release workflow, with exact source provenance and wheel/sdist/npm assets
 The live behavioral quality failure remains documented; passing static/package CI
 must not be presented as broad model success. Publication status and remote CI
 evidence are retained in the external task report after the workflows finish.
+
+The first PR CI run exposed POSIX-only false secret detection for the newly
+generated top-level `artifact_directory` field. Run-store validation now applies
+the existing absolute-path, full credential-pattern and per-component entropy
+checks to that exact field. Arbitrary task/context strings keep full-value scans.
+The two path regressions now cover report persistence and credential, relative,
+non-string and nested-field rejection. This is a narrow metadata fix, not a
+general relaxation of secret detection. The failed initial CI evidence is retained
+externally; the corrected source must pass the complete matrix before merge.

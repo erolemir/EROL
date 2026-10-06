@@ -50,6 +50,8 @@
   benchmark roots. The fixed-model 36-arm trial produced 30 strictly reviewed
   successes; five migration review failures and one research timeout remain.
   Cross-model calibration and general savings claims are not established.
+- Validate generated report paths as filesystem metadata on POSIX while retaining
+  credential-pattern/component checks and full scans of arbitrary nested content.
 
 - Add bounded TODO/check/imported-issue discovery and explicit project-policy queues
   with unique tasks, durable cancellation, recovery and verified dependency deltas.

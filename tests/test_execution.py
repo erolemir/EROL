@@ -231,7 +231,15 @@ class ExecutionTests(unittest.TestCase):
             "project_id": self.project.id,
             "task": "Repair arithmetic",
             **dict.fromkeys(
-                ("project_root", "worktree", "directory", "checks_path", "patch", "delta_patch"),
+                (
+                    "project_root",
+                    "worktree",
+                    "directory",
+                    "checks_path",
+                    "patch",
+                    "delta_patch",
+                    "artifact_directory",
+                ),
                 path,
             ),
         }
@@ -239,6 +247,7 @@ class ExecutionTests(unittest.TestCase):
             self.runs.create(record)
             self.runs.save(record)
         self.assertEqual(path, self.runs.get(record["id"])["worktree"])
+        self.assertEqual(path, self.runs.get(record["id"])["artifact_directory"])
 
     def test_run_path_exception_keeps_credentials_and_arbitrary_text_rejected(self):
         record = {
@@ -254,8 +263,13 @@ class ExecutionTests(unittest.TestCase):
                 {"worktree": "/home/password=private-fixture/src"},
                 {"worktree": "relative/project"},
                 {"worktree": 123},
+                {"artifact_directory": unsafe_path},
+                {"artifact_directory": "/home/password=private-fixture/reports"},
+                {"artifact_directory": "relative/reports"},
+                {"artifact_directory": 123},
                 {"task": joined},
                 {"context": {"worktree": joined}},
+                {"context": {"artifact_directory": joined}},
             ):
                 with self.subTest(fields=fields), self.assertRaises(ErolError):
                     self.runs.create({**record, **fields})

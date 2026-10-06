@@ -154,6 +154,7 @@ class RunStore:
             "checks_path",
             "patch",
             "delta_patch",
+            "artifact_directory",
         }
         for key in path_fields & record.keys():
             if not isinstance(record[key], str):
