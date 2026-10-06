@@ -584,3 +584,33 @@ adapter drift, pack/context eval and both package builds/smokes. PR CI run
 37319948984 passed all six OS/Python jobs, including the native Darwin repeat
 cleanup regression. The title addition receives focused tests/review and a new
 complete CI run before merging; that previous run is not credited to the new head.
+
+## English README maintenance (2026-10-06)
+
+The GitHub-facing README is translated into English, including installation
+instructions, terminal usage, task/research examples, troubleshooting, learning
+gates, and limitations. Command names, configuration keys, manifests, pinned
+release examples, evidence links, and runtime behavior are preserved. English
+contents links target the translated headings; explicit legacy heading aliases
+preserve existing Turkish section links. Personal example paths are replaced
+with neutral placeholders. The original brand PNG is unchanged.
+
+This is a documentation-only change. Validation results are recorded below
+only after the corresponding checks have actually completed. No live provider
+calls or learned-skill qualification are part of this task.
+
+Local validation on Windows / Python 3.14.2 passed: 327 Python tests (324
+passed, three platform-specific skips), 12 Node tests, Ruff lint/format, Mypy
+across 42 source files, adapter drift, 96-workflow / 289-fixture pack evaluation,
+context/learning evaluation, sdist/wheel build, and wheel/npm package smokes.
+The documentation check preserved all 39 fenced blocks, both JSON manifests,
+CLI option names, external URLs, and legacy level-two section anchors. It
+resolved 59 Markdown link targets and ran nine non-provider CLI examples using
+an explicit project and a temporary external home. GitHub's Markdown API also
+rendered the English document successfully.
+
+Independent read-only review found one scope-check example had lost its Turkish
+keyword alternatives. The exact original bilingual acceptance expression was
+restored, and the reviewer confirmed the finding was resolved with no new
+concrete blocker. No live provider calls, account login changes, runtime edits,
+learned project-skill use receipts, or global promotion were performed.
