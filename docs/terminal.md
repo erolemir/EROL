@@ -232,7 +232,10 @@ approved independent review against unchanged source. A model's statement that
 tests passed is not evidence. Small work with no review and work without check
 manifest remain implemented_unverified. Failures/findings remain needs_attention;
 cancellation retains the partial diff. Project-memory promotion gates are unchanged;
-terminal tasks do not automatically promote skills or award real-use receipts.
+terminal tasks do not automatically promote skills. Verified terminal tasks now
+complete revision-bound usage receipts through the same transaction as isolated
+runs. Only admitted, qualified learned revisions receive credit; repeated task IDs,
+missing native-session acknowledgments and stale check/source/report evidence do not.
 
 A configured `checks_path` must first be explicitly reviewed and approved with
 `erol --project PATH --home HOME checks trust --file MANIFEST` using the terminal's
@@ -258,3 +261,70 @@ provide raw-key multiline/history/completion. Rich paste requires a terminal tha
 emits bracketed-paste markers; display assumes monospace Unicode and approximately
 1:2 cells. Model routing remains a profile-based prior rather than a measured
 "best model" guarantee.
+
+## Routing, comparison and first-run setup (2026-10-06)
+
+`erol onboard --wizard` previews project, connection, API budget and literal check
+commands before saving. Explicit YES authorization binds the displayed manifest
+digest. Blank connection selects automatic routing; omitted CLI connection preserves
+the existing preference. Connection settings are shared under the external home;
+checks are authorized for the chosen project.
+
+`plan`, `explain` and `chat` accept repeated `--skill NAME`. Interactive
+`/skills use NAME NAME` pins skills and `/skills auto` restores automatic routing.
+Pinned skills still obey project revision and context admission gates. Followup
+phrases inherit a bounded task summary; explicit replacement and project switching
+reset the task context. Routing reports unmatched and excluded negative clauses.
+
+`/models compare TASK` compares implementer, planner and reviewer profiles and
+efforts without starting model calls. Criteria are scope/risk, role, prepared
+context, tools, supported efforts, preferences and budget. Skill count alone does
+not make a task large. Eligible alternatives and unknown measured success are
+visible. `/models refresh` refreshes discovery; role calls share discovery during a
+task, invalidating it on connection changes or access errors.
+
+Native bridge plans use `plan --harness codex` or `--harness claude` automatically.
+Each advisory agent includes `model_selection` and a native `binding`. The bridge
+checks the current delegation API and model inventory before applying that binding;
+manual `--model`/`--effort` takes precedence. With an unknown host or unsupported
+override, inherit host settings and report the limitation. Configured API providers
+can be compared with their provider kind; native bindings are only supplied for
+Codex/Claude. Installation and profile metadata do not prove model access.
+
+Generated reports use `~/.erol/reports/<project-id>/<task-id>/` (or the configured
+external EROL home). Source docs and native instruction/skill locations keep their
+normal purpose. API tools expose only the exact task report subtree; source and
+report digests both bind checks/review. An explicit user document path takes priority.
+
+The task result combines admitted skills, selection reason, effort, changes,
+checks/review, report location and next action. The read-only loopback panel adds
+terminal sessions, routing diagnostics, phase timings and missing evidence reasons.
+`doctor` separates package health, executable discovery, login/configuration and
+acceptance-check authorization; no paid health turn is implied.
+
+## Projects and saved chats
+
+`/my-projects` lists visited local project checkouts, including readable metadata
+from older EROL state. `/my-projects add "PATH"` adds a checkout;
+`/my-projects 1` selects the displayed number. IDs or unambiguous names also work.
+Missing folders are marked; selection rechecks the project identity. Switching
+uses the existing `/project` flow and starts a fresh project context. Active or
+uncertain tasks must finish or be cancelled first.
+
+`/chats` lists the current project's saved chats; general chats have their own
+list. `/chats page 2` shows the next 50 records. `/chats 1` opens a saved summary
+without a model call. `/chats show 1` displays its changes, checks and verification
+state; `/chats continue 1` explicitly runs a followup. A saved session ID or an
+unambiguous quoted title may replace the number. Numbers refer to the last
+displayed page even when another process adds a chat.
+
+`/rename "TITLE"` names the current chat, including before its first task.
+`/chats rename 1 "TITLE"` names an older idle chat. Titles persist across reopen
+and continuation; renaming preserves task IDs, timestamps and evidence.
+Running/locked chats cannot be renamed. This view uses retained summaries,
+changes and check records; it does not add full message transcript retention.
+
+Project metadata stays in `~/.erol/global/projects.json`, project chats in
+`~/.erol/state/<project-id>/chat/`, and general chats in `~/.erol/global/chat/`
+(or the configured external EROL home). No project Markdown files are generated
+by these navigation commands.

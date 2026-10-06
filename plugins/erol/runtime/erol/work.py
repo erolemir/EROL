@@ -15,7 +15,7 @@ from pathlib import Path
 
 from .checktrust import CheckTrust, command_environment
 from .common import ErolError, canonical, digest, identifier, now, reject_links, required_text
-from .execution import Limits, Runner, git, load_checks, snapshot
+from .execution import Limits, Runner, git, load_checks
 from .runprocess import observe
 from .runstore import pid_alive
 from .security import assert_secret_safe, scan_secrets
@@ -487,13 +487,20 @@ class Queue:
                         break
                     prior = self.runner.runs.get(parent["run_id"])
                     expected = self.runner.runs.directory / "runs" / identifier(prior["id"])
+                    workspace = (
+                        self.runner.store.home
+                        / "workspaces"
+                        / self.runner.store.project_id
+                        / identifier(prior["id"])
+                    )
                     if (
                         prior["directory"] != str(expected)
-                        or prior["worktree"] != str(expected / "worktree")
+                        or prior["worktree"]
+                        not in {str(workspace / "worktree"), str(expected / "worktree")}
                         or prior["project_root"] != str(self.runner.root)
                     ):
                         raise ErolError("Dependency worktree identity mismatch")
-                    current, patch = snapshot(Path(prior["worktree"]), prior["base_commit"])
+                    current, patch = self.runner._snapshot(prior)
                     if (
                         prior["status"] != "completed"
                         or current != prior["reviewed_digest"]

@@ -63,7 +63,10 @@ class Store:
         metadata = project.to_dict()
         assert_project_path_safe(Path(metadata["root"]))
         assert_secret_safe({key: value for key, value in metadata.items() if key != "root"})
-        self.home.mkdir(parents=True, exist_ok=True, mode=0o700)
+        # The container also holds sandbox workspaces and generated reports.
+        # On Windows, 0700 installs an owner-only DACL that dedicated native
+        # sandbox users cannot traverse. Keep private state restricted below.
+        self.home.mkdir(parents=True, exist_ok=True, mode=0o700 if os.name == "posix" else 0o777)
         (self.home / "state").mkdir(exist_ok=True, mode=0o700)
         self.directory.mkdir(exist_ok=True, mode=0o700)
         if os.name == "posix":
@@ -91,6 +94,21 @@ class Store:
             "payload TEXT NOT NULL,stale INTEGER NOT NULL DEFAULT 0,updated TEXT NOT NULL,"
             "PRIMARY KEY(kind,id))"
         )
+        # Additive revision bookkeeping, including writes by older CLI versions.
+        self.db.execute("INSERT OR IGNORE INTO metadata VALUES('record_revision','0')")
+        self.db.execute(
+            "CREATE TABLE IF NOT EXISTS record_changes(kind TEXT,id TEXT,revision INTEGER,"
+            "PRIMARY KEY(kind,id))"
+        )
+        for event, source in (("INSERT", "new"), ("UPDATE", "new"), ("DELETE", "old")):
+            self.db.execute(
+                f"CREATE TRIGGER IF NOT EXISTS record_revision_{event.lower()} "
+                f"AFTER {event} ON records BEGIN "
+                "UPDATE metadata SET value=CAST(value AS INTEGER)+1 WHERE key='record_revision'; "
+                f"INSERT INTO record_changes VALUES({source}.kind,{source}.id,"
+                "(SELECT CAST(value AS INTEGER) FROM metadata WHERE key='record_revision')) "
+                "ON CONFLICT(kind,id) DO UPDATE SET revision=excluded.revision; END"
+            )
         self.db.execute(
             "INSERT OR REPLACE INTO metadata VALUES('project',?)", (canonical(project.to_dict()),)
         )

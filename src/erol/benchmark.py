@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-import tempfile
+import os
 import time
 import uuid
 from pathlib import Path
@@ -11,7 +11,7 @@ from pathlib import Path
 from .checktrust import CheckTrust
 from .common import ErolError, atomic_write, canonical, digest, now, reject_links, required_text
 from .config import Config
-from .execution import Limits, Runner, git, load_checks
+from .execution import Limits, Runner, git, load_checks, validate_checks
 from .identity import detect_project
 from .learning import LearningEngine
 from .registry import Registry
@@ -52,6 +52,7 @@ def load_suite(path: Path) -> dict:
             raise ErolError("Duplicate behavioral case")
         seen.add(key)
         required_text(case["task"], "benchmark task")
+        validate_checks(case["checks"])
         if (
             case["mode"] not in {"development", "research"}
             or not isinstance(case["files"], dict)
@@ -99,8 +100,14 @@ def metrics(run: dict, elapsed: float) -> dict:
                 if isinstance(value, (int, float)) and not isinstance(value, bool):
                     usage[key] = usage.get(key, 0) + value
     before = {item["name"]: item["passed"] for item in run["baseline"]}
+    unresolved = [
+        item
+        for item in ((run.get("review") or {}).get("result") or {}).get("findings", [])
+        if not item["resolved"]
+    ]
     return {
-        "completed": run["status"] == "completed",
+        "completed": run["status"] == "completed" and not unresolved,
+        "unresolved_findings": unresolved,
         "status": run["status"],
         "duration_seconds": elapsed,
         "attempts": len(run["attempts"]),
@@ -118,6 +125,9 @@ def metrics(run: dict, elapsed: float) -> dict:
         "base_commit": run["base_commit"],
         "checks_digest": run["checks_digest"],
         "task_digest": digest(run["task"]),
+        "requested_model": run.get("requested_model"),
+        "requested_effort": run.get("requested_effort"),
+        "phase_timings": run.get("phase_timings", {}),
     }
 
 
@@ -127,8 +137,11 @@ def behavioral_benchmark(
     report_path: Path,
     *,
     repeat: int = 1,
+    model: str | None = None,
+    effort: str | None = None,
     runner_factory=Runner,
     trust: CheckTrust | None = None,
+    fixture_parent: Path | None = None,
 ) -> dict:
     if not 1 <= repeat <= 3:
         raise ErolError("Behavioral repeat must be 1..3")
@@ -136,7 +149,16 @@ def behavioral_benchmark(
     if trust is None:
         raise ErolError("Behavioral suite contains unreviewed checks; use erol checks trust first")
     approved = {case["id"]: trust.require(case["checks"]) for case in suite["cases"]}
-    retained = Path(tempfile.mkdtemp(prefix="erol-behavior-"))
+    # Retain controlled fixtures beside the caller's external report. Windows
+    # mkdtemp/0700 DACLs prevent dedicated sandbox users traversing the root.
+    parent = (
+        report_path.expanduser().absolute().parent if fixture_parent is None else fixture_parent
+    )
+    # Keep metadata paths short on native Windows Git. Exclusive mkdir still
+    # rejects the unlikely collision rather than reusing an earlier trial.
+    retained = parent / ("b-" + uuid.uuid4().hex[:16])
+    reject_links(retained)
+    retained.mkdir(parents=True, mode=0o700 if os.name == "posix" else 0o777)
     report: dict = {
         "schema_version": 1,
         "id": "benchmark-" + uuid.uuid4().hex,
@@ -144,6 +166,8 @@ def behavioral_benchmark(
         "created": now(),
         "suite_digest": digest(suite),
         "harness": harness,
+        "requested_model": model,
+        "requested_effort": effort,
         "fixture_root": str(retained),
         "limitations": [
             "Both arms use the same EROL checks, permissions and independent review",
@@ -213,12 +237,30 @@ def behavioral_benchmark(
                             checks_path,
                             mode=case["mode"],
                             context_enabled=arm == "erol",
+                            model=model,
+                            effort=effort,
                         )
                         pair["arms"][arm] = metrics(outcome, time.monotonic() - started)
                 # Persist every completed arm so interruption does not erase expensive evidence.
                 atomic_write(report_path, canonical({**report, "in_progress_pair": pair}) + "\n")
             report["pairs"].append(pair)
             atomic_write(report_path, canonical(report) + "\n")
+    report["case_comparisons"] = []
+    for case in suite["cases"]:
+        pairs = [p for p in report["pairs"] if p["case_id"] == case["id"]]
+        results = {}
+        for arm in ("erol", "control"):
+            rows = [p["arms"][arm] for p in pairs]
+            results[arm] = {
+                "trials": len(rows),
+                "completed": sum(r["completed"] for r in rows),
+                "regressions": sum(len(r["regressed_checks"]) for r in rows),
+                "duration_seconds": [r["duration_seconds"] for r in rows],
+                "reported_input_tokens": [r["usage"].get("input_tokens") for r in rows],
+                "reported_output_tokens": [r["usage"].get("output_tokens") for r in rows],
+                "reported_cost_usd": [r["cost_usd"] for r in rows],
+            }
+        report["case_comparisons"].append({"case_id": case["id"], "arms": results})
     report["passed"] = all(
         arm["completed"] for pair in report["pairs"] for arm in pair["arms"].values()
     )

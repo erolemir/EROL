@@ -614,3 +614,172 @@ keyword alternatives. The exact original bilingual acceptance expression was
 restored, and the reviewer confirmed the finding was resolved with no new
 concrete blocker. No live provider calls, account login changes, runtime edits,
 learned project-skill use receipts, or global promotion were performed.
+
+
+## Three-stage reliability, efficiency and usability upgrade (2026-10-06)
+
+The user approved implementation in accuracy → local efficiency → usability order,
+then requested all generated reports under the external EROL home and automatic
+subagent model/effort selection in native AI hosts. Team features and publication
+remain outside scope. The runtime remains dependency-free and harness-independent.
+
+Implemented software:
+
+- Fifty additive Turkish/English acceptance fixtures (339 total), natural inspection
+  and prioritization triggers, clause-scoped operation negation, bounded followup
+  task context, explicit replacement/project resets and routing diagnostics.
+- Repeated plan/explain/chat `--skill`, terminal `/skills use` and `/skills auto`,
+  project/revision validation, actual context admission and no omitted-skill roles.
+- Shared terminal/runner observed completion, distinct native/API review sessions,
+  source/check/report digest binding and transactionally idempotent revision credit.
+- Phase/model/tool/check/review accounting, full prepared prompt/tool/summary context
+  proxies, independent retry escalation, provider discovery shared within a task,
+  committed revision-based incremental indexing with a full legacy bootstrap.
+- `/models compare`, native plan host detection/selection, manual model/effort
+  precedence and per-role alternatives. Effort-only selection filters eligible
+  profiles before choosing a model. Unknown native capabilities inherit current
+  settings. Bridges use supported delegation parameters and never write agent
+  Markdown/config/hooks. Official native capability references:
+  [Codex subagents](https://developers.openai.com/codex/subagents) and
+  [Claude subagents](https://code.claude.com/docs/en/sub-agents), checked 2026-10-06.
+- Preview-first onboarding with exact-manifest trust, digest-bound wizard approval,
+  automatic-connection reset, separate package/login/model/check doctor diagnostics,
+  consolidated task result and read-only local panel terminal records.
+- External task reports at `<EROL_HOME>/reports/<project-id>/<task-id>/`. API workers
+  can discover/read/write only their exact report subtree; reviewers read it, and
+  report changes invalidate evidence. Source docs and native discovery paths remain.
+- Six controlled paired cases for pagination, message idempotency, filter state,
+  migration rollback, authorization and sourced research, repeat/fixed-model/effort
+  options and a repaired external-artifact live research trial. README packages
+  three usage examples, with deterministic versus live verification distinguished.
+
+Seven repeated local-work measurements preserved search results for 1,000 records.
+Forced full reconciliation examined 1,000 records; unchanged incremental sync
+examined zero. Median durations were 11.512 ms and 2.711 ms respectively. Five
+native provider discovery/login/profile probes per task versus one shared probe
+measured median 0.717 s and 0.141 s. These measurements cover local work only,
+not model quality, charged model calls or overall task savings.
+
+The requested six-case × three-repeat live behavioral gate remains **pending**.
+A fixed Codex gpt-6.1-sol/medium attempt completed one failed pair: both arms
+returned native filesystem denial before repair/check/review. The next owned run
+was interrupted and durably cancelled after observing child exit. The partial
+report explicitly records the blocker and is not a successful comparison. Profiles
+were not calibrated from these failures, and no general success/token-saving claim
+is made. Linux/macOS and live Claude/API/native delegation need separate trials.
+
+External evidence is retained under the task report directory for
+`erol-upgrade-20261006-implementation`: `behavior.json`, `local-work.json`,
+`cli-smoke.json` and validation logs. Four CLI/deterministic research-trial smoke
+cases passed without model calls. The source ledger smoke does not verify factual
+accuracy. Independent read-only review found and resolved negation boundaries,
+index commit provenance, retry context/escalation, report scope/digest/discovery,
+queue digest compatibility, onboarding approval/automatic reset, effort-only
+selection and general followup model-risk issues. The final reviewer found no new
+concrete blocker and made no file changes or live model calls.
+
+Final local validation on Windows / Python 3.12.10: 349 Python tests
+(346 passed, three platform skips), 12 Node tests, Ruff lint/format, Mypy across
+46 source files, adapter drift, 96-skill / 339-case routing and context/learning
+evaluation passed. Build/package smoke outcomes and the final validation summary
+are retained alongside the external task logs. Four CLI/trial smoke cases passed.
+These results do not replace the pending live behavioral gate.
+
+## Native Windows access diagnosis and follow-up (2026-10-06)
+
+A fresh shell read/write/Python-test canary passed with the existing native
+sandbox. A real paired runner trial reproduced PowerShell Get-Content and
+Set-Location denial in both arms. Comparing directory ACLs exposed owner-only
+ancestors installed by Windows `mkdir(mode=0700)` under the private memory/run
+tree. This is an observed filesystem denial, not an automatic approval rejection.
+
+New source worktrees are separate at `home/workspaces/<project-id>/<run-id>/worktree`.
+Memory, run records, schemas and patches remain in private state. Windows home
+and source containers inherit default ACLs without changing existing ACLs; POSIX
+privacy is preserved. Resume validates exact new or legacy locations. Controlled
+benchmark fixtures now use inherited Windows ACLs under `home/benchmarks/`, which
+also avoids the long Git metadata path encountered with deeply nested reports.
+
+The fresh pagination pair passed implementation, both acceptance checks and
+separate native review in both arms (Codex 0.160.0, requested gpt-6.1-sol/medium).
+Independent read-only code review found no new blocker. Complete validation then
+found stale Queue worktree identity checks and a long-path fixture setup failure.
+Queue now accepts only exact new or legacy identities; exclusive short benchmark
+roots avoid that failure. The reviewer independently ran all three affected
+regression tests, which passed, and found no additional blocker.
+
+Final Windows validation passed: 351 Python tests (348 passed, three platform
+skips), 12 Node tests, Ruff lint/format, Mypy across 46 source files, adapter drift,
+339 routing fixtures, pack/context/learning eval, build and wheel/npm smokes.
+The full six-case, three-repeat live trial is running with fixed requested
+gpt-6.1-sol/medium. These comparisons vary injected context; native user/plugin
+instructions remain active in both arms. Cross-model/effort ranking cannot be
+calibrated from this single requested configuration.
+External evidence is under `reports/erol-dc3958ee207243b6/erol-live-access-20261006/`.
+No general savings, untested model calibration or learned-use credit is claimed.
+
+## Review gate and terminal project/chat navigation (2026-10-06)
+
+The live evidence audit found four legacy completed migration outcomes with
+unresolved medium findings, plus a high finding that already required attention.
+All unresolved findings now block runner completion and learning credit, at every
+severity. Benchmark metrics recompute this gate for legacy runs. Learning metrics,
+rollback and qualification revalidate historical attestations; stored records are
+retained rather than silently rewritten. New regressions cover medium/low review,
+legacy use credit, legacy qualification and fake-engine evidence qualification.
+Independent review found and resolved the legacy metrics issue. Pre-navigation
+validation passed 356 Python tests (353 passed, three skips), 12 Node tests,
+Ruff/Mypy, 339 routing cases, adapter drift, pack/context/learning eval and build
+with wheel/npm package smokes. This is local code validation, not live gate success.
+
+The user's terminal navigation request adds `/my-projects` with visited checkouts,
+read-only discovery of old memory metadata, displayed-number selection and fresh
+project identity validation. `/chats` lists scoped records with pagination;
+`/chats show` shows retained summary/change/check evidence and `/chats continue`
+explicitly starts work. `/rename` and `/chats rename` preserve evidence and persist
+names across reopen/continuation. The user chose existing summaries and records;
+full transcript retention is not added. Catalog and chat state stay external.
+
+Independent review reproduced and resolved two issues: long display names rejected
+by ID validation, and switching sessions during preflight planning. Display names
+are bounded printable text; whole-task busy/lock guards include planning and all
+exception exits. The reviewer independently passed all 14 navigation regressions
+with fake providers and found no remaining actionable issue. Complete validation
+passed on Windows / Python 3.12.10: 371 Python tests (368 passed, three platform
+skips), 12 Node tests, Ruff lint/format, Mypy across 47 source files, adapter drift,
+96-skill / 339-case routing and pack/context/learning evaluation, build and wheel/npm
+package smokes. The reviewer also independently passed the updated two startup
+tests and all fifteen navigation tests: 17/17. No live provider calls were made by
+the reviewer. Current evidence is external under
+`reports/erol-dc3958ee207243b6/erol-terminal-projects-20261006/`.
+
+The fixed requested Codex gpt-6.1-sol/medium matrix finished all 36 arms (six cases,
+three repeats, context enabled/disabled). Strict success was 16/18 with injected
+context and 14/18 without it: 30/36 overall. Five migration outcomes retained open
+review findings (four had legacy completed status); one control research arm
+timed out. The source access denial did not recur. The observer then failed on its
+null worker logging; the timeout was recovered from the retained run without
+replay, and only the remaining three research arms were launched. Those final
+arms used the corrected review gate; all original run evidence remains retained.
+This change in gate version is an explicit experimental limitation.
+
+Median elapsed seconds, including failed outcomes, with / without injected context:
+pagination 124.266 / 129.516; idempotency 113.110 / 138.266; filter state
+116.921 / 135.046; migration rollback 527.360 / 523.671; authorization
+120.656 / 129.203; sourced research 369.656 / 301.125. The recovered timeout
+duration is a phase-sum estimate. Reported usage/cached usage is distinct from
+cost; CLI cost remained unknown. Native user/plugin instructions were active in
+both arms and local validation overlapped part of the timings. The full live
+quality gate **did not pass**; three samples and one requested model/effort cannot
+calibrate cross-model rankings or justify a general savings claim. No profile
+rank update or learned-use credit was applied. Final calibration and strict
+evidence audit are in the external access task's `calibration.json` and
+`evidence-audit.json`; successful sourced reports remain in their task report
+directories, with model-asserted independent source reviews explicitly labeled.
+
+The user explicitly authorized pushing the completed source to `main` and creating
+a release. Publication follows the existing validate → automatically versioned
+stable release workflow, with exact source provenance and wheel/sdist/npm assets.
+The live behavioral quality failure remains documented; passing static/package CI
+must not be presented as broad model success. Publication status and remote CI
+evidence are retained in the external task report after the workflows finish.

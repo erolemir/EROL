@@ -10,6 +10,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 
 from .benchmark import metrics
+from .chat import Sessions
 from .common import ErolError, canonical
 from .runstore import RunStore
 from .work import WorkStore
@@ -26,19 +27,19 @@ input,select,button{font:inherit;border:1px solid #cddcd6;border-radius:7px;back
 article{margin-bottom:12px;padding:18px 22px}article button{padding:0;border:0;text-align:left;color:#16313c;width:100%;display:flex;justify-content:space-between;gap:20px}code{font-family:monospace;font-size:13px;overflow-wrap:anywhere}.badge{border-radius:16px;background:#edf3f0;font-size:12px;padding:5px 10px}.completed{background:#d8eee6;color:#176447}.needs_attention{background:#fff0d5;color:#865b17}.running{background:#ddecf6;color:#275c81}.detail{border-top:1px solid #e5ebe8;margin-top:16px;padding-top:16px}.detail p{line-height:1.6;font-size:13px}table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:9px;text-align:left;border-bottom:1px solid #edf1ef}.empty{text-align:center;padding:48px;color:#688078}.note{font-size:12px;color:#6b827a;margin-top:24px}
 @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}header{padding:24px}main{padding:20px 16px}.stat{padding:16px}}
 </style><header><div><h1>EROL</h1><p>İşler, yürütme ve doğrulama kanıtları</p></div><span id="connection">Bağlanıyor…</span></header>
-<main><div class="stats" id="stats"></div><nav><button id="runs" class="active">Yürütmeler</button><button id="jobs">Kuyruk</button><button id="benchmarks">Ölçümler</button><input id="query" placeholder="Kimlik veya aşama ara" aria-label="Ara"><select id="status" aria-label="Durum"><option value="">Tüm durumlar</option>completed</option><option>running</option><option>queued</option><option>needs_attention</option><option>cancelled</option></select></nav><div id="items"></div><p class="note">Salt okunur yerel panel · Süreç çıkışları yerel kanıttır. Kaynak erişimi iddianın doğruluğunu onaylamaz. Worktree bir işletim sistemi sandbox’ı değildir.</p></main>
+<main><div class="stats" id="stats"></div><nav><button id="runs" class="active">Yürütmeler</button><button id="chats">Terminal görevleri</button><button id="jobs">Kuyruk</button><button id="benchmarks">Ölçümler</button><input id="query" placeholder="Kimlik veya aşama ara" aria-label="Ara"><select id="status" aria-label="Durum"><option value="">Tüm durumlar</option>completed</option><option>running</option><option>queued</option><option>needs_attention</option><option>cancelled</option></select></nav><div id="items"></div><p class="note">Salt okunur yerel panel · Süreç çıkışları yerel kanıttır. Kaynak erişimi iddianın doğruluğunu onaylamaz. Worktree bir işletim sistemi sandbox’ı değildir.</p></main>
 <script src="/panel.js"></script></html>"""
 
 JS = """const credential=new URLSearchParams(location.hash.slice(1)).get('token')||'';
 history.replaceState(null,'',location.pathname);
-let state={runs:[],jobs:[],benchmarks:[]},view='runs',expanded=new Set();
+let state={runs:[],chats:[],jobs:[],benchmarks:[]},view='runs',expanded=new Set();
 const $=id=>document.getElementById(id),el=(tag,text)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;return e};
 function render(){const counts=[['Yürütme',state.runs.length],['Tamamlanan',state.runs.filter(r=>r.status==='completed').length],['İlgi bekleyen',state.runs.filter(r=>r.status==='needs_attention').length],['Kuyruk',state.jobs.filter(j=>j.status==='queued').length]];
 $('stats').replaceChildren(...counts.map(([label,n])=>{let d=el('div');d.className='stat';let l=el('span',label);l.className='label';d.append(l,el('strong',n));return d}));
 let rows=state[view].filter(r=>(!$('status').value||r.status===$('status').value)&&JSON.stringify([r.id,r.task_id,r.phase,r.status]).toLowerCase().includes($('query').value.toLowerCase()));
 $('items').replaceChildren(...rows.slice().reverse().map(r=>{let a=el('article'),b=el('button'),badge=el('span',r.status);badge.className='badge '+r.status;b.append(el('code',r.id),badge);b.onclick=()=>{expanded.has(r.id)?expanded.delete(r.id):expanded.add(r.id);render()};a.append(b,el('p',(r.phase||'')+' · '+(r.harness||r.rule?.harness||'')+' · '+(r.created||'')));
-if(expanded.has(r.id)){let d=el('div');d.className='detail';for(const key of ['worktree','tested_digest','reviewed_digest','reason','run_id','duration_seconds','attempts','cost_usd','pairs','report'])if(r[key]!==undefined&&r[key]!==null)d.append(el('p',key+': '+r[key]));if(r.usage)d.append(el('p','CLI kullanımı: '+JSON.stringify(r.usage)));if(r.review_summary)d.append(el('p',r.review_summary));let t=el('table'),head=el('tr');['Kontrol / kaynak','Sonuç','Kanıt'].forEach(s=>head.append(el('th',s)));t.append(head);for(const c of r.checks||[]){let tr=el('tr');[c.name,c.passed?'Geçti':'Başarısız',c.evidence_type].forEach(s=>tr.append(el('td',s)));t.append(tr)}for(const c of r.source_access_receipts||[]){let tr=el('tr');[c.source_id,c.status,c.evidence_type].forEach(s=>tr.append(el('td',s)));t.append(tr)}d.append(t);for(const f of r.findings||[])d.append(el('p',f.severity+': '+f.message));a.append(d)}return a}));if(!rows.length){let e=el('div','Bu filtrede kayıt yok.');e.className='empty';$('items').append(e)}}
-['runs','jobs','benchmarks'].forEach(id=>$(id).onclick=()=>{view=id;['runs','jobs','benchmarks'].forEach(k=>$(k).classList.toggle('active',k===view));render()});$('query').oninput=render;$('status').onchange=render;
+if(expanded.has(r.id)){let d=el('div');d.className='detail';for(const key of ['worktree','tested_digest','reviewed_digest','reason','run_id','duration_seconds','attempts','cost_usd','pairs','report','artifact_directory','next_step'])if(r[key]!==undefined&&r[key]!==null)d.append(el('p',key+': '+r[key]));for(const key of ['routing','selected_skills','phase_timings','model_turns','verification','selection'])if(r[key])d.append(el('p',key+': '+JSON.stringify(r[key])));if(r.usage)d.append(el('p','CLI kullanımı: '+JSON.stringify(r.usage)));if(r.review_summary)d.append(el('p',r.review_summary));let t=el('table'),head=el('tr');['Kontrol / kaynak','Sonuç','Kanıt'].forEach(s=>head.append(el('th',s)));t.append(head);for(const c of r.checks||[]){let tr=el('tr');[c.name,c.passed?'Geçti':'Başarısız',c.evidence_type].forEach(s=>tr.append(el('td',s)));t.append(tr)}for(const c of r.source_access_receipts||[]){let tr=el('tr');[c.source_id,c.status,c.evidence_type].forEach(s=>tr.append(el('td',s)));t.append(tr)}d.append(t);for(const f of r.findings||[])d.append(el('p',f.severity+': '+f.message));a.append(d)}return a}));if(!rows.length){let e=el('div','Bu filtrede kayıt yok.');e.className='empty';$('items').append(e)}}
+['runs','chats','jobs','benchmarks'].forEach(id=>$(id).onclick=()=>{view=id;['runs','chats','jobs','benchmarks'].forEach(k=>$(k).classList.toggle('active',k===view));render()});$('query').oninput=render;$('status').onchange=render;
 async function refresh(){try{let r=await fetch('/api/state',{cache:'no-store',headers:{Authorization:'Bearer '+credential}});if(!r.ok)throw Error();state=await r.json();$('connection').textContent='● Yerel bağlantı';render()}catch{$('connection').textContent='Bağlantı bekleniyor'}}refresh();setInterval(refresh,3000);
 """
 
@@ -60,6 +61,8 @@ def panel_state(directory: Path, project_id: str) -> dict:
                     "tested_digest",
                     "reviewed_digest",
                     "reason",
+                    "phase_timings",
+                    "artifact_directory",
                 )
             }
             try:
@@ -91,6 +94,47 @@ def panel_state(directory: Path, project_id: str) -> dict:
                 {"review_summary": review.get("summary"), "findings": review.get("findings", [])}
             )
             records.append(item)
+        chats = []
+        sessions = Sessions(directory, project_id)
+        for entry in sessions.list():
+            record = sessions.load(entry["id"])
+            item = {
+                key: record.get(key)
+                for key in (
+                    "id",
+                    "task_id",
+                    "status",
+                    "updated",
+                    "selected_skills",
+                    "phase_timings",
+                    "artifact_directory",
+                    "model_turns",
+                    "verification",
+                    "selection",
+                    "error",
+                )
+            }
+            item["created"] = record.get("updated")
+            item["duration_seconds"] = record.get("elapsed_seconds")
+            item["phase"] = "terminal"
+            item["checks"] = [
+                {key: check.get(key) for key in ("name", "passed", "evidence_type")}
+                for check in record.get("checks", [])
+            ]
+            diagnostics = record.get("routing_diagnostics", {})
+            item["routing"] = {
+                key: diagnostics.get(key)
+                for key in ("mode", "context_inherited", "unmatched", "ambiguity")
+            }
+            item["reason"] = record.get("error") or record.get("verification", {}).get(
+                "missing_checks_reason"
+            )
+            item["next_step"] = (
+                "None"
+                if record.get("status") == "completed"
+                else "Inspect verification and configured checks; /tests /usage"
+            )
+            chats.append(item)
         jobs = [
             {key: item.get(key) for key in ("id", "task_id", "status", "run_id", "created")}
             for item in work.list("jobs")[-200:]
@@ -103,6 +147,7 @@ def panel_state(directory: Path, project_id: str) -> dict:
         "project_id": project_id,
         "runs": records,
         "jobs": jobs,
+        "chats": chats,
         "benchmarks": benchmarks,
         "read_only": True,
     }

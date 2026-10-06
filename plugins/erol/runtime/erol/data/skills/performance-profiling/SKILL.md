@@ -2,7 +2,7 @@
 name: performance-profiling
 description: "Measure bottlenecks before optimizing CPU, memory, or end-to-end latency."
 metadata:
-  version: "1.0.1"
+  version: "1.0.2"
 ---
 # Performance Profiling
 

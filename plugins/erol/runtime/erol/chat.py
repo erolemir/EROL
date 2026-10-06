@@ -14,6 +14,8 @@ from contextlib import ExitStack, contextmanager
 from pathlib import Path
 from typing import Any
 
+from .artifacts import external_directory, report_digest
+from .artifacts import instructions as artifact_instructions
 from .checktrust import CheckTrust
 from .common import (
     ErolError,
@@ -31,6 +33,7 @@ from .execution import TERMINAL, Runner, git
 from .identity import Project, detect_project
 from .learning import LearningEngine
 from .orchestration import Orchestrator
+from .projects import ProjectCatalog
 from .providers import (
     APIAdapter,
     Budget,
@@ -43,10 +46,19 @@ from .providers import (
     visible,
 )
 from .registry import Registry
-from .runstore import RunStore, pid_alive
+from .runstore import RunStore, file_lease, pid_alive
 from .security import assert_secret_safe
 from .store import Store
-from .workspace import Snapshot, Workspace, changes, check_manifest, run_checks, snapshot
+from .verification import complete_observed_task
+from .workspace import (
+    Snapshot,
+    Workspace,
+    changes,
+    check_manifest,
+    run_checks,
+    snapshot,
+    source_digest,
+)
 
 
 class Sessions:
@@ -61,6 +73,35 @@ class Sessions:
         atomic_write(
             self.directory / (identifier(record["id"]) + ".json"), canonical(record) + "\n"
         )
+
+    @contextmanager
+    def lease(self, session_id: str):
+        reject_links(self.directory)
+        self.directory.mkdir(parents=True, exist_ok=True, mode=0o700)
+        with file_lease(self.directory / (identifier(session_id) + ".lock")):
+            yield
+
+    @staticmethod
+    def title(value: str) -> str:
+        value = required_text(value, "Chat title", 120)
+        if any(ord(c) < 32 or 127 <= ord(c) <= 159 for c in value):
+            raise ErolError("Chat title must be a single printable line")
+        assert_secret_safe(value)
+        return value
+
+    def rename(self, session_id: str, title: str) -> dict:
+        title = self.title(title)
+        with self.lease(session_id):
+            record = self.load(session_id)
+            if (
+                (record.get("status") == "running" and pid_alive(record.get("owner_pid")))
+                or any(pid_alive(p) for p in record.get("active_pids", []))
+                or record.get("cleanup_uncertain")
+            ):
+                raise ErolError("A running or uncertain chat cannot be renamed")
+            record["title"] = title
+            self.save(record)
+        return record
 
     def load(self, session_id: str) -> dict:
         path = self.directory / (identifier(session_id) + ".json")
@@ -79,21 +120,31 @@ class Sessions:
             raise ErolError("Invalid or foreign project session")
         return record
 
-    def list(self) -> list[dict]:
+    def list(self, page: int = 1) -> list[dict]:
+        if type(page) is not int or not 1 <= page <= 10000:
+            raise ErolError("Chat page must be 1..10000")
         if not self.directory.exists():
             return []
         result = []
         for path in sorted(
             self.directory.glob("session-*.json"), key=lambda p: p.stat().st_mtime, reverse=True
-        )[:50]:
+        )[(page - 1) * 50 : page * 50]:
             try:
                 record = self.load(path.stem)
+                if not all(
+                    isinstance(record.get(key, ""), str)
+                    for key in ("updated", "status", "summary", "title", "task")
+                ) or not all(key in record for key in ("updated", "status")):
+                    continue
                 result.append(
                     {
                         "id": record["id"],
                         "updated": record["updated"],
                         "status": record["status"],
                         "summary": record.get("summary", "")[:150],
+                        "title": record.get("title")
+                        or record.get("task", "")[:80]
+                        or record.get("summary", "")[:80],
                     }
                 )
             except ErolError:
@@ -114,8 +165,16 @@ class ConnectionContext:
         self.home = self.connections.home
         self.factory = factory
         self.selected_model: str | None = None
+        self.skill_names: list[str] | None = None
+        self.session_title = ""
+        self.project_choices: list[dict] | None = None
+        self.chat_choices: list[dict] | None = None
+        self._provider_cache: tuple[str, tuple[list[dict], dict[str, list[Model]]]] | None = None
 
     def providers(self, refresh: bool = False) -> tuple[list[dict], dict[str, list[Model]]]:
+        configuration = digest(self.connections.settings.to_dict())
+        if not refresh and self._provider_cache and self._provider_cache[0] == configuration:
+            return self._provider_cache[1]
         reports, models = [], {}
         for connection in self.connections.settings.connections:
             row = {"id": connection.id, "kind": connection.kind, "enabled": connection.enabled}
@@ -149,6 +208,7 @@ class ConnectionContext:
                         }
                     )
             reports.append(row)
+        self._provider_cache = (configuration, (reports, models))
         return reports, models
 
 
@@ -165,33 +225,70 @@ class ChatEngine(ConnectionContext):
         self.session_id = "session-" + uuid.uuid4().hex
         self.record: dict = {}
         self.previous_summary = ""
+        self.previous_task = ""
         self.native_sessions: dict[str, str] = {}
         self.stopped = threading.Event()
         self.active: list[Any] = []
         self.lock = threading.RLock()
+        self.busy = False
         self.started = 0.0
         self.last_events: list[dict] = []
         self.allowed_commands: list[list[str]] = []
         self.checks_manifest: dict = {"checks": []}
         self.check_trust = CheckTrust(self.directory, self.root)
         self.marker: Path | None = None
+        ProjectCatalog(self.home).remember(self.project)
+
+    def ensure_idle(self) -> None:
+        if (
+            self.busy
+            or self.active
+            or self.marker is not None
+            or any(pid_alive(p) for p in self.record.get("active_pids", []))
+            or self.record.get("cleanup_uncertain")
+        ):
+            raise ErolError("Project session is running or process cleanup is uncertain")
 
     def new(self) -> str:
+        with self.lock:
+            return self._new()
+
+    def _new(self) -> str:
+        self.ensure_idle()
         self.session_id = "session-" + uuid.uuid4().hex
         self.previous_summary = ""
+        self.previous_task = ""
         self.native_sessions = {}
         self.record = {}
+        self.session_title = ""
+        self.chat_choices = None
         return self.session_id
 
     def resume(self, session_id: str) -> dict:
+        with self.lock:
+            return self._resume(session_id)
+
+    def _resume(self, session_id: str) -> dict:
+        self.ensure_idle()
         record = self.sessions.load(session_id)
+        if (record.get("status") == "running" and pid_alive(record.get("owner_pid"))) or record.get(
+            "cleanup_uncertain"
+        ):
+            raise ErolError("A saved session is running or process cleanup is uncertain")
         if any(pid_alive(p) for p in record.get("active_pids", [])):
             raise ErolError("A previous session child may still be running")
         self.session_id = session_id
         self.previous_summary = record.get("summary", "")
+        self.previous_task = record.get("routing_task", "")
         self.native_sessions = record.get("native_sessions", {})
         self.record = record
-        return {"id": session_id, "status": record["status"], "summary": self.previous_summary}
+        self.session_title = record.get("title", "")
+        return {
+            "id": session_id,
+            "title": self.session_title,
+            "status": record["status"],
+            "summary": self.previous_summary,
+        }
 
     def cancel(self) -> None:
         self.stopped.set()
@@ -210,6 +307,8 @@ class ChatEngine(ConnectionContext):
                 memory=store.search(task, mode="hybrid"),
                 token_budget=config.context_tokens,
                 max_skills=config.max_active_skills,
+                skill_names=self.skill_names,
+                previous_task=self.previous_task,
             )
 
     def _emit(self, output, item: dict) -> None:
@@ -314,12 +413,13 @@ class ChatEngine(ConnectionContext):
     def _turn(
         self, chosen: dict, prompt: str, role: str, budget: Budget, output, *, resume: bool = False
     ) -> dict:
+        turn_started = time.monotonic()
         if role == "implementer" and any(pid_alive(p) for p in self.record.get("active_pids", [])):
             raise CleanupFailure("An earlier writer is still running; inspect its session")
         connection = self.connections.get(chosen["connection"])
         model = next(m for m in connection.models if m.id == chosen["model"])
         provider = self.factory(connection, self.root)
-        provider.capabilities()
+        # Discovery is shared within this task; the actual turn still validates access.
         remaining = self.connections.settings.task_timeout_seconds - (
             time.monotonic() - self.started
         )
@@ -344,9 +444,11 @@ class ChatEngine(ConnectionContext):
                 ),
             ),
         )
+        request.report_directory = self.record["artifact_directory"]
         workspace = Workspace(
             self.root,
             readonly=role != "implementer",
+            report_directory=Path(self.record["artifact_directory"]),
             allowed_commands=self.allowed_commands,
             check_trust=self.check_trust,
             checks_manifest=self.checks_manifest,
@@ -354,7 +456,23 @@ class ChatEngine(ConnectionContext):
             deadline=self.started + self.connections.settings.task_timeout_seconds,
             on_process=self._process_callback(output),
         )
+        estimate = len(canonical({"prompt": prompt, "tools": workspace.tools}).encode("utf-8"))
+        if estimate + model.output_limit > model.context_window:
+            raise ErolError("Complete prompt and tool schemas exceed the model context profile")
+        tool_seconds, tool_calls = 0.0, 0
+
+        def dispatch(name, arguments):
+            nonlocal tool_seconds, tool_calls
+            started = time.monotonic()
+            try:
+                return workspace.dispatch(name, arguments)
+            finally:
+                tool_seconds += time.monotonic() - started
+                tool_calls += 1
+
         text = ""
+        turn_id = "turn-" + uuid.uuid4().hex
+        acknowledged = None
         report = None
         completed = False
         self._emit(output, event("routing", request, **chosen))
@@ -367,7 +485,7 @@ class ChatEngine(ConnectionContext):
                 request,
                 budget=budget,
                 tools=workspace.tools,
-                dispatch=workspace.dispatch,
+                dispatch=dispatch,
                 max_rounds=self.connections.settings.max_tool_rounds,
             ):
                 self._emit(output, item)
@@ -381,11 +499,13 @@ class ChatEngine(ConnectionContext):
                     native = item["data"].get("native_session")
                     if native:
                         self.native_sessions[key] = identifier(native)
+                        acknowledged = identifier(native)
                 if self.stopped.is_set():
                     provider.cancel()
         except (BudgetExhausted, CleanupFailure):
             raise
         except ErolError as exc:
+            self._provider_cache = None
             if time.monotonic() - self.started >= self.connections.settings.task_timeout_seconds:
                 raise
             completed = False
@@ -395,11 +515,26 @@ class ChatEngine(ConnectionContext):
             provider.cancel()
             with self.lock:
                 self.active.remove(provider)
+                self.record.setdefault("model_turns", []).append(
+                    {
+                        "role": role,
+                        "model": key,
+                        "duration_seconds": round(time.monotonic() - turn_started, 6),
+                        "tool_seconds": round(tool_seconds, 6),
+                        "tool_calls": tool_calls,
+                        "context_estimated_tokens": estimate,
+                        "context_estimator": "UTF-8 byte proxy; native hidden context unknown",
+                    }
+                )
         return {
             "completed": completed,
             "text": report["summary"] if report else text,
             "model": key,
             "command_evidence": workspace.command_evidence,
+            "session_id": acknowledged if connection.kind in CLI_KINDS else turn_id,
+            "session_evidence": "native_acknowledged"
+            if connection.kind in CLI_KINDS
+            else "erol_api_turn",
         }
 
     def _prompt(self, task: str, plan: dict, *, role: str, extra: str = "") -> str:
@@ -416,6 +551,9 @@ class ChatEngine(ConnectionContext):
             "erol_context": plan["context"]["packet"],
             "previous_summary": self.previous_summary[:4000],
             "verified_prior_evidence": extra[:24000],
+            "artifact_directory": self.record.get(
+                "artifact_directory", str(external_directory(self.home, self.project.id, "preview"))
+            ),
         }
         return (
             "You are working through EROL. Follow the user's task and project instructions. "
@@ -436,7 +574,23 @@ class ChatEngine(ConnectionContext):
                 if role == "implementer"
                 else "Read-only role: do not edit files or run commands. "
             )
+            + artifact_instructions(payload["artifact_directory"])
             + canonical(payload)
+        )
+
+    def _context_size(self, task: str, plan: dict, role: str, extra: str = "") -> int:
+        from .workspace import TOOLS
+
+        return (
+            len(
+                canonical(
+                    {
+                        "prompt": self._prompt(task, plan, role=role, extra=extra),
+                        "tools": TOOLS if role == "implementer" else TOOLS[:3],
+                    }
+                ).encode("utf-8")
+            )
+            + 1024
         )
 
     def _review(
@@ -457,13 +611,24 @@ class ChatEngine(ConnectionContext):
                     role="reviewer",
                     plan=plan,
                     excluded={f"{c['connection']}:{c['model']}" for c in review_choices},
+                    context_tokens=self._context_size(
+                        task,
+                        plan,
+                        "reviewer",
+                        canonical(
+                            {
+                                "changes": self.record["changes"],
+                                "observed_checks": self.record["checks"],
+                            }
+                        ),
+                    ),
                 )
             except ErolError:
                 if review_choices:
                     break
                 raise
             review_choices.append(choice)
-        review_snapshot = snapshot(self.root)
+        review_snapshot = self._evidence_digest(snapshot(self.root))
         review_prompt = (
             self._prompt(
                 task,
@@ -503,6 +668,8 @@ class ChatEngine(ConnectionContext):
                 reviews.append(
                     {
                         "model": result["model"],
+                        "session_id": result["session_id"],
+                        "session_evidence": result["session_evidence"],
                         "approved": approved,
                         "summary": visible(
                             report.get("summary", "Invalid/incomplete review output")
@@ -514,11 +681,29 @@ class ChatEngine(ConnectionContext):
                         else [],
                     }
                 )
-        if review_snapshot != snapshot(self.root):
+        if review_snapshot != self._evidence_digest(snapshot(self.root)):
             raise ErolError("Read-only review changed source files; inspect the diff")
         return reviews
 
+    def _evidence_digest(self, source: Snapshot) -> str:
+        return digest(
+            {
+                "source": source_digest(source),
+                "reports": report_digest(self.record.get("artifact_directory")),
+            }
+        )
+
     def execute(self, task: str, output=lambda item: None, *, resume: bool = False) -> dict:
+        with self.lock:
+            self.ensure_idle()
+            self.busy = True
+        try:
+            return self._execute(task, output, resume=resume)
+        finally:
+            with self.lock:
+                self.busy = False
+
+    def _execute(self, task: str, output, *, resume: bool) -> dict:
         if os.environ.get("EROL_RUN_ACTIVE"):
             raise ErolError("Nested EROL execution is unsupported")
         task = required_text(task, "task", 16000)
@@ -527,6 +712,7 @@ class ChatEngine(ConnectionContext):
         self.stopped.clear()
         self.last_events = []
         self.started = time.monotonic()
+        plan_started = time.monotonic()
         plan = self.plan(task)
         self.record = {
             "schema_version": 1,
@@ -537,11 +723,19 @@ class ChatEngine(ConnectionContext):
             "updated": now(),
             "status": "running",
             "summary": self.previous_summary,
+            "title": self.session_title or " ".join(visible(task).split())[:80],
+            "owner_pid": os.getpid(),
             "active_pids": [],
             "changes": [],
             "checks": [],
             "reviews": [],
             "selected_skills": plan["context"]["selected_skills"],
+            "routing_task": plan["routing_task"],
+            "routing_diagnostics": plan["routing_diagnostics"],
+            "tested_digest": None,
+            "reviewed_digest": None,
+            "phase_timings": {"routing_seconds": round(time.monotonic() - plan_started, 6)},
+            "model_turns": [],
             "previous_changes": previous.get("changes", []),
             "continuation_history": previous.get("continuation_history", [])
             + (
@@ -551,13 +745,28 @@ class ChatEngine(ConnectionContext):
             ),
             "native_sessions": self.native_sessions,
         }
+        self.record["artifact_directory"] = str(
+            external_directory(self.home, self.project.id, self.record["task_id"])
+        )
         budget = Budget(self.connections.settings.api_budget_usd)
         if resume:
             budget.spent = float(previous.get("usage", {}).get("accounted_usd", 0))
             budget.unreported = float(previous.get("usage", {}).get("unreported_reserved_usd", 0))
             budget.calls = int(previous.get("usage", {}).get("api_calls", 0))
         baseline: Snapshot | None = None
-        with Store(self.home, self.project) as store, self._lease(store) as marker:
+        with (
+            Store(self.home, self.project) as store,
+            self._lease(store) as marker,
+            self.sessions.lease(self.session_id),
+        ):
+            if (self.sessions.directory / (self.session_id + ".json")).exists():
+                latest = self.sessions.load(self.session_id)
+                self.record["title"] = latest.get("title") or self.record["title"]
+            self.session_title = self.record["title"]
+            config = Config.load(self.home, self.root)
+            learning = LearningEngine(store, config, Registry(project_store=store))
+            receipt = learning.begin_task(self.record["task_id"], task, plan=plan)
+            self.record["learned_skill_revisions"] = receipt["selected_skills"]
             self.marker = marker
             self.sessions.save(self.record)
             atomic_write(marker, canonical({"session": self.session_id, "active_pids": []}) + "\n")
@@ -567,10 +776,15 @@ class ChatEngine(ConnectionContext):
                     self.root, self.connections.settings.checks_path, trust=self.check_trust
                 )
                 self.checks_manifest = manifest
+                self.record["checks_digest"] = digest(manifest)
                 self.allowed_commands = self.connections.settings.allowed_commands + [
                     check["argv"] for check in manifest["checks"]
                 ]
+                discovery_started = time.monotonic()
                 reports, available = self.providers(refresh=True)
+                self.record["phase_timings"]["provider_seconds"] = round(
+                    time.monotonic() - discovery_started, 6
+                )
                 self.record["providers"] = reports
                 chosen = route(
                     self.connections.settings,
@@ -578,12 +792,19 @@ class ChatEngine(ConnectionContext):
                     available,
                     override=self.selected_model,
                     plan=plan,
+                    context_tokens=self._context_size(task, plan, "implementer"),
                 )
+                self.record["selection"] = chosen
                 assessed = chosen["assessment"]
                 notes = ""
                 if assessed["complexity"] == "large":
                     planner = route(
-                        self.connections.settings, task, available, role="planner", plan=plan
+                        self.connections.settings,
+                        task,
+                        available,
+                        role="planner",
+                        plan=plan,
+                        context_tokens=self._context_size(task, plan, "planner"),
                     )
                     result = self._turn(
                         planner,
@@ -597,11 +818,24 @@ class ChatEngine(ConnectionContext):
                         raise ErolError("Planning did not complete; task needs attention")
                     notes = result["text"][:12000]
                 attempts = []
+                worker: dict = {}
                 reviews: list[dict] = []
                 excluded: set[str] = set()
+                escalation_level = 0
                 for attempt in range(3):
                     if self.stopped.is_set():
                         break
+                    chosen = route(
+                        self.connections.settings,
+                        task,
+                        available,
+                        override=self.selected_model,
+                        plan=plan,
+                        minimum_level=escalation_level,
+                        excluded=excluded,
+                        context_tokens=self._context_size(task, plan, "implementer", notes),
+                    )
+                    self.record["selection"] = chosen
                     worker = self._turn(
                         chosen,
                         self._prompt(task, plan, role="implementer", extra=notes),
@@ -619,6 +853,8 @@ class ChatEngine(ConnectionContext):
                     )
                     self.record["summary"] = visible(worker["text"][-4000:])
                     before_checks = snapshot(self.root)
+                    before_evidence = self._evidence_digest(before_checks)
+                    checks_started = time.monotonic()
                     checks = run_checks(
                         self.root,
                         manifest,
@@ -628,17 +864,28 @@ class ChatEngine(ConnectionContext):
                         trust=self.check_trust,
                     )
                     self.record["checks"] = checks
-                    if before_checks != snapshot(self.root):
+                    self.record["phase_timings"]["checks_seconds"] = self.record[
+                        "phase_timings"
+                    ].get("checks_seconds", 0) + round(time.monotonic() - checks_started, 6)
+                    if before_evidence != self._evidence_digest(snapshot(self.root)):
                         raise ErolError(
                             "Acceptance checks modified source files; inspect the task diff"
                         )
                     self.record["attempts"] = attempts
                     self.record["changes"] = changes(baseline, before_checks)
+                    self.record["tested_digest"] = before_evidence
                     reviews = []
                     if worker["completed"] and all(c["passed"] for c in checks):
                         if not self.stopped.is_set() and assessed["complexity"] != "small":
+                            review_started = time.monotonic()
                             reviews = self._review(task, plan, assessed, available, budget, output)
+                            self.record["phase_timings"]["review_seconds"] = self.record[
+                                "phase_timings"
+                            ].get("review_seconds", 0) + round(time.monotonic() - review_started, 6)
                         self.record["reviews"] = reviews
+                        self.record["reviewed_digest"] = (
+                            self._evidence_digest(snapshot(self.root)) if reviews else None
+                        )
                         if all(r["approved"] for r in reviews):
                             break
                     notes = canonical(
@@ -657,13 +904,15 @@ class ChatEngine(ConnectionContext):
                             for m in self.connections.get(chosen["connection"]).models
                             if m.id == chosen["model"]
                         )
+                        escalation_level = min(4, current.level + 1)
                         chosen = route(
                             self.connections.settings,
                             task,
                             available,
-                            minimum_level=min(4, current.level + 1),
+                            minimum_level=escalation_level,
                             excluded=excluded,
                             plan=plan,
+                            context_tokens=self._context_size(task, plan, "implementer", notes),
                         )
                 self.record["attempts"] = attempts
                 self.record["changes"] = changes(baseline, snapshot(self.root))
@@ -678,6 +927,19 @@ class ChatEngine(ConnectionContext):
                         }
                     )
                 has_acceptance = any(c["kind"] == "acceptance" for c in self.record["checks"])
+                source_current = self._evidence_digest(snapshot(self.root))
+                checks_current = check_manifest(
+                    self.root, self.connections.settings.checks_path, trust=self.check_trust
+                )
+                sessions = [worker.get("session_id"), *[r.get("session_id") for r in reviews]]
+                evidence_bound = (
+                    self.record["tested_digest"] == self.record["reviewed_digest"] == source_current
+                    and digest(checks_current) == self.record["checks_digest"]
+                    and [(c["name"], c["kind"]) for c in self.record["checks"]]
+                    == [(c["name"], c["kind"]) for c in manifest["checks"]]
+                    and all(sessions)
+                    and len(set(sessions)) == len(sessions)
+                )
                 verified = (
                     not self.stopped.is_set()
                     and bool(attempts)
@@ -686,6 +948,7 @@ class ChatEngine(ConnectionContext):
                     and all(c["passed"] for c in self.record["checks"])
                     and bool(reviews)
                     and all(r["approved"] for r in reviews)
+                    and evidence_bound
                 )
                 self.record["status"] = (
                     "cancelled"
@@ -699,11 +962,40 @@ class ChatEngine(ConnectionContext):
                     or any(not r["approved"] for r in reviews)
                     else "implemented_unverified"
                 )
+                if has_acceptance and reviews and not evidence_bound:
+                    self.record["status"] = "needs_attention"
+                if verified:
+                    report = {
+                        "implementer": sessions[0],
+                        "reviewer": sessions[1],
+                        "tests": [
+                            {
+                                "name": c["name"],
+                                "passed": c["passed"],
+                                "reference": f"chat:{self.record['task_id']}#check:{c['name']}",
+                            }
+                            for c in self.record["checks"]
+                        ],
+                        "findings": [],
+                        "evidence_type": "chat_observed",
+                        "checks_executed_by_erol": True,
+                        "source_digest": source_current,
+                        "checks_digest": self.record["checks_digest"],
+                        "peer_reviewer_sessions": sessions[1:],
+                        "session_evidence": [
+                            worker["session_evidence"],
+                            *[r["session_evidence"] for r in reviews],
+                        ],
+                    }
+                    self.record["skill_uses"] = complete_observed_task(
+                        learning, self.record["task_id"], report
+                    )
                 self.record["verification"] = {
                     "tests_observed": has_acceptance,
                     "review_observed": bool(reviews),
                     "verified": bool(verified),
                     "missing_checks_reason": manifest.get("reason"),
+                    "evidence_bound": bool(evidence_bound),
                 }
             except (ErolError, OSError, ValueError, TypeError, KeyError, sqlite3.Error) as exc:
                 interrupted = self.stopped.is_set()
@@ -740,10 +1032,12 @@ class ChatEngine(ConnectionContext):
                         "usage": budget.summary(),
                         "native_sessions": self.native_sessions,
                         "updated": now(),
+                        "owner_pid": None,
                         "elapsed_seconds": round(time.monotonic() - self.started, 2),
                     }
                 )
                 self.previous_summary = self.record.get("summary", "")
+                self.previous_task = plan["routing_task"][:2000]
                 self.sessions.save(self.record)
                 atomic_write(
                     marker,
@@ -760,7 +1054,11 @@ class ChatEngine(ConnectionContext):
             {
                 "schema_version": 1,
                 "type": "status",
-                "data": {"status": self.record["status"], "usage": self.record["usage"]},
+                "data": {
+                    "status": self.record["status"],
+                    "usage": self.record["usage"],
+                    "result": self.record,
+                },
                 "time": now(),
             }
         )

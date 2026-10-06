@@ -178,6 +178,7 @@ class Settings:
     task_timeout_seconds: int = 3600
     max_tool_rounds: int = 30
     language: str = "auto"
+    preferred_connection: str | None = None
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -222,6 +223,10 @@ class Settings:
             or "\x00" in value.checks_path
         ):
             raise ErolError("Invalid checks_path")
+        if value.preferred_connection is not None:
+            identifier(value.preferred_connection)
+            if value.preferred_connection not in {c.id for c in value.connections}:
+                raise ErolError("Preferred connection must exist")
         if not isinstance(value.allowed_commands, list) or len(value.allowed_commands) > 50:
             raise ErolError("Invalid allowed_commands")
         for argv in value.allowed_commands:
@@ -287,7 +292,9 @@ class ConnectionStore:
 
 def classify(task: str, plan: dict | None = None) -> dict:
     """Conservative scope priors, not a calibrated model-confidence score."""
-    text = normalize(task)
+    from .router import intent_clauses
+
+    text = normalize(intent_clauses((plan or {}).get("routing_task", task))[0])
     greeting = text in {
         "selam",
         "merhaba",
@@ -381,14 +388,6 @@ def route(
     plan: dict | None = None,
 ) -> dict:
     assessment = classify(task, plan)
-    if plan and len(plan.get("skills", [])) >= 3:
-        assessment.update(
-            {
-                "complexity": "large",
-                "minimum_level": 3,
-                "reason": "substantial multi-workflow EROL plan",
-            }
-        )
     level = max(assessment["minimum_level"], minimum_level)
     if role == "planner":
         level = max(level, 3)
@@ -423,8 +422,14 @@ def route(
             # CLI quota pressure is a configurable-profile prior, never a USD measurement.
             resource_rank = (0.02 * model.level) if cli else (cost or 0)
             priority = 0 if settings.policy == "subscription_first" and cli else 1
+            preferred = 0 if connection.id == settings.preferred_connection else 1
             candidates.append(
-                ((priority, resource_rank, model.latency_rank, name), connection, model, cost)
+                (
+                    (preferred, priority, resource_rank, model.latency_rank, name),
+                    connection,
+                    model,
+                    cost,
+                )
             )
     if not candidates:
         raise ErolError(
@@ -461,5 +466,24 @@ def route(
             f"{settings.policy} resource ranking{fallback}"
         ),
         "profile_source": model.source,
+        "context_estimated_tokens": context_tokens,
+        "context_estimator": "UTF-8 bytes + protocol reserve; conservative proxy, not a tokenizer",
+        "effort_reason": (
+            "high for risk/planning; low for small tasks; medium otherwise; "
+            "supported profile efforts only"
+        ),
+        "eligible_alternatives": [
+            {
+                "connection": c.id,
+                "model": m.id,
+                "level": m.level,
+                "context_window": m.context_window,
+                "estimated_request_usd": cost,
+                "latency_rank": m.latency_rank,
+                "efforts": m.efforts,
+                "profile_source": m.source,
+            }
+            for _, c, m, cost in sorted(candidates, key=lambda item: item[0])
+        ],
         "behavioral_success_rate": None,
     }

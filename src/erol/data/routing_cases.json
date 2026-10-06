@@ -2859,6 +2859,495 @@
       "expect_empty": false,
       "limit": 4,
       "language": "en"
+    },
+    {
+      "task": "Bu uygulamayı incele ve daha üst seviyeye nasıl geçiririz bana söyle",
+      "expected": [
+        "repository-exploration"
+      ],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Bu uygulamayı incele",
+      "expected": [
+        "repository-exploration"
+      ],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "BU UYGULAMAYI INCELE",
+      "expected": [
+        "repository-exploration"
+      ],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Bu projeyi incele",
+      "expected": [
+        "repository-exploration"
+      ],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Projenin yapısını incele",
+      "expected": [
+        "repository-exploration"
+      ],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Geliştirme önerileri çıkar",
+      "expected": [
+        "product-prioritization"
+      ],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "İyileştirme öncelikleri belirle",
+      "expected": [
+        "product-prioritization"
+      ],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Ürün yol haritası hazırla",
+      "expected": [
+        "product-prioritization"
+      ],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Nasıl geliştiririz bunu",
+      "expected": [
+        "product-prioritization"
+      ],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Take this application further",
+      "expected": [
+        "product-prioritization"
+      ],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Daha hızlı çalışsın",
+      "expected": [
+        "performance-profiling"
+      ],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Daha iyi çalışsın",
+      "expected": [
+        "performance-profiling"
+      ],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Ve daha iyi çalışmasını nasıl sağlarım",
+      "expected": [
+        "performance-profiling"
+      ],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Make it faster",
+      "expected": [
+        "performance-profiling"
+      ],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Improve runtime performance",
+      "expected": [
+        "performance-profiling"
+      ],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Mimari seçenekleri karşılaştır",
+      "expected": [
+        "architecture-decision"
+      ],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Mimariyi değerlendir",
+      "expected": [
+        "architecture-decision"
+      ],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Architecture options for this project",
+      "expected": [
+        "architecture-decision"
+      ],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "MİMARİ SEÇENEKLERİ",
+      "expected": [
+        "architecture-decision"
+      ],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "mimariyi degerlendir",
+      "expected": [
+        "architecture-decision"
+      ],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Deploy yapma, sadece yazım hatasını düzelt",
+      "expected": [],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": true
+    },
+    {
+      "task": "Do not deploy; fix one typo",
+      "expected": [],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": true
+    },
+    {
+      "task": "Deployment out of scope. Only a typo",
+      "expected": [],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": true
+    },
+    {
+      "task": "Deploy kapsam dışı; yalnızca yazım",
+      "expected": [],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": true
+    },
+    {
+      "task": "Never publish; typo only",
+      "expected": [],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": true
+    },
+    {
+      "task": "Deploy yapma; pagination hatasını düzelt",
+      "expected": [
+        "incident-debugging"
+      ],
+      "forbidden": [
+        "release-verification"
+      ],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Do not deploy, diagnose RabbitMQ duplicate delivery",
+      "expected": [
+        "message-idempotency"
+      ],
+      "forbidden": [
+        "release-verification"
+      ],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Migration yapma, API contract tasarla",
+      "expected": [
+        "api-contract-design"
+      ],
+      "forbidden": [
+        "release-verification"
+      ],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Do not refactor; code review this diff",
+      "expected": [
+        "evidence-code-review"
+      ],
+      "forbidden": [
+        "release-verification"
+      ],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Release yapma; slow query için EXPLAIN ANALYZE",
+      "expected": [
+        "database-query-performance"
+      ],
+      "forbidden": [
+        "release-verification"
+      ],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Do not duplicate messages: RabbitMQ idempotency",
+      "expected": [
+        "message-idempotency"
+      ],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Do not bypass authorization: security review",
+      "expected": [
+        "security-boundary-review"
+      ],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Deploy the application; do not publish a package",
+      "expected": [
+        "release-verification"
+      ],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Deploy yap; migration yapma",
+      "expected": [
+        "release-verification"
+      ],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Production deploy and rollback plan",
+      "expected": [
+        "release-verification"
+      ],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Inspect this application",
+      "expected": [
+        "repository-exploration"
+      ],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Inspect this project",
+      "expected": [
+        "repository-exploration"
+      ],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Bu projeyi incele ve iyileştirme öncelikleri belirle",
+      "expected": [
+        "repository-exploration"
+      ],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Bu uygulamayı incele; geliştirme önerileri sun",
+      "expected": [
+        "repository-exploration"
+      ],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "PROJENİN YAPISINI İNCELE",
+      "expected": [
+        "repository-exploration"
+      ],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Selam",
+      "expected": [],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": true
+    },
+    {
+      "task": "Teşekkürler",
+      "expected": [],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": true
+    },
+    {
+      "task": "Yaz tatili öner",
+      "expected": [],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": true
+    },
+    {
+      "task": "Halıdaki lekeyi düzelt",
+      "expected": [],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": true
+    },
+    {
+      "task": "Fotoğrafımı güzelleştir",
+      "expected": [],
+      "forbidden": [],
+      "language": "tr",
+      "upgrade_acceptance": true,
+      "expect_empty": true
+    },
+    {
+      "task": "Database migration rollback safety",
+      "expected": [
+        "database-migration-safety"
+      ],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Authentication session security review",
+      "expected": [
+        "authentication-session-security"
+      ],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Frontend state correctness for screen filter",
+      "expected": [
+        "frontend-state-correctness"
+      ],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Regression test strategy for pagination",
+      "expected": [
+        "regression-test-design",
+        "stable-pagination"
+      ],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
+    },
+    {
+      "task": "Source citation research evidence",
+      "expected": [],
+      "forbidden": [],
+      "language": "en",
+      "upgrade_acceptance": true,
+      "expect_empty": false
     }
   ]
 }

@@ -36,6 +36,21 @@
 
 ## Unreleased
 
+- Improve natural Turkish task routing, scoped negation, followup context and
+  explicit skill selection; add 50 bilingual acceptance cases (339 total).
+- Share observed terminal/runner completion evidence and reject every unresolved
+  review finding, including historical learning and qualification attestations.
+- Add external report directories, prepared-context accounting, shared provider
+  discovery, incremental memory indexing and explanatory model/effort comparison.
+- Add native-host advisory model/effort bindings, preview-first onboarding,
+  package/login/check doctor diagnostics and local panel task evidence.
+- Add `/my-projects`, paged `/chats`, saved evidence views and persistent titles,
+  with project isolation, session leases and planning-time busy guards.
+- Repair Windows native source access with separate workspaces and short retained
+  benchmark roots. The fixed-model 36-arm trial produced 30 strictly reviewed
+  successes; five migration review failures and one research timeout remain.
+  Cross-model calibration and general savings claims are not established.
+
 - Add bounded TODO/check/imported-issue discovery and explicit project-policy queues
   with unique tasks, durable cancellation, recovery and verified dependency deltas.
 - Add concurrent read-only specialist review while preserving one implementer per project.

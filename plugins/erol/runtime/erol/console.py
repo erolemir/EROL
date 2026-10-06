@@ -15,29 +15,43 @@ from contextlib import contextmanager
 from dataclasses import asdict
 from pathlib import Path
 
-from .chat import ChatEngine
-from .common import ErolError, reject_links
+from .chat import ChatEngine, Sessions
+from .common import ErolError, identifier, reject_links
 from .connections import CLI_KINDS, KINDS, Model, Settings, read_settings
 from .console_input import InputRecord, decode_record
 from .display import Display
 from .general import GeneralEngine
 from .i18n import HELP_EN, message, resolve_language
 from .identity import detect_project
-from .presentation import STATUS_KEYS, api_observed, present, usage_summary, usage_transport
+from .presentation import (
+    STATUS_KEYS,
+    api_observed,
+    present,
+    task_result,
+    usage_summary,
+    usage_transport,
+)
+from .projects import ProjectCatalog, choose
 from .providers import visible
 from .terminal import render_logo
 
 COMMANDS = {
     "help": "Komutları ve örneklerini göster",
     "project": "Proje göster/seç: /project C:/Projects/my-app (boşluk varsa tırnak kullan)",
+    "my-projects": "Projelerini listele/seç: /my-projects | /my-projects 1 | /my-projects add PATH",
+    "chats": "Eski sohbetler: /chats | /chats 1 | /chats show 1 | /chats page 2",
+    "rename": "Sohbete isim ver: /rename İSİM | /chats rename 1 İSİM",
     "general": "Projesiz genel sohbete geç: /general [MESAJ]",
     "research": "Projesiz kaynak araştırması: /research [SORU veya URL]",
     "connect": "CLI/API ekle: /connect codex | /connect openai work OPENAI_API_KEY",
     "providers": "Bağlantıların giriş/yetenek durumunu göster; /providers disable ID",
-    "models": "Model profilleri; /models refresh | /models add ID JSON_PROFILE",
+    "models": (
+        "Model profilleri; /models compare TASK | /models refresh | /models add ID JSON_PROFILE"
+    ),
     "model": "Otomatik veya elle seçim: /model auto | /model CONNECTION:MODEL",
     "settings": "Ayarları göster/değiştir: /settings api_budget_usd 5",
     "plan": "Çalıştırmadan planla: /plan GÖREV",
+    "skills": "Skill seçimini düzelt: /skills use NAME… | /skills auto",
     "diff": "Son görevin eklenen/değişen/silinen dosyaları ve diff'i",
     "tests": "EROL'un gözlediği son test sonuçları",
     "usage": "Token olayları ve görev API bütçesi; kesin fatura değildir",
@@ -469,6 +483,8 @@ class Screen:
                 + hints
             )
             self.write(f"\n{self.status}\n")
+            if data.get("result"):
+                self.write(task_result(data["result"], self.language) + "\n")
         self.update_context()
         self.refresh()
 
@@ -763,9 +779,73 @@ def command(engine: ChatEngine | GeneralEngine, text: str) -> dict:
     if name == "project":
         if not rest.strip():
             return {"project": engine.project.to_dict() if engine.project else None}
-        if isinstance(engine, GeneralEngine):
-            engine.ensure_idle()
+        engine.ensure_idle()
         return {"select_project": str(project_directory(rest, engine.root, engine.home, language))}
+    if name == "my-projects":
+        argv = split_command(rest, language)
+        catalog = ProjectCatalog(engine.home)
+        if not argv or argv == ["refresh"]:
+            engine.project_choices = catalog.list()
+            return {"projects": engine.project_choices}
+        if len(argv) == 2 and argv[0] == "add":
+            path = project_directory(argv[1], engine.root, engine.home, language)
+            catalog.remember(detect_project(path))
+            engine.project_choices = catalog.list()
+            return {"projects": engine.project_choices}
+        if len(argv) != 1:
+            raise ErolError("/my-projects [NUMBER|ID|NAME] | /my-projects add PATH")
+        engine.ensure_idle()
+        rows = engine.project_choices if engine.project_choices is not None else catalog.list()
+        selected = choose(rows, argv[0])
+        path = project_directory(selected["root"], engine.root, engine.home, language)
+        if detect_project(path).id != selected["project_id"]:
+            raise ErolError("Project identity changed; refresh /my-projects before selecting")
+        return {"select_project": str(path)}
+    if name == "rename":
+        engine.ensure_idle()
+        title = Sessions.title(rest.strip().strip('"'))
+        if engine.record:
+            renamed = engine.sessions.rename(engine.session_id, title)
+            engine.record["title"] = renamed["title"]
+        engine.session_title = title
+        engine.chat_choices = None
+        return {"session": engine.session_id, "title": title}
+    if name == "chats":
+        argv = split_command(rest, language)
+        if not argv or argv == ["refresh"] or (len(argv) == 2 and argv[0] == "page"):
+            try:
+                page = int(argv[1]) if len(argv) == 2 else 1
+            except ValueError as exc:
+                raise ErolError("/chats page NUMBER") from exc
+            engine.chat_choices = engine.sessions.list(page=page)
+            return {"sessions": engine.chat_choices, "page": page}
+        action = argv[0] if argv[0] in {"open", "show", "continue", "rename"} else "open"
+        selection = argv[1] if action == argv[0] and len(argv) > 1 else argv[0]
+        if (action == "rename" and len(argv) < 3) or (
+            action != "rename" and len(argv) != (2 if action == argv[0] else 1)
+        ):
+            raise ErolError("/chats [open|show|continue] NUMBER|ID | /chats rename NUMBER|ID TITLE")
+        rows = engine.chat_choices if engine.chat_choices is not None else engine.sessions.list()
+        session_id = (
+            identifier(selection)
+            if selection.startswith("session-")
+            else choose(rows, selection)["id"]
+        )
+        if action == "show":
+            return {"saved_chat": engine.sessions.load(session_id)}
+        engine.ensure_idle()
+        if action == "rename":
+            title = Sessions.title(" ".join(argv[2:]))
+            renamed = engine.sessions.rename(session_id, title)
+            if session_id == engine.session_id:
+                engine.record["title"] = title
+                engine.session_title = title
+            engine.chat_choices = None
+            return {"session": session_id, "title": renamed["title"]}
+        result = engine.resume(session_id)
+        if action == "continue":
+            result["continue_task"] = engine.record["task"]
+        return result
     if name in {"general", "research"}:
         return {
             "select_general": True,
@@ -803,6 +883,39 @@ def command(engine: ChatEngine | GeneralEngine, text: str) -> dict:
             engine.connections.save()
         return {"providers": engine.providers()[0]}
     if name == "models":
+        if rest.startswith("compare "):
+            from .connections import route
+
+            task = rest[8:].strip()
+            plan = engine.plan(task)
+            _, available = engine.providers()
+            comparisons = []
+            for role in ("implementer", "planner", "reviewer"):
+                context_size = (
+                    engine._context_size(task, plan, role)
+                    if isinstance(engine, ChatEngine)
+                    else len(json.dumps(plan).encode("utf-8")) + 1024
+                )
+                try:
+                    choice = route(
+                        engine.connections.settings,
+                        task,
+                        available,
+                        role=role,
+                        override=engine.selected_model if role == "implementer" else None,
+                        plan=plan,
+                        context_tokens=context_size,
+                    )
+                    comparisons.append(choice)
+                except ErolError as exc:
+                    comparisons.append({"role": role, "reason": str(exc), "eligible": False})
+            return {
+                "model_comparison": comparisons,
+                "note": (
+                    "Profile priors; measured success rate unknown. "
+                    "This command does not spawn agents."
+                ),
+            }
         if rest.startswith("add "):
             connection_id, _, profile = rest[4:].partition(" ")
             model = Model.load(json.loads(profile))
@@ -840,6 +953,31 @@ def command(engine: ChatEngine | GeneralEngine, text: str) -> dict:
         return {"settings": engine.connections.settings.to_dict()}
     if name == "plan":
         return engine.plan(rest)
+    if name == "skills":
+        argv = split_command(rest, language)
+        if argv == ["auto"]:
+            engine.skill_names = None
+        elif len(argv) > 1 and argv[0] == "use":
+            from .config import Config
+            from .registry import Registry
+            from .store import Store
+
+            if engine.project is not None:
+                with Store(engine.home, engine.project) as store:
+                    Registry(project_store=store).select(
+                        "explicit selection",
+                        Config.load(engine.home, engine.root).max_active_skills,
+                        argv[1:],
+                    )
+            else:
+                Registry().select("explicit selection", names=argv[1:])
+            engine.skill_names = argv[1:]
+        elif argv:
+            raise ErolError("/skills use NAME... | /skills auto")
+        return {
+            "skill_selection": engine.skill_names,
+            "mode": "automatic" if engine.skill_names is None else "explicit",
+        }
     if name in {"diff", "tests", "usage"}:
         if name == "usage":
             return {
@@ -992,7 +1130,10 @@ def project_directory(text: str, base: Path, home: Path, language: str = "en") -
         raise ErolError(message(language, "path_required"))
     path = Path(text).expanduser()
     path = path if path.is_absolute() else base / path
-    project = Path(detect_project(path).root)
+    try:
+        project = Path(detect_project(path).root)
+    except OSError as exc:
+        raise ErolError(message(language, "missing_project")) from exc
     if project == home or project in home.parents:
         raise ErolError(message(language, "home_overlap"))
     return project
@@ -1005,6 +1146,7 @@ def launch(
     model: str | None = None,
     resume: str | None = None,
     mode: str = "auto",
+    skill_names: list[str] | None = None,
 ) -> int:
     if not sys.stdin.isatty() or not sys.stdout.isatty():
         raise ErolError(
@@ -1038,6 +1180,7 @@ def launch(
             engine.connections.settings.language = screen.preference
             engine.connections.save()
         engine.selected_model = model
+        engine.skill_names = skill_names
         if resume:
             engine.resume(resume)
         if engine.project is not None and not engine.connections.settings.connections:

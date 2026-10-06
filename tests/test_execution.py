@@ -38,7 +38,8 @@ if '--version' in args:
     print('fixture-cli 1.2.3'); sys.exit(0)
 if '--help' in args:
     print('--json --output-schema --sandbox --output-format --json-schema --resume '
-          '--tools --allowedTools --permission-mode dontAsk --strict-mcp-config --search')
+          '--tools --allowedTools --permission-mode dontAsk --strict-mcp-config '
+          '--search --add-dir --model --effort')
     sys.exit(0)
 if args[:2] == ['login', 'status']:
     sys.exit(0)
@@ -71,7 +72,9 @@ if not review:
     if scenario == 'new-file':
         pathlib.Path('notes.txt').write_text('Reviewed new file\n')
     if scenario.startswith('research'):
-        directory = pathlib.Path('research'); directory.mkdir(exist_ok=True)
+        payload = json.loads(prompt[prompt.index('{"acceptance_checks"'):])
+        directory = pathlib.Path(payload['artifact_directory'])
+        directory.mkdir(parents=True, exist_ok=True)
         ledger = {'schema_version': 1, 'question': 'Compare arithmetic options',
                   'scope': 'Synthetic technical research fixture',
                   'sources': [{'id': 'S1', 'url': 'https://example.test/arithmetic',
@@ -92,8 +95,9 @@ if not review:
         result['summary'] = 'password=synthetic-private-value'
 else:
     findings = []
-    if scenario == 'review-fail':
-        findings = [{'severity': 'high', 'resolved': False, 'message': 'Acceptance gap'}]
+    if scenario.startswith('review-fail'):
+        severity = scenario.removeprefix('review-fail-') if scenario != 'review-fail' else 'high'
+        findings = [{'severity': severity, 'resolved': False, 'message': 'Acceptance gap'}]
     if scenario == 'review-edits':
         pathlib.Path('calculator.py').write_text('def add(a,b): return 0\n')
     result = {'summary': 'Independent diff review', 'findings': findings}
@@ -308,7 +312,9 @@ class ExecutionTests(unittest.TestCase):
         self.assertEqual("model_review_assertion", result["review"]["source_evidence_type"])
         self.assertIn("vendor", self.calls[0][3].lower())
         self.assertIn("Open every cited source", self.calls[-1][3])
-        self.assertTrue((Path(result["worktree"]) / "research/report.md").is_file())
+        self.assertTrue(
+            (Path(result["worktree"]) / result["artifact_directory"] / "report.md").is_file()
+        )
 
     def test_research_unavailable_sources_and_invalid_claims_block_completion(self):
         for scenario in ("research-unavailable", "research-bad-ledger"):
@@ -336,6 +342,19 @@ class ExecutionTests(unittest.TestCase):
         self.assertEqual(3, len(result["attempts"]))
         self.assertTrue(result["checks"][0]["passed"])
         self.assertIsNone(result["reviewed_digest"])
+
+    def test_medium_and_low_review_findings_do_not_complete_or_credit(self):
+        for severity in ("medium", "low"):
+            with self.subTest(severity=severity):
+                self.scenario = "review-fail-" + severity
+                result = self.start()
+                self.assertEqual("needs_attention", result["status"])
+                self.assertEqual(3, len(result["attempts"]))
+                self.assertTrue(result["checks"][0]["passed"])
+                self.assertIsNone(result["reviewed_digest"])
+                self.assertEqual("started", self.store.get("tasks", result["task_id"])["status"])
+                self.assertEqual([], self.store.list("uses"))
+                self.runner.cancel(result["id"])
 
     def test_review_mutation_invalidates_evidence(self):
         self.scenario = "review-edits"
@@ -368,6 +387,38 @@ class ExecutionTests(unittest.TestCase):
         self.assertEqual("completed", resumed["status"], resumed.get("reason"))
         self.assertEqual(1, len(resumed["attempts"]))
         self.assertEqual(result["worker_session"], self.calls[1][2])
+
+    def test_workspace_is_separate_from_private_state_and_resume_rejects_sibling(self):
+        self.scenario = "no-fix"
+        result = self.start()
+        expected = self.store.home / "workspaces" / self.project.id / result["id"] / "worktree"
+        self.assertEqual(str(expected), result["worktree"])
+        self.assertFalse(expected.is_relative_to(self.store.directory))
+        self.assertTrue(Path(result["directory"]).is_relative_to(self.store.directory))
+        record = self.runs.get(result["id"])
+        record["worktree"] = str(expected.parent / "other-worktree")
+        self.runs.save(record)
+        calls = len(self.calls)
+        with self.assertRaisesRegex(ErolError, "identity mismatch"):
+            self.runner.resume(result["id"])
+        self.assertEqual(calls, len(self.calls))
+
+    def test_legacy_private_worktree_record_can_resume_without_moving_memory(self):
+        self.scenario = "truncated"
+        result = self.start()
+        legacy = Path(result["directory"]) / "worktree"
+        subprocess.run(
+            ["git", "-C", str(self.repo), "worktree", "move", result["worktree"], str(legacy)],
+            capture_output=True,
+            check=True,
+        )
+        record = self.runs.get(result["id"])
+        record["worktree"] = str(legacy)
+        self.runs.save(record)
+        self.scenario = "success"
+        resumed = self.runner.resume(result["id"])
+        self.assertEqual("completed", resumed["status"], resumed.get("reason"))
+        self.assertEqual(str(legacy), resumed["worktree"])
 
     def test_resume_rejects_changed_manifest_and_living_child(self):
         self.scenario = "truncated"

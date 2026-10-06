@@ -55,6 +55,27 @@ MESSAGES = {
         "Kontrol çalıştırılmadı. Görev doğrulanmış değildir.",
     ),
     "sessions_title": ("Saved sessions", "Kayıtlı oturumlar"),
+    "projects_title": ("My projects", "Projelerim"),
+    "no_projects": (
+        "No saved projects. Add one with /my-projects add PATH.",
+        "Kayıtlı proje yok. /my-projects add PATH ile ekle.",
+    ),
+    "projects_hint": (
+        "Select: /my-projects NUMBER · Add: /my-projects add PATH",
+        "Seç: /my-projects NUMARA · Ekle: /my-projects add PATH",
+    ),
+    "missing_project": ("Folder unavailable", "Klasör erişilemiyor"),
+    "chat_title": ("Chat: {title}", "Sohbet: {title}"),
+    "chats_hint": (
+        "Open: /chats NUMBER · Details: /chats show NUMBER · "
+        "Rename: /chats rename NUMBER TITLE · More: /chats page {next}",
+        "Aç: /chats NUMARA · Ayrıntı: /chats show NUMARA · "
+        "İsim: /chats rename NUMARA İSİM · Devamı: /chats page {next}",
+    ),
+    "saved_chat_note": (
+        "Saved summary, changes and checks; full message transcript was not retained.",
+        "Kayıtlı özet, değişiklik ve kontroller; tam mesaj geçmişi saklanmadı.",
+    ),
     "no_sessions": ("No sessions saved in this scope.", "Bu kapsamda kayıtlı oturum yok."),
     "plan_title": ("Task plan", "Görev planı"),
     "not_started": ("Plan only; execution has not started.", "Yalnızca plan; yürütme başlamadı."),
@@ -198,14 +219,20 @@ MESSAGES = {
 HELP_EN = {
     "help": "Show commands and examples",
     "project": "Show/select project: /project C:/Projects/my-app (quote spaces)",
+    "my-projects": "List/select projects: /my-projects | /my-projects 1 | /my-projects add PATH",
+    "chats": "Saved chats: /chats | /chats 1 | /chats show 1 | /chats page 2",
+    "rename": "Name a chat: /rename TITLE | /chats rename 1 TITLE",
     "general": "Switch to projectless conversation: /general [MESSAGE]",
     "research": "Projectless source research: /research [QUESTION or URL]",
     "connect": "Add CLI/API: /connect codex | /connect openai work OPENAI_API_KEY",
     "providers": "Check connection login/capabilities; /providers disable ID",
-    "models": "Model profiles; /models refresh | /models add ID JSON_PROFILE",
+    "models": (
+        "Model profiles; /models compare TASK | /models refresh | /models add ID JSON_PROFILE"
+    ),
     "model": "Automatic or manual: /model auto | /model CONNECTION:MODEL",
     "settings": "Show/change settings: /settings api_budget_usd 5",
     "plan": "Plan without execution: /plan TASK",
+    "skills": "Override routing: /skills use NAME… | /skills auto",
     "diff": "Latest task's added/modified/deleted files and diffs",
     "tests": "Latest test results observed by EROL",
     "usage": "Token events and task API budget; not the final bill",

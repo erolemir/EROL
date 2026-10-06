@@ -2,7 +2,7 @@
 name: product-prioritization
 description: "Prioritize product work using customer evidence, constraints and transparent impact assumptions."
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 # Product Prioritization
 

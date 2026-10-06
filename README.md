@@ -617,7 +617,7 @@ rejected.
 
 Baseline checks are recorded, implementation takes place in a separate worktree,
 checks are run, and a separate session reviews the result. Completion requires
-passing acceptance checks and no open critical/high findings against the same
+passing acceptance checks and no unresolved review findings against the same
 change digest. One implementer runs per project; reviewers receive no editing
 tools.
 
@@ -923,6 +923,56 @@ Model calls remain subject to provider time/usage limits.
 <a id="doğrulama-ve-geliştirme"></a>
 
 ## Validation and development
+
+The three-stage upgrade adds natural Turkish routing/followup context, explicit
+skills, revision-bound terminal verification, phase/context accounting, incremental
+memory indexing, guided setup, doctor output and terminal panel records.
+Generated reports stay under `~/.erol/reports/<project-id>/<task-id>/`; source
+documentation and native skill/instruction files retain their normal locations.
+
+Native Codex/Claude bridges automatically request host-specific per-agent model and
+effort recommendations. Plans compare task risk, role, prepared context,
+supported tools/efforts and resource priors; bridges apply a pair only through
+supported delegation parameters after checking runtime availability. Manual choices
+remain in force. `plan --harness auto` recognizes host session markers, otherwise
+inherits current settings. Other configured provider kinds can be compared without
+claiming native delegation support. See the [terminal contract](docs/terminal.md).
+
+Three short usage examples (CLI routing and deterministic execution fixtures are
+tested; native end-to-end success remains subject to account/permission access):
+
+In the terminal, `/my-projects` lists visited projects and `/my-projects 1`
+selects a displayed checkout. `/chats` lists saved chats, `/chats 1` opens its
+summary, and `/chats show 1` displays changes and checks. `/rename "TITLE"` or
+`/chats rename 1 "TITLE"` saves a name. `/chats continue 1` explicitly resumes
+work. Records stay under the external EROL home; see the
+[project/chat commands](docs/terminal.md#projects-and-saved-chats).
+
+1. **First verified task:** run `erol onboard --wizard`, inspect the displayed
+   acceptance commands and authorize them explicitly. Then
+   `erol chat --prompt "Fix cursor pagination; preserve the API contract, add a regression test and code review"`.
+   Completion needs passing observed checks and an independent unchanged-source review.
+2. **Failure diagnosis:**
+   `erol explain --task "Deploy yapma, sadece yazım hatasını düzelt"` shows scoped
+   negation. For a runtime failure, specify symptom, expected behavior and files;
+   use `/models compare TASK`, `/tests` and `/usage` to inspect choices/evidence.
+   Pin guidance with `/skills use incident-debugging regression-test-design`.
+3. **Research:**
+   `erol plan --harness codex --task-id UNIQUE_ID --task "Compare SQLite rollback behavior using primary sources"`.
+   In a native host, the bridge reads admitted context, writes the source ledger
+   and report to the returned external directory and verifies retrieved sources.
+   In projectless terminal mode `/research QUESTION` can read public sources but
+   cannot claim project checks or learned-use success.
+
+The [six-case paired suite](examples/upgrade-behavior-suite.json) supports three
+repeats with fixed `--model` and `--effort`. Native Windows filesystem denial was
+reproduced and repaired by separating source workspaces from private state. A
+fresh pair passed checks and separate review in both arms; the full six-case gate
+finished 36 arms with 30 strictly reviewed successes. Five migration outcomes had
+unresolved review findings and one research arm timed out, so the live quality gate
+did not pass. All unresolved findings now block completion and learning credit,
+including historical evidence validation. Cross-model/effort calibration remains
+pending. No overall speed or token savings are promised.
 
 Full check sequence from a source checkout, using a development virtual environment:
 
