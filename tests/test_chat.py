@@ -77,7 +77,7 @@ class ConnectionTests(unittest.TestCase):
             with self.assertRaises(ErolError):
                 Settings.load(data)
 
-    def test_task_scope_and_plan_size_affect_routing(self):
+    def test_task_scope_affects_routing_without_skill_count_escalation(self):
         models = [Model("small", level=1), Model("medium", level=2), Model("large", level=3)]
         settings = Settings(connections=[Connection("local", "codex", models=models)])
         available = {"local": models}
@@ -87,7 +87,7 @@ class ConnectionTests(unittest.TestCase):
             route(settings, "Security authorization migration", available)["model"], "large"
         )
         self.assertEqual(
-            route(settings, "Fix this", available, plan={"skills": [{}, {}, {}]})["model"], "large"
+            route(settings, "Fix this", available, plan={"skills": [{}, {}, {}]})["model"], "medium"
         )
         self.assertEqual(classify("fix")["complexity"], "medium")
 
@@ -573,7 +573,12 @@ class FakeProvider:
         else:
             text = "Inspect, implement and verify"
         yield event("text_delta", request, text=text)
-        yield event("final", request, completed=True, native_session="native-1")
+        yield event(
+            "final",
+            request,
+            completed=True,
+            native_session=f"native-{request.role}-{request.model.id}",
+        )
 
 
 class EngineTests(unittest.TestCase):
@@ -839,7 +844,10 @@ class StartupTests(unittest.TestCase):
             self.assertIn(str(project), output)
             self.assertEqual(engines.call_count, 1)
             self.assertEqual(engines.call_args.args[0].resolve(), project.resolve())
-            self.assertFalse(home.exists())
+            catalog = json.loads((home / "global/projects.json").read_text("utf-8"))
+            self.assertEqual(catalog["projects"][0]["root"], str(project))
+            self.assertFalse((home / "state").exists())
+            self.assertFalse((home / "global/chat").exists())
 
     def test_picker_exit_and_interrupt_do_not_create_state(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -858,7 +866,10 @@ class StartupTests(unittest.TestCase):
             result, _, engines = self.start(root, home, ["/exit"])
             self.assertEqual(result, 0)
             engines.assert_called_once()
-            self.assertFalse(home.exists())
+            catalog = json.loads((home / "global/projects.json").read_text("utf-8"))
+            self.assertEqual(catalog["projects"][0]["root"], str(root))
+            self.assertFalse((home / "state").exists())
+            self.assertFalse((home / "global/chat").exists())
 
     def test_headless_nested_home_uses_general_mode_without_project_state(self):
         with tempfile.TemporaryDirectory() as temporary:

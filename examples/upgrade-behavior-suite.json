@@ -1,0 +1,227 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "pagination",
+      "task": "Fix cursor pagination in api.py. page(items,cursor,limit) returns {items,next_cursor}; cursor is exclusive last item id. Preserve stable id order, empty inputs, and limit validation. API contract, regression test and code review.",
+      "files": {
+        ".gitignore": "__pycache__/\n",
+        "api.py": "def page(items, cursor=None, limit=2):\n    if limit < 1: raise ValueError('limit')\n    rows = sorted(items, key=lambda row: row['id'])\n    if cursor is not None: rows = [r for r in rows if r['id'] >= cursor]\n    selected = rows[:limit]\n    return {'items': selected, 'next_cursor': selected[-1]['id'] if selected else None}\n"
+      },
+      "checks": {
+        "schema_version": 1,
+        "checks": [
+          {
+            "name": "acceptance",
+            "kind": "acceptance",
+            "argv": [
+              "python",
+              "-B",
+              "-c",
+              "from api import page; rows=[{'id':i} for i in (3,1,5,2,4)]; a=page(rows); b=page(rows,a['next_cursor']); c=page(rows,b['next_cursor']); assert [r['id'] for r in a['items']+b['items']+c['items']]==[1,2,3,4,5]; assert c['next_cursor'] is None; assert page([])=={'items':[],'next_cursor':None}"
+            ],
+            "timeout_seconds": 30
+          },
+          {
+            "name": "regression",
+            "kind": "acceptance",
+            "argv": [
+              "python",
+              "-B",
+              "-c",
+              "from api import page; assert [r['id'] for r in page([{'id':4},{'id':1}])['items']]==[1,4];\ntry: page([],limit=0)\nexcept ValueError: pass\nelse: raise AssertionError('validation')"
+            ],
+            "timeout_seconds": 30
+          }
+        ]
+      },
+      "mode": "development",
+      "memory": []
+    },
+    {
+      "id": "message-idempotency",
+      "task": "Fix message idempotency in messages.py. send(store,key,body) must return the existing message for an identical retry; a different body for the same key raises ValueError without changing state. Distinct keys remain independent. Regression test and code review.",
+      "files": {
+        ".gitignore": "__pycache__/\n",
+        "messages.py": "def send(store, key, body):\n    message = {'id': len(store)+1, 'key': key, 'body': body}\n    store[key] = message\n    return message\n"
+      },
+      "checks": {
+        "schema_version": 1,
+        "checks": [
+          {
+            "name": "acceptance",
+            "kind": "acceptance",
+            "argv": [
+              "python",
+              "-B",
+              "-c",
+              "from messages import send; s={}; a=send(s,'k','hello'); b=send(s,'k','hello'); assert a==b and len(s)==1;\ntry: send(s,'k','changed')\nexcept ValueError: pass\nelse: raise AssertionError('conflict')\nassert s['k']==a"
+            ],
+            "timeout_seconds": 30
+          },
+          {
+            "name": "regression",
+            "kind": "acceptance",
+            "argv": [
+              "python",
+              "-B",
+              "-c",
+              "from messages import send; s={}; a=send(s,'one','a'); b=send(s,'two','b'); assert len(s)==2 and a['id']!=b['id']"
+            ],
+            "timeout_seconds": 30
+          }
+        ]
+      },
+      "mode": "development",
+      "memory": []
+    },
+    {
+      "id": "frontend-filter-state",
+      "task": "Fix frontend filter state in filters.py (controlled state reducer fixture). reduce(state,event) preserves unrelated filter/sort values, resets page on filter changes, and clear removes only filters. Events: {type:filter,key,value}, {type:page,value}, {type:clear}. Use immutable return values, regression test and code review.",
+      "files": {
+        ".gitignore": "__pycache__/\n",
+        "filters.py": "def reduce(state, event):\n    if event['type']=='filter':\n        return {'filters': {event['key']:event['value']}, 'page':state['page'], 'sort':'name'}\n    if event['type']=='clear': return {'filters':{},'page':1,'sort':'name'}\n    return {**state, 'page':event['value']}\n"
+      },
+      "checks": {
+        "schema_version": 1,
+        "checks": [
+          {
+            "name": "acceptance",
+            "kind": "acceptance",
+            "argv": [
+              "python",
+              "-B",
+              "-c",
+              "from filters import reduce; s={'filters':{'owner':'me'},'page':3,'sort':'date'}; a=reduce(s,{'type':'filter','key':'status','value':'open'}); assert a=={'filters':{'owner':'me','status':'open'},'page':1,'sort':'date'} and s['page']==3 and s['filters']=={'owner':'me'}; b=reduce(a,{'type':'clear'}); assert b=={'filters':{},'page':1,'sort':'date'} and a['filters']['status']=='open'"
+            ],
+            "timeout_seconds": 30
+          },
+          {
+            "name": "regression",
+            "kind": "acceptance",
+            "argv": [
+              "python",
+              "-B",
+              "-c",
+              "from filters import reduce; s={'filters':{},'page':1,'sort':'date'}; assert reduce(s,{'type':'page','value':4})=={**s,'page':4}"
+            ],
+            "timeout_seconds": 30
+          }
+        ]
+      },
+      "mode": "development",
+      "memory": []
+    },
+    {
+      "id": "migration-rollback",
+      "task": "Fix SQLite migration rollback in migrate.py. apply(conn,statements) runs the complete batch atomically; any failure must roll back all changes and re-raise. Preserve prior committed rows, and successful migrations persist. Regression test and independent code review.",
+      "files": {
+        ".gitignore": "__pycache__/\n",
+        "migrate.py": "def apply(conn, statements):\n    for sql in statements:\n        conn.execute(sql)\n        conn.commit()\n"
+      },
+      "checks": {
+        "schema_version": 1,
+        "checks": [
+          {
+            "name": "acceptance",
+            "kind": "acceptance",
+            "argv": [
+              "python",
+              "-B",
+              "-c",
+              "import sqlite3; from migrate import apply; c=sqlite3.connect(':memory:'); c.execute('CREATE TABLE items(id INTEGER PRIMARY KEY)'); c.execute('INSERT INTO items VALUES(1)'); c.commit();\ntry: apply(c,['INSERT INTO items VALUES(2)','INSERT INTO missing VALUES(3)'])\nexcept sqlite3.Error: pass\nelse: raise AssertionError('failure was hidden')\nassert c.execute('SELECT id FROM items ORDER BY id').fetchall()==[(1,)]"
+            ],
+            "timeout_seconds": 30
+          },
+          {
+            "name": "regression",
+            "kind": "acceptance",
+            "argv": [
+              "python",
+              "-B",
+              "-c",
+              "import sqlite3; from migrate import apply; c=sqlite3.connect(':memory:'); c.execute('CREATE TABLE items(id INTEGER)'); c.commit(); apply(c,['INSERT INTO items VALUES(7)']); assert c.execute('SELECT id FROM items').fetchall()==[(7,)] and not c.in_transaction"
+            ],
+            "timeout_seconds": 30
+          }
+        ]
+      },
+      "mode": "development",
+      "memory": []
+    },
+    {
+      "id": "authorization",
+      "task": "Fix authorization in auth.py. get_document(user,doc) returns only owner/admin documents. Unauthenticated and unauthorized users raise PermissionError; never return private content. Preserve admin access. Security review, regression test and code review.",
+      "files": {
+        ".gitignore": "__pycache__/\n",
+        "auth.py": "def get_document(user, doc):\n    if user is None: raise PermissionError('login')\n    return doc['content']\n"
+      },
+      "checks": {
+        "schema_version": 1,
+        "checks": [
+          {
+            "name": "acceptance",
+            "kind": "acceptance",
+            "argv": [
+              "python",
+              "-B",
+              "-c",
+              "from auth import get_document; d={'owner':1,'content':'private'};\nfor u in (None,{'id':2,'role':'member'}):\n try: get_document(u,d)\n except PermissionError: pass\n else: raise AssertionError('private disclosure')\nassert get_document({'id':1,'role':'member'},d)=='private'"
+            ],
+            "timeout_seconds": 30
+          },
+          {
+            "name": "regression",
+            "kind": "acceptance",
+            "argv": [
+              "python",
+              "-B",
+              "-c",
+              "from auth import get_document; assert get_document({'id':99,'role':'admin'},{'owner':1,'content':'ok'})=='ok'"
+            ],
+            "timeout_seconds": 30
+          }
+        ]
+      },
+      "mode": "development",
+      "memory": []
+    },
+    {
+      "id": "sourced-research",
+      "task": "Research Python sqlite3 transaction semantics using https://docs.python.org/3/library/sqlite3.html . Explain the connection context manager commit/rollback behavior, and whether it closes the connection. Source-backed research, explicit fact/inference separation and independent source review. Write the mandated report and source ledger only in artifact_directory.",
+      "files": {
+        ".gitignore": "__pycache__/\n",
+        "question.txt": "Explain sqlite3 connection context manager transaction semantics.\n"
+      },
+      "checks": {
+        "schema_version": 1,
+        "checks": [
+          {
+            "name": "acceptance",
+            "kind": "acceptance",
+            "argv": [
+              "python",
+              "-B",
+              "-c",
+              "from pathlib import Path; assert Path('question.txt').read_text().startswith('Explain sqlite3')"
+            ],
+            "timeout_seconds": 30
+          },
+          {
+            "name": "regression",
+            "kind": "acceptance",
+            "argv": [
+              "python",
+              "-B",
+              "-c",
+              "from pathlib import Path; assert len(Path('question.txt').read_text())>30"
+            ],
+            "timeout_seconds": 30
+          }
+        ]
+      },
+      "mode": "research",
+      "memory": []
+    }
+  ]
+}

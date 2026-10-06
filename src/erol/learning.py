@@ -23,6 +23,16 @@ from erol.store import Store
 from erol.verification import verify_report
 
 
+def _verified_use(use: dict) -> bool:
+    if use.get("successful") is not True:
+        return False
+    try:
+        verify_report(use.get("verification"))
+    except ErolError:
+        return False
+    return True
+
+
 class LearningEngine:
     def __init__(
         self, store: Store, config: Config | None = None, registry: Registry | None = None
@@ -172,7 +182,7 @@ class LearningEngine:
             "3. If the same cause is confirmed, apply this verified remedy: "
             f"{pattern['solution']}.\n"
             "4. Run a targeted regression test and check data integrity. Cite test evidence.\n"
-            "5. Request independent review. Stop on unresolved critical/high findings.\n\n"
+            "5. Request independent review. Stop on unresolved findings at any severity.\n\n"
             "## Avoid\n\nDo not apply when the root cause differs, the memory is stale, "
             "or the task concerns another project.\n"
         )
@@ -318,26 +328,55 @@ class LearningEngine:
             skill.to_dict()
         ):
             raise ErolError("Evaluation does not qualify the current skill revision")
+        verify_report(evaluation.get("behavior"))
         if scan_instructions(skill.body):
             raise ErolError("Current skill fails the security scan")
 
-    def begin_task(self, task_id: str, task: str) -> dict:
-        from erol.orchestration import Orchestrator
+    def begin_task(
+        self,
+        task_id: str,
+        task: str,
+        *,
+        plan: dict | None = None,
+        skill_names: list[str] | None = None,
+    ) -> dict:
+        from erol.orchestration import Orchestrator, estimate_tokens
 
         identifier(task_id)
         required_text(task, "task")
         assert_secret_safe(task)
         self.registry.refresh_project()
-        plan = Orchestrator(self.registry).plan(
-            task,
-            memory=self.store.search(task, mode="hybrid"),
-            token_budget=self.config.context_tokens,
-            max_skills=self.config.max_active_skills,
+        plan = (
+            plan
+            if plan is not None
+            else Orchestrator(self.registry).plan(
+                task,
+                memory=self.store.search(task, mode="hybrid"),
+                token_budget=self.config.context_tokens,
+                max_skills=self.config.max_active_skills,
+                skill_names=skill_names,
+            )
         )
+        if plan.get("task") != task:
+            raise ErolError("Task receipt must match the actual task")
+        context = plan["context"]
+        admitted_skills = context["packet"]["skills"]
+        if (
+            context["text"] != canonical(context["packet"])
+            or context["packet"]["task"] != task
+            or len(admitted_skills) > self.config.max_active_skills
+            or context["selected_skills"] != [s["name"] for s in admitted_skills]
+            or len(context["selected_skills"]) != len(set(context["selected_skills"]))
+            or estimate_tokens(canonical(context["packet"])) > self.config.context_tokens
+        ):
+            raise ErolError("Invalid admitted skill context")
+        for item in admitted_skills:
+            if item != self.registry.get(item["name"]).to_dict():
+                raise ErolError("Admitted skill revision no longer matches")
         admitted = set(plan["context"]["selected_skills"])
         selected = [
             {"name": s.name, "version": s.version, "digest": digest(s.to_dict())}
-            for s in self.registry.route(task, self.config.max_active_skills)
+            for s in (self.registry.get(name) for name in admitted)
             if s.scope == "project" and s.name in admitted
         ]
         record = {
@@ -351,7 +390,16 @@ class LearningEngine:
             if self.store.get("tasks", task_id, include_stale=True):
                 raise ErolError("Task ID already used; choose a distinct execution ID")
             self.store.put("tasks", record)
-        return {"task_id": task_id, "plan": plan, "selected_skills": selected}
+        from .artifacts import external_directory
+
+        return {
+            "task_id": task_id,
+            "plan": plan,
+            "selected_skills": selected,
+            "artifact_directory": str(
+                external_directory(self.store.home, self.store.project_id, task_id)
+            ),
+        }
 
     def complete_task(
         self, task_id: str, verification: dict, false_triggers: list[str] | None = None
@@ -377,6 +425,9 @@ class LearningEngine:
                     or current["status"] != "project_active"
                 ):
                     raise ErolError("Selected revision is no longer active; start a new task")
+                self._valid_eval(
+                    Skill.from_dict(current), self._require("evals", current["eval_id"])
+                )
                 use = {
                     "id": "use-" + digest({"task": task_id, "skill": selection})[:24],
                     "task_id": task_id,
@@ -436,7 +487,8 @@ class LearningEngine:
             for use in self.store.list("uses")
             if use["name"] == name and use["digest"] == current["digest"]
         ]
-        successes = sum(use["successful"] for use in uses)
+        successes = sum(_verified_use(use) for use in uses)
+        invalid_successes = sum(use["successful"] for use in uses) - successes
         false = sum(use["false_trigger"] for use in uses)
         return {
             "name": name,
@@ -445,6 +497,7 @@ class LearningEngine:
             "activations": len(uses),
             "successful_tasks": successes,
             "failed_tasks": len(uses) - successes,
+            "invalid_success_records": invalid_successes,
             "false_triggers": false,
             "success_rate": successes / len(uses) if uses else None,
             "false_trigger_rate": false / len(uses) if uses else None,
@@ -569,7 +622,9 @@ class LearningEngine:
         failed = [
             use
             for use in self.store.list("uses")
-            if use["name"] == name and use["digest"] == revision["digest"] and not use["successful"]
+            if use["name"] == name
+            and use["digest"] == revision["digest"]
+            and not _verified_use(use)
         ]
         if failed:
             raise ErolError("Rollback revision has unresolved real-use failures")

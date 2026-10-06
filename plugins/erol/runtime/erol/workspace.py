@@ -16,6 +16,7 @@ from typing import Any
 
 from .checktrust import CheckTrust, command_environment
 from .common import ErolError, atomic_write, canonical, reject_links
+from .common import digest as record_digest
 from .execution import load_checks
 from .providers import visible
 from .runprocess import observe
@@ -108,6 +109,15 @@ class Fingerprint:
 
 
 Snapshot = dict[str, bytes | Fingerprint]
+
+
+def source_digest(value: Snapshot) -> str:
+    return record_digest(
+        {
+            name: hashlib.sha256(body).hexdigest() if isinstance(body, bytes) else body.sha256
+            for name, body in value.items()
+        }
+    )
 
 
 def digest(content: bytes | Fingerprint | None) -> str | None:
@@ -276,6 +286,7 @@ class Workspace:
         root: Path,
         *,
         readonly: bool = False,
+        report_directory: Path | None = None,
         allowed_commands: list[list[str]] | None = None,
         check_trust: CheckTrust | None = None,
         checks_manifest: dict | None = None,
@@ -285,6 +296,10 @@ class Workspace:
     ):
         self.root = root.resolve(strict=True)
         self.readonly = readonly
+        self.report_directory = report_directory
+        if report_directory is not None:
+            reject_links(report_directory)
+            report_directory.mkdir(parents=True, exist_ok=True)
         self.allowed_commands = allowed_commands or []
         self.check_trust, self.checks_manifest = check_trust, checks_manifest
         self.stopped = stopped or threading.Event()
@@ -304,6 +319,11 @@ class Workspace:
         if not isinstance(name, str) or not name or len(name) > 1000 or "\x00" in name:
             raise ErolError("File path must be a bounded relative path")
         relative = Path(name)
+        if relative.is_absolute() and self.report_directory is not None:
+            reject_links(relative)
+            resolved = relative.resolve()
+            if resolved != self.report_directory and resolved.is_relative_to(self.report_directory):
+                return resolved
         if relative.is_absolute() or ".." in relative.parts or protected(relative):
             raise ErolError("File is outside the permitted project scope")
         path = self.root / relative
@@ -329,6 +349,14 @@ class Workspace:
             "truncated": len(text) > 64000,
         }
 
+    def files(self) -> list[str]:
+        names = file_names(self.root)
+        if self.report_directory is not None:
+            names += [
+                str(self.report_directory / name) for name in file_names(self.report_directory)
+            ]
+        return names
+
     def dispatch(self, name: str, arguments: dict) -> str:
         if self.stopped.is_set():
             raise ErolError("Task cancelled")
@@ -338,7 +366,7 @@ class Workspace:
         if set(arguments) - set(schema["properties"]) or set(schema["required"]) - set(arguments):
             raise ErolError("Invalid tool argument fields")
         if name == "list_files":
-            names = file_names(self.root)
+            names = self.files()
             return canonical({"files": names[:1000], "truncated": len(names) > 1000})
         if name == "read_file":
             return canonical(self.read(arguments["path"]))
@@ -347,7 +375,7 @@ class Workspace:
             if not isinstance(query, str) or not query or len(query) > 500:
                 raise ErolError("Search query must be 1..500 characters")
             matches = []
-            for filename in file_names(self.root):
+            for filename in self.files():
                 try:
                     read = self.read(filename)
                 except ErolError:

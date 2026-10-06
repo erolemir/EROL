@@ -289,9 +289,19 @@ class CliHarness:
         self.name = name
         self.cwd = cwd
         self.prefix = command_prefix(name)
+        self.configure("development")
 
-    def configure(self, mode: str) -> CliHarness:
+    def configure(
+        self,
+        mode: str,
+        model: str | None = None,
+        report_directory: str | None = None,
+        effort: str | None = None,
+    ) -> CliHarness:
         self.mode = mode
+        self.model = model
+        self.report_directory = report_directory
+        self.effort = effort
         return self
 
     def preflight(self) -> dict:
@@ -334,7 +344,14 @@ class CliHarness:
                 raise ErolError("Claude authentication probe is unsupported") from exc
             if not isinstance(auth, dict) or auth.get("loggedIn") is not True:
                 raise ErolError("Claude authentication is required")
+        if self.model and "--model" not in help_text:
+            raise ErolError("Harness lacks explicit model selection")
+        if self.effort and self.name == "claude" and "--effort" not in help_text:
+            raise ErolError("Claude lacks explicit effort selection")
+        if self.report_directory and "--add-dir" not in help_text:
+            raise ErolError("Harness lacks external report-directory support")
         return {
+            "requested_model": self.model,
             "name": self.name,
             "version": version,
             "capabilities_checked": True,
@@ -349,6 +366,12 @@ class CliHarness:
             args = [*self.prefix, "-a", "never", "-s", sandbox, "exec"]
             if getattr(self, "mode", "development") == "research":
                 args.insert(len(self.prefix), "--search")
+            if self.effort:
+                args += ["-c", f'model_reasoning_effort="{self.effort}"']
+            if self.model:
+                args += ["--model", self.model]
+            if self.report_directory and role == "implementer":
+                args += ["--add-dir", self.report_directory]
             if session_id:
                 args += ["resume", session_id]
             args += ["--json", "--output-schema", str(schema_path), "-"]
@@ -374,6 +397,12 @@ class CliHarness:
             "--mcp-config",
             '{"mcpServers":{}}',
         ]
+        if self.effort:
+            args += ["--effort", self.effort]
+        if self.model:
+            args += ["--model", self.model]
+        if self.report_directory:
+            args += ["--add-dir", self.report_directory]
         if session_id:
             args += ["--resume", session_id]
         return args

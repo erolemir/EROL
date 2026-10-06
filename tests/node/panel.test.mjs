@@ -23,7 +23,7 @@ class Element {
 
 test('panel filters, expands observed evidence, switches tabs and renders untrusted text literally', async () => {
   const elements = Object.fromEntries(
-    ['stats', 'items', 'query', 'status', 'runs', 'jobs', 'benchmarks', 'connection']
+    ['stats', 'items', 'query', 'status', 'runs', 'chats', 'jobs', 'benchmarks', 'connection']
       .map(id => [id, new Element('div')])
   );
   const data = {
@@ -32,6 +32,9 @@ test('panel filters, expands observed evidence, switches tabs and renders untrus
       checks: [{ name: 'behavior', passed: true, evidence_type: 'runner_observed' }],
       source_access_receipts: [{ source_id: 'S1', status: 'accessed', evidence_type: 'runner_observed_source_access' }],
       cost_usd: null, usage: { input_tokens: 42 }, findings: [] }],
+    chats: [{ id: 'session-one', status: 'implemented_unverified', phase: 'terminal',
+      selected_skills: ['repository-exploration'], phase_timings: { provider_seconds: 0.2 },
+      verification: { verified: false, missing_checks_reason: 'No acceptance manifest' } }],
     jobs: [{ id: 'job-one', status: 'queued' }],
     benchmarks: [{ id: 'benchmark-one', status: 'completed', pairs: 1 }],
   };
@@ -62,6 +65,11 @@ test('panel filters, expands observed evidence, switches tabs and renders untrus
   elements.status.onchange();
   assert.match(elements.items.textContent, /kayıt yok/);
   elements.status.value = '';
+  elements.chats.onclick();
+  assert.match(elements.items.textContent, /session-one/);
+  elements.items.children[0].children[0].onclick();
+  assert.match(elements.items.textContent, /No acceptance manifest/);
+  assert.match(elements.items.textContent, /provider_seconds/);
   elements.jobs.onclick();
   assert.match(elements.items.textContent, /job-one/);
   elements.query.value = 'missing';
@@ -74,7 +82,7 @@ test('panel filters, expands observed evidence, switches tabs and renders untrus
 
 test('panel reports an unavailable evidence endpoint without inventing state', async () => {
   const elements = Object.fromEntries(
-    ['stats', 'items', 'query', 'status', 'runs', 'jobs', 'benchmarks', 'connection']
+    ['stats', 'items', 'query', 'status', 'runs', 'chats', 'jobs', 'benchmarks', 'connection']
       .map(id => [id, new Element('div')])
   );
   vm.runInNewContext(script, {

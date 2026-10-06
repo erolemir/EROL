@@ -82,10 +82,18 @@ OS-held leases permit one unfinished run per project, including callers using
 different homes for the same Git checkout. A small Git metadata marker references
 the retained external run record; missing/unknown referenced state fails closed.
 Use the original home to resume or cancel its run. The runner creates
-a detached worktree from HEAD beneath external state and retains the original
+a detached worktree from HEAD beneath `<EROL_HOME>/workspaces/<project-id>/<run-id>/`
+and retains the original
 project identity and exact admitted skill revisions. Git worktree registration
 changes local Git metadata; the main checkout stays intact. No automatic commit,
 merge, push or publication is performed. A worktree is not an OS sandbox.
+
+Private memory and run evidence remain under `state/`. Source workspaces are
+separate so dedicated Windows sandbox users do not need to traverse owner-only
+memory directories. Windows workspace containers inherit normal directory ACLs;
+EROL does not widen existing ACLs. Existing runs retain their original worktree
+paths. A previously protected home may still require native sandbox setup for
+access to the exact workspace and report subtree.
 
 The loop records baseline checks, invokes an implementer, observes checks directly,
 and launches a separate reviewer. Codex uses workspace-write for implementation
@@ -96,7 +104,7 @@ checks; Claude workers have no Bash tool. Native and managed settings can furthe
 restrict these operations. This does not establish OS containment, universal
 prompt-injection protection or reviewer correctness.
 
-Completion requires all checks and no unresolved high/critical findings on the
+Completion requires all checks and no unresolved review findings on the
 same source digest. Digests cover tracked/staged changes and nonignored new files,
 including contents; ignored caches/build outputs are excluded. Changing source
 during checks/review invalidates the evidence. Changed HEAD, linked source files,
@@ -159,5 +167,35 @@ directories remain available for inspection. See validation.md for measured resu
 See [research](research-execution.md); it uses the same retained worktree, checks and resume
 protocol. It does not require a provider SDK or add runtime dependencies.
 
-Scanning, rule-based automatic starts, parallel workers, semantic retrieval and a
-dashboard remain subsequent milestones.
+Semantic retrieval and concurrent writing workers remain subsequent milestones. The existing local
+read-only dashboard also includes terminal sessions.
+
+## External artifacts and controlled comparisons
+
+Run and terminal reports default to the canonical external EROL home at
+`reports/<project-id>/<task-id>/`. The receipt returns `artifact_directory`.
+Workers receive the exact directory and reviewers read it; both source and report
+digests are checked before credit. External write denial is a blocker, not a reason
+to leave report Markdown in a project. Existing source docs may still be edited.
+
+The six controlled cases in `examples/upgrade-behavior-suite.json` exercise cursor
+pagination, message idempotency, frontend filter-state transitions, SQLite rollback,
+authorization and sourced research. The frontend fixture is a state reducer, not
+a browser/DOM test. Source research also requires the normal source ledger and
+independent review. Use `benchmark --repeat 3 --model MODEL --effort medium` with
+the same harness in both arms and an external `--report` path, after explicitly
+reviewing/trusting every acceptance manifest. This creates eighteen paired tasks
+(thirty-six arms), alternates arm order and keeps fixture/check digests comparable.
+The CLI retains fixtures and their isolated homes under `<EROL_HOME>/benchmarks/`;
+reports remain at the explicitly selected external path. A short home path avoids
+Windows Git metadata path-length limits.
+Reported token usage, unknown cost and estimates remain separate; fixed settings
+are recorded as requests, not assertions of actual provider compliance.
+
+Phase and model-turn timings are measurements, not behavioral success. Profiles
+keep their engineering capability/latency priors until repeatable passing live
+results permit calibration. The first 2026-10-06 attempt was stopped after both
+arms were denied native filesystem access beneath owner-only state directories.
+After separating source workspaces and private state, a fresh pair passed both
+acceptance checks and separate native review in both arms. Neither a single pair
+nor the earlier blocked attempt establishes general accuracy or token savings.

@@ -8,9 +8,11 @@ erol --project /path/to/project --home /external/home run --mode research --harn
 ```
 
 A committed local Git project and reviewed acceptance manifest are still required.
-An empty research repository with a committed brief is sufficient. Outputs stay in
-the retained worktree; the runner returns its patch and evidence. It never publishes
-the report. Native authentication, provider availability and network rules apply.
+An empty research repository with a committed brief is sufficient. Source edits
+stay in the retained worktree; generated reports and ledgers use the run's external
+`artifact_directory` under the canonical EROL home. The runner returns patch,
+report location and evidence. It never publishes the report. Native authentication,
+provider availability and network rules apply.
 
 The workflow defines the decision, audience, geography, versions and evaluation
 criteria. Technical research prefers official documentation and original papers.
@@ -22,11 +24,11 @@ This is a workflow contract, not a measured guarantee of exhaustive research.
 
 ## Deliverables and completion
 
-`research/report.md` presents the answer, comparison when appropriate, recommendation,
+`<artifact_directory>/report.md` presents the answer, comparison when appropriate, recommendation,
 assumptions, conflicting evidence, limits and actionable next steps. Cite sources as
 `[S1](https://example.test/docs)` with the exact ledger ID and URL.
 
-`research/sources.json` follows the [ledger schema](../schemas/research.schema.json).
+`<artifact_directory>/sources.json` follows the [ledger schema](../schemas/research.schema.json).
 The [synthetic example](../examples/research-sources.json) illustrates the format;
 its reserved example URL is not factual evidence. Unknown publication dates are
 null; accessed dates must be real calendar dates no later than today. Facts and
@@ -59,7 +61,9 @@ Native tool payloads are not retained. Reviewer mistakes,
 inaccessible pages, stale vendor information and incomplete search remain possible.
 Successful checks and review bind to the same report/source bytes; editing either
 invalidates prior evidence on resume. Use `runs show` to inspect the review and
-the worktree to read the complete report.
+the returned artifact_directory to read the complete report. Legacy callers that
+do not supply a directory may still validate existing worktree `research/` files;
+new run receipts always supply the external location.
 
 ## Native capabilities and validation
 

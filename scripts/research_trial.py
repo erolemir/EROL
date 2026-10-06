@@ -8,6 +8,7 @@ import sys
 import tempfile
 from pathlib import Path
 
+from erol.artifacts import external_directory
 from erol.checktrust import CheckTrust
 from erol.common import atomic_write, canonical
 from erol.config import Config
@@ -35,9 +36,12 @@ def trial(harness: str) -> dict:
     ):
         subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True)
     check = base / "acceptance.py"
+    project = detect_project(root)
+    task_id = "research-trial"
+    directory = external_directory(base / "external home", project.id, task_id)
     check.write_text(
         "import json,pathlib\nfrom urllib.parse import urlsplit\n"
-        "root=pathlib.Path('research')\n"
+        "root=pathlib.Path(" + repr(str(directory)) + ")\n"
         "report=(root/'report.md').read_text(encoding='utf-8').lower()\n"
         "ledger=json.loads((root/'sources.json').read_text(encoding='utf-8'))\n"
         "terms=['sqlite','postgresql','concurrency','deployment']\n"
@@ -66,7 +70,6 @@ def trial(harness: str) -> dict:
             }
         ),
     )
-    project = detect_project(root)
     with (
         Store(base / "external home", project) as store,
         RunStore(store.directory, project.id) as runs,
@@ -85,6 +88,7 @@ def trial(harness: str) -> dict:
             harness,
             manifest,
             mode="research",
+            task_id=task_id,
         )
         return {
             key: result.get(key)
@@ -101,6 +105,7 @@ def trial(harness: str) -> dict:
                 "tested_digest",
                 "reviewed_digest",
                 "worktree",
+                "artifact_directory",
                 "patch",
                 "source_access_receipts",
             )

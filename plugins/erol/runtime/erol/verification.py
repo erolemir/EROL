@@ -6,6 +6,29 @@ from erol.common import ErolError, required_text
 from erol.security import assert_secret_safe
 
 
+def complete_observed_task(engine, task_id: str, report: dict) -> list[dict]:
+    """Atomically retain observer provenance without upgrading CLI attestations."""
+    if report.get("checks_executed_by_erol") is not True:
+        raise ErolError("Observed completion requires executed checks")
+    verify_report(report)
+    with engine.store.transaction():
+        task = engine.store.get("tasks", task_id)
+        if not task:
+            raise ErolError("Original task receipt is missing")
+        if task["status"] == "completed":
+            if task.get("verification") != report:
+                raise ErolError("Task completion belongs to different evidence")
+            return []
+        credited = engine.complete_task(task_id, report)
+        for use in credited["uses"]:
+            use["verification"] = report
+            engine.store.put("uses", use, replace=True)
+        task = engine.store.get("tasks", task_id)
+        task["verification"] = report
+        engine.store.put("tasks", task, replace=True)
+        return credited["uses"]
+
+
 def verify_report(report: object) -> dict:
     if not isinstance(report, dict):
         raise ErolError("Verification report must be an object")
@@ -41,8 +64,8 @@ def verify_report(report: object) -> dict:
             raise ErolError("Invalid finding severity")
         if type(finding.get("resolved")) is not bool:
             raise ErolError("Findings require explicit resolution status")
-        if finding["severity"] in {"critical", "high"} and not finding["resolved"]:
-            raise ErolError("Unresolved critical/high findings prevent completion")
+        if not finding["resolved"]:
+            raise ErolError("Unresolved review findings prevent completion")
     return {
         "implementer": implementer,
         "reviewer": reviewer,
