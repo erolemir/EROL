@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 
 from .i18n import message
+from .resultview import changes_view, files_view
 
 STATUS_KEYS = {
     "ready",
@@ -89,9 +90,9 @@ def task_result(record: dict, language: str = "en") -> str:
             f"{selection['connection']}:{selection['model']} · {selection['effort']} · "
             + selection["reason"]
         )
-    lines.append(
-        ("Değişen dosyalar: " if tr else "Changed files: ")
-        + (", ".join(c["path"] for c in record.get("changes", [])) or "—")
+    lines.append("Değişen dosyalar:" if tr else "Changed files:")
+    lines.extend(
+        changes_view(record.get("changes", []), record.get("project_root", ""), language) or ["—"]
     )
     checks, reviews = record.get("checks", []), record.get("reviews", [])
     lines.append(
@@ -100,7 +101,7 @@ def task_result(record: dict, language: str = "en") -> str:
         + f"{sum(r.get('approved') is True for r in reviews)}/{len(reviews)}"
     )
     if record.get("artifact_directory"):
-        lines.append(("Raporlar: " if tr else "Reports: ") + record["artifact_directory"])
+        lines.extend(files_view({**record, "changes": []}, language))
     reason = record.get("error") or (record.get("verification") or {}).get("missing_checks_reason")
     if reason:
         lines.append(str(reason))
@@ -108,6 +109,8 @@ def task_result(record: dict, language: str = "en") -> str:
         ("Sonraki adım: " if tr else "Next step: ")
         + ("—" if record.get("status") == "completed" else "/tests · /diff · /usage")
     )
+    if record.get("changes") or record.get("artifact_directory"):
+        lines.append("/files · /diff NUMBER [PAGE] · /tests · /usage")
     return "\n".join(line for line in lines if line)
 
 
@@ -156,9 +159,9 @@ def present(result: dict, language: str) -> str:
             ),
             (
                 "help_connections",
-                ["connect", "providers", "models", "model", "settings", "language"],
+                ["connect", "providers", "models", "model", "effort", "settings", "language"],
             ),
-            ("help_evidence", ["diff", "tests", "usage", "status"]),
+            ("help_evidence", ["files", "diff", "tests", "usage", "status"]),
             ("help_display", ["clear", "view", "motion", "logo", "help", "exit"]),
         ]
         for title, names in groups:
@@ -174,7 +177,7 @@ def present(result: dict, language: str) -> str:
             lines.append(f"{row['id']}  ·  {row['kind']}  ·  {state}")
             if row.get("available"):
                 lines.append("  " + t("access_note", value=row.get("model_access", "unknown")))
-        profiles = result.get("profiles", {})
+        profiles = result.get("profiles", {}) if "model_choices" not in result else {}
         kinds = {row["id"]: row["kind"] for row in result["providers"]}
         for connection, models in profiles.items():
             for model in models:
@@ -195,6 +198,67 @@ def present(result: dict, language: str) -> str:
                 )
         if not result["providers"]:
             lines.append(t("no_connections"))
+        if "model_choices" in result:
+            for index, choice in enumerate(result["model_choices"], 1):
+                marker = " *" if choice["value"] == result["model"] else ""
+                lines.append(
+                    f"{index}. {choice['value']}{marker} · " + ", ".join(choice["efforts"])
+                )
+                profile = choice["profile"]
+                native = kinds.get(choice["value"].partition(":")[0]) in {
+                    "codex",
+                    "claude",
+                    "antigravity",
+                }
+                prices = (profile.get("input_price"), profile.get("output_price"))
+                cost = (
+                    t("cli_subscription")
+                    if native
+                    else (
+                        f"${prices[0]:g} / ${prices[1]:g} / 1M token"
+                        if all(p is not None for p in prices)
+                        else t("unknown_price")
+                    )
+                )
+                lines.append(
+                    f"   L{profile['level']} · context {profile['context_window']} · {cost}"
+                )
+                lines.append("   " + t("access_note", value=choice["access"]))
+            lines.append(
+                t("model_selected", value=result["model"]) + " · effort: " + result["effort"]
+            )
+            lines.append("/model NUMBER · /model NAME · /model CONNECTION:MODEL · /model auto")
+            lines.append("/effort auto · /effort VALUE · /models refresh")
+    elif "files" in result:
+        lines.extend(files_view(result["files"], language))
+    elif "diff" in result:
+        root = result.get("project_root", "")
+        page = result.get("diff_page")
+        command = result.get("diff_command", "/diff")
+        if result.get("previous_task"):
+            lines.append(t("previous", task_id=result["previous_task"]))
+        if page:
+            lines.extend(
+                changes_view(result["diff"], root, language, preview=False, start=page["index"])
+            )
+            lines.append(f"{page['page']}/{page['pages']}")
+            lines.extend(page["lines"])
+            if page["page"] < page["pages"]:
+                lines.append(f"{command} {page['index']} {page['page'] + 1}")
+        else:
+            for index, step in enumerate(result.get("continuation_history", []), 1):
+                lines.append(t("previous", task_id=step["task_id"]))
+                lines.extend(
+                    changes_view(
+                        step["changes"], step.get("project_root", root), language, preview=False
+                    )
+                )
+                lines.append(f"/diff previous {index} NUMBER [PAGE]")
+            lines.extend(
+                changes_view(result["diff"], root, language, preview=command == "/diff")
+                or [t("no_changes")]
+            )
+            lines.append(f"{command} NUMBER [PAGE] · /files")
     elif "projects" in result:
         lines.append("── " + t("projects_title"))
         for index, row in enumerate(result["projects"], 1):
@@ -216,10 +280,6 @@ def present(result: dict, language: str) -> str:
         lines.append(record["id"] + " · " + status(record["status"]))
         lines.append(t("saved_chat_note"))
         lines.append(task_result(record, language))
-        for change in record.get("changes", []):
-            lines.append(f"{change.get('status', 'changed')}: {change['path']}")
-            if change.get("diff"):
-                lines.append(change["diff"])
         for check in record.get("checks", []):
             lines.append(
                 check["name"] + " · " + t("check_passed" if check.get("passed") else "check_failed")
@@ -232,6 +292,12 @@ def present(result: dict, language: str) -> str:
             if key in result:
                 value = status(result[key]) if key == "status" else result[key]
                 lines.append(f"{t(key + '_label')}: {value}")
+        if "model_preference" in result:
+            lines.append(
+                t("model_selected", value=result["model_preference"])
+                + " · effort: "
+                + result["effort_preference"]
+            )
         if "selection" in result:
             selection = result["selection"]
             lines.extend(
@@ -253,6 +319,8 @@ def present(result: dict, language: str) -> str:
         lines.append(t("settings_example"))
     elif "model" in result:
         lines.append(t("model_selected", value=result["model"]))
+        lines.append("effort: " + result.get("effort", "auto"))
+        lines.append("/model · /models · /effort auto")
     elif "usage" in result:
         usage = result["usage"]
         events = result.get("events", [])

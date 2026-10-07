@@ -381,6 +381,7 @@ def route(
     *,
     role: str = "implementer",
     override: str | None = None,
+    effort_override: str | None = None,
     minimum_level: int = 0,
     excluded: set[str] | None = None,
     context_tokens: int = 4000,
@@ -406,6 +407,7 @@ def route(
                 continue
             if (
                 (not override and model.level < level)
+                or (effort_override is not None and effort_override not in model.efforts)
                 or (require_tools and not model.tools)
                 or model.context_window < context_tokens + model.output_limit
             ):
@@ -444,7 +446,7 @@ def route(
         and not any(c[2].level < model.level for c in candidates)
         else ""
     )
-    effort = (
+    effort = effort_override or (
         "high"
         if assessment["risk"] or role == "planner"
         else "low"
@@ -462,16 +464,22 @@ def route(
         "assessment": assessment,
         "estimated_request_usd": cost,
         "reason": (
-            f"{assessment['complexity']} task; eligible capability level {model.level}; "
+            "Manual model selection; context/tools/budget eligibility retained"
+            if override
+            else f"{assessment['complexity']} task; eligible capability level {model.level}; "
             f"{settings.policy} resource ranking{fallback}"
         ),
         "profile_source": model.source,
         "context_estimated_tokens": context_tokens,
         "context_estimator": "UTF-8 bytes + protocol reserve; conservative proxy, not a tokenizer",
         "effort_reason": (
-            "high for risk/planning; low for small tasks; medium otherwise; "
+            "Manual effort selection"
+            if effort_override
+            else "high for risk/planning; low for small tasks; medium otherwise; "
             "supported profile efforts only"
         ),
+        "manual_model": bool(override),
+        "manual_effort": bool(effort_override),
         "eligible_alternatives": [
             {
                 "connection": c.id,
