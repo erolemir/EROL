@@ -815,3 +815,28 @@ The local global launcher points to `~/.erol/cli/0.2.0`, independently of instal
 plugins; it must be updated to the validated distribution to expose these changes.
 Final validation/review/installation evidence is kept outside the repository in
 `reports/erol-dc3958ee207243b6/erol-terminal-ux-20261007/`.
+
+## Guided terminal and mantis follow-up — 2026-10-07
+
+The user requested improvements across command discovery, project/model selection
+and reading, and reported unnatural mantis animation. Startup now points to common
+actions and `/menu`. Rich model, effort, project and saved-chat pickers support
+arrows, numeric selection, paging and cancellation without starting model work.
+Headless JSON and plain numbered views keep their existing contracts. Preferences
+remain visible, Tab cycles ambiguous completions, and the narrower brand sidebar
+leaves more room for answers. Worker/reviewer protocol JSON is kept out of the
+conversation; validated results and observed errors/checks remain visible.
+
+Animation no longer shifts disconnected horizontal strips. A slow light cycle
+preserves the original silhouette at every phase; monochrome and motion-off stay
+static. The original brand asset is unchanged. Nineteen focused acceptance tests
+cover menu input/paste/cancel, inventory selection, chat paging, reading boundaries
+and silhouette stability. Actual generated terminal frames were rasterized and
+visually inspected; this is synthetic frame inspection, not universal live UI
+coverage. Full gates and independent review evidence are retained externally in
+`reports/erol-dc3958ee207243b6/erol-terminal-guidance-mantis-20261007/`.
+
+Independent review identified a paste-cancellation boundary that could expose the
+remaining pasted text to the next prompt. The picker now consumes the complete
+bracketed payload before accepting cancellation; an outer-loop regression covers
+both pasted Ctrl+C and Esc, rather than only the choice-state component.

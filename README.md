@@ -425,6 +425,15 @@ under the external EROL home; a text response alone is not an exported file.
 patch truncation and binary changes are explicitly marked. Old chats retain
 their original evidence; missing historical report inventories are disclosed.
 
+For everyday navigation, open `/menu`. In the rich terminal, `/model`, `/effort`,
+`/my-projects` and `/chats` also open selectable lists: arrows to move, Enter to
+choose, Esc to return. Saved chats offer page navigation; opening them does not
+run a task. Model/effort preferences stay visible. Tab cycles matching commands.
+Use the menu's reading-layout action or `/view compact` for full-width responses.
+The mantis now uses a gentle light pulse with a fixed silhouette; `/motion off`
+keeps it still. Plain terminals retain numbered command views and headless
+commands retain JSON output.
+
 Model routing considers task risk/scope and the EROL plan. Unknown work starts
 at a medium level; small explicit fixes prefer economical profiles, while
 substantial or risky tasks require stronger profiles. Exact simple greetings
