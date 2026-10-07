@@ -140,6 +140,10 @@ def present(result: dict, language: str) -> str:
                     + f"context {profile['context_window']} · {profile['profile_source']}"
                 )
         lines.append(result["note"])
+    elif "menu_choices" in result:
+        lines.append(t("menu_title"))
+        for index, row in enumerate(result["menu_choices"], 1):
+            lines.append(f"{index}. {row['label']}  ·  {row['value']}")
     elif "commands" in result:
         groups = [
             (
@@ -162,7 +166,7 @@ def present(result: dict, language: str) -> str:
                 ["connect", "providers", "models", "model", "effort", "settings", "language"],
             ),
             ("help_evidence", ["files", "diff", "tests", "usage", "status"]),
-            ("help_display", ["clear", "view", "motion", "logo", "help", "exit"]),
+            ("help_display", ["menu", "clear", "view", "motion", "logo", "help", "exit"]),
         ]
         for title, names in groups:
             lines.extend(["", "── " + t(title)])

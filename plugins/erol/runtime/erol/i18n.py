@@ -6,6 +6,31 @@ import locale
 import os
 
 MESSAGES = {
+    "menu_title": ("What would you like to do?", "Ne yapmak istiyorsun?"),
+    "menu_projects": ("Choose a project", "Proje seç"),
+    "menu_models": ("Choose a model", "Model seç"),
+    "menu_effort": ("Choose reasoning effort", "Düşünme eforunu seç"),
+    "next_page": ("Next page", "Sonraki sayfa"),
+    "previous_page": ("Previous page", "Önceki sayfa"),
+    "menu_chats": ("Open a saved chat", "Eski sohbeti aç"),
+    "menu_files": ("Find output files", "Üretilen dosyaları bul"),
+    "menu_changes": ("See file changes", "Dosya değişikliklerini gör"),
+    "menu_tests": ("See test results", "Test sonuçlarını gör"),
+    "menu_status": ("See project and task status", "Proje ve görev durumunu gör"),
+    "menu_view": ("Switch reading layout", "Okuma görünümünü değiştir"),
+    "menu_settings": ("See settings", "Ayarları gör"),
+    "menu_help": ("All commands and examples", "Tüm komutlar ve örnekler"),
+    "choice_hint": ("↑/↓ choose · Enter open · Esc back", "↑/↓ seç · Enter aç · Esc geri"),
+    "choice_plain": ("Number (blank to go back): ", "Numara (geri dönmek için boş bırak): "),
+    "auto_model": ("Automatic · choose for each task", "Otomatik · göreve göre seç"),
+    "welcome_actions": (
+        "\nDescribe your task, or open /menu.\n"
+        "/my-projects  project · /model  model · /chats  saved chats\n"
+        "/files  output paths · /diff  changes · /tests  checks\n",
+        "\nGörevini yaz veya /menu ile seçim yap.\n"
+        "/my-projects  proje · /model  model · /chats  eski sohbetler\n"
+        "/files  çıktı yolları · /diff  değişiklikler · /tests  kontroller\n",
+    ),
     "help_conversation": ("Conversation and tasks", "Sohbet ve görevler"),
     "skills_used": ("Skills in context: {names}", "Bağlama alınan skill'ler: {names}"),
     "skills_none": (
@@ -97,8 +122,8 @@ MESSAGES = {
     "view_changed": ("View: {view}\n", "Görünüm: {view}\n"),
     "motion_changed": ("Logo motion: {value}\n", "Logo hareketi: {value}\n"),
     "keys_short": (
-        "Ctrl+W erase word · Ctrl+U clear · Ctrl+J newline · /help",
-        "Ctrl+W kelime sil · Ctrl+U temizle · Ctrl+J yeni satır · /help",
+        "/menu actions · Tab complete/cycle · Ctrl+J newline · PgUp/PgDn scroll",
+        "/menu eylemler · Tab tamamla/geç · Ctrl+J yeni satır · PgUp/PgDn kaydır",
     ),
     "running": ("Running", "Çalışıyor"),
     "completed": ("Completed", "Tamamlandı"),
@@ -217,6 +242,7 @@ MESSAGES = {
 }
 
 HELP_EN = {
+    "menu": "Action menu: project, model, saved chats, files and reading layout",
     "help": "Show commands and examples",
     "project": "Show/select project: /project C:/Projects/my-app (quote spaces)",
     "my-projects": "List/select projects: /my-projects | /my-projects 1 | /my-projects add PATH",

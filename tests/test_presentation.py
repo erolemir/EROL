@@ -88,7 +88,9 @@ class PresentationTests(unittest.TestCase):
         editor.insert("/connect c")
         self.assertEqual(editor.suggestions(), ["/connect codex", "/connect claude"])
         editor.key("tab")
-        self.assertEqual(editor.text, "/connect c")
+        self.assertEqual(editor.text, "/connect codex")
+        editor.key("tab")
+        self.assertEqual(editor.text, "/connect claude")
         reader = Mock()
         for key, action in (("\x17", "erase_word"), ("\x0b", "erase_end")):
             reader.getwch.return_value = key

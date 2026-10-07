@@ -840,3 +840,9 @@ Independent review identified a paste-cancellation boundary that could expose th
 remaining pasted text to the next prompt. The picker now consumes the complete
 bracketed payload before accepting cancellation; an outer-loop regression covers
 both pasted Ctrl+C and Esc, rather than only the choice-state component.
+
+The initial remote matrix found omitted generated plugin runtime copies and a
+legacy Tab expectation. Runtime snapshots were regenerated through the canonical
+drift script, and the existing editor test now asserts the requested completion
+cycling. The failed CI log is retained externally; the corrected distribution
+must pass the complete matrix and local gates before publication.
