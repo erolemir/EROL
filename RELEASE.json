@@ -1,6 +1,6 @@
 {
-  "version": "0.2.4",
-  "source_commit": "e69ee9146ef69db3e6a4f3c3eccf2dc2cebcce4d",
+  "version": "0.2.5",
+  "source_commit": "24666867999711e16c6ded13efd8a1b4386a270e",
   "repository": "erolemir/EROL",
   "channel": "stable",
   "license": "AGPL-3.0-only"
