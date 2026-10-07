@@ -6,7 +6,7 @@ The original PNG is packaged byte-for-byte under `data/brand/erol.png`. Terminal
 pixels use the existing compressed monochrome asset and Unicode half blocks.
 
 The rich UI owns a cleared alternate screen. Transcript cells wrap only inside
-the left column; a separate right panel animates antennae/forelegs while the
+the left column; a separate right panel gently pulses the mantis light while the
 editor and status remain below both panels. `/logo` toggles panel width; PgUp/PgDn
 or the mouse wheel scroll the bounded 200,000-character in-memory transcript,
 including during execution. New stream chunks preserve a scrolled viewport;
@@ -55,7 +55,8 @@ remain unchanged. Provider diagnostics and model output are displayed as supplie
 Interactive provider/model/settings/status/usage/test/session/plan views render
 human-readable summaries; headless results retain their JSON structure. Help is
 grouped by purpose. Command and common argument suggestions appear below the
-editor; Tab uses the common prefix. Ctrl+W erases a word, Ctrl+K erases to the
+editor; Tab completes the common prefix, then cycles matching commands. Esc clears
+the current draft. Ctrl+W erases a word, Ctrl+K erases to the
 line end, and multiline up/down navigates lines before recalling prompt history.
 Prose wraps at word boundaries while code fences/indented text preserve spacing.
 Semantic heading/diff/error colors are added after layout, never interpreted from
@@ -66,6 +67,34 @@ Successful tool results are quiet; failed tools remain visible and are marked
 sidebar; `/motion on|off` controls logo motion. These display controls are session
 preferences and do not reset task records. Native text selection remains terminal
 dependent. No screen-reader or universal accessibility compliance is claimed.
+
+## Guided navigation
+
+Startup offers common actions beside the normal task prompt. `/menu` opens an
+action picker; `/model`, `/effort`, `/my-projects` and `/chats` open dedicated
+pickers in the rich terminal. Use arrows, Home/End or PgUp/PgDn to navigate,
+Enter to select, or Esc/Ctrl+C to return. Numbers also select displayed rows.
+Bracketed paste never selects a row. Saved chats include page navigation and
+retain the existing summary/change/check storage contract. A model picker offers
+automatic selection and only the current available provider profiles, with access
+limitations shown. Selection still passes the existing configuration, identity,
+supported-effort and idle-state guards; opening a picker never starts a model turn.
+
+Pickers temporarily cover the reading area and restore its transcript and scroll
+position on cancellation, selection, EOF or failure. Plain terminals retain the
+existing numbered command views; `/menu` also accepts a numbered choice there.
+Headless slash commands return data and never wait for picker input.
+Manual model/effort preferences remain visible in the status row, including when
+the sidebar is hidden. The default sidebar is narrower to give responses more
+room; `/view compact` uses the full reading width and the menu can restore it.
+Worker/reviewer protocol JSON is omitted from streaming prose; final validated
+summaries, file changes, checks and errors remain visible.
+
+The original brand PNG and static pose remain unchanged. A six-second, 24-phase
+light cycle preserves every occupied pixel, rather than displacing separate bands
+of limbs. Monochrome output stays static; `/motion off` is exactly static. Synthetic
+frames and keyboard regressions verify layout and behavior; they do not constitute
+live UI validation for every terminal, font or accessibility device.
 
 ## Projectless conversation and research
 

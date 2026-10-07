@@ -16,6 +16,7 @@ from pathlib import Path
 
 from . import modelmenu
 from .chat import ChatEngine, Sessions
+from .choices import Choice
 from .common import ErolError, identifier, reject_links
 from .connections import CLI_KINDS, KINDS, Model, Settings, read_settings
 from .console_input import InputRecord, decode_record
@@ -37,6 +38,7 @@ from .resultview import diff_result
 from .terminal import render_logo
 
 COMMANDS = {
+    "menu": "Eylem menüsü: proje, model, sohbet, dosyalar ve görünüm",
     "help": "Komutları ve örneklerini göster",
     "project": "Proje göster/seç: /project C:/Projects/my-app (boşluk varsa tırnak kullan)",
     "my-projects": "Projelerini listele/seç: /my-projects | /my-projects 1 | /my-projects add PATH",
@@ -143,6 +145,8 @@ class Editor:
         self.draft = ""
         self.completions = completions
         self.pasting = False
+        self.tab_choices: list[str] = []
+        self.tab_index = -1
 
     def suggestions(self) -> list[str]:
         if not self.text.startswith("/") or "\n" in self.text:
@@ -150,6 +154,8 @@ class Editor:
         return [c for c in self.completions if c.startswith(self.text) and c != self.text][:5]
 
     def key(self, key: str) -> str | None:
+        if key != "tab":
+            self.tab_choices, self.tab_index = [], -1
         if key == "paste_start":
             self.pasting = True
         elif key == "paste_end":
@@ -210,10 +216,18 @@ class Editor:
             self.text = self.history[self.index] if self.index < len(self.history) else self.draft
             self.cursor = len(self.text)
         elif key == "tab":
-            options = [c for c in self.completions if c.startswith(self.text)]
-            if options:
-                self.text = os.path.commonprefix(options)
+            if not self.tab_choices:
+                self.tab_choices = [c for c in self.completions if c.startswith(self.text)]
+                common = os.path.commonprefix(self.tab_choices)
+                if len(common) > len(self.text):
+                    self.text, self.cursor = common, len(common)
+                    return None
+            if self.tab_choices:
+                self.tab_index = (self.tab_index + 1) % len(self.tab_choices)
+                self.text = self.tab_choices[self.tab_index]
                 self.cursor = len(self.text)
+        elif key == "escape":
+            self.text, self.cursor = "", 0
         elif key == "cancel":
             raise KeyboardInterrupt
         elif key == "eof":
@@ -304,6 +318,12 @@ class Screen:
             resource = "API · ? token"
         self.display.context = [self.context_name, resource]
 
+    def configure_selection(self, engine: ChatEngine | GeneralEngine) -> None:
+        self.display.selection = (
+            f"{engine.selected_model or 'auto'} · {engine.selected_effort or 'auto'}"
+        )
+        self.display.context.insert(1, engine.selected_model or "Model: auto")
+
     def write(self, text: str, *, raw: bool = False) -> None:
         with self.lock:
             if self.rich and self.active and not raw:
@@ -382,7 +402,7 @@ class Screen:
                     columns,
                     rows,
                     visible(status),
-                    pose=int(time.monotonic() * 2) % 6 if self.display.motion else 0,
+                    pose=int(time.monotonic() * 4) % 24 if self.display.motion else 0,
                 )
                 output = ["\x1b[?25l"]
                 if self.owns_windows_title:
@@ -425,7 +445,10 @@ class Screen:
     def event(self, item: dict) -> None:
         data, kind = item["data"], item["type"]
         if kind == "text_delta":
-            self.write(data.get("text", ""))
+            # Worker/reviewer streams contain protocol JSON. Their validated
+            # summaries and evidence are rendered by the final status event.
+            if item.get("role") not in {"implementer", "reviewer"}:
+                self.write(data.get("text", ""))
         elif kind == "skills":
             names = data.get("names", [])
             self.write(
@@ -608,6 +631,7 @@ def key_windows(reader=None) -> str:
             "Q": "page_down",
         }.get(module.getwch(), "unknown")
     return {
+        "\x1b": "escape",
         "\r": "enter",
         "\n": "newline",
         "\x08": "backspace",
@@ -638,6 +662,7 @@ def escape_key(sequence: str) -> str:
             pass
         return "unknown"
     return {
+        "\x1b": "escape",
         "\x1b[A": "up",
         "\x1b[B": "down",
         "\x1b[C": "right",
@@ -749,9 +774,154 @@ def read_prompt(screen: Screen, history: list[str], completions: list[str]) -> s
             screen.edit(None)
 
 
+def read_choice(screen: Screen, title: str, rows: list[dict], current: str = "") -> str | None:
+    """Temporary overlay: cancellation restores the conversation and its scroll position."""
+    rows = [
+        {
+            **row,
+            "label": visible(row["label"]).replace("\n", " "),
+            "detail": visible(row.get("detail", "")).replace("\n", " "),
+        }
+        for row in rows
+    ]
+    choice = Choice(rows, current)
+    if not rows:
+        return None
+    if not screen.rich:
+        screen.write(title + "\n")
+        for index, row in enumerate(rows, 1):
+            screen.write(f"{index}. {row['label']}\n")
+        value = input(screen.t("choice_plain"))
+        if value.isascii() and value.isdecimal() and 1 <= int(value) <= len(rows):
+            return rows[int(value) - 1]["value"]
+        return None
+    with input_session(screen) as (fd, windows_keys):
+        try:
+            while True:
+                _, height = shutil.get_terminal_size()
+                with screen.lock:
+                    screen.display.overlay = choice.lines(
+                        title, screen.t("choice_hint"), max(1, height - 7)
+                    )
+                    screen.refresh()
+                key = (
+                    screen.pending_keys.pop(0)
+                    if screen.pending_keys
+                    else key_windows(windows_keys)
+                    if os.name == "nt"
+                    else key_posix(fd)
+                )
+                if key == "eof":
+                    raise EOFError
+                if choice.pasting:
+                    choice.key(key)
+                    continue
+                if key in {"escape", "cancel"}:
+                    return None
+                result = choice.key(key)
+                if result is not None:
+                    return result
+        finally:
+            with screen.lock:
+                screen.display.overlay = None
+                screen.refresh()
+
+
+def interactive_command(engine: ChatEngine | GeneralEngine, text: str, screen: Screen) -> dict:
+    """Use pickers only in the interactive frontend; CLI JSON commands stay repeatable."""
+    while True:
+        result = command(engine, text)
+        rows: list[dict] = []
+        title, current = screen.t("menu_title"), ""
+        if text == "/menu":
+            rows = result["menu_choices"]
+            for row in rows:
+                if row["value"] == "/view compact" and screen.display.compact:
+                    row["value"] = row["detail"] = "/view full"
+        elif screen.rich and text == "/model":
+            title, current = screen.t("help_connections"), "/model " + result["model"]
+            rows = [{"value": "/model auto", "label": screen.t("auto_model")}]
+            rows += [
+                {
+                    "value": "/model " + item["value"],
+                    "label": item["value"],
+                    "detail": screen.t("access_note", value=item["access"])
+                    + " · effort: "
+                    + ", ".join(item["efforts"]),
+                }
+                for item in result["model_choices"]
+            ]
+            if not result["model_choices"]:
+                screen.write(present(result, screen.language))
+                return {}
+        elif screen.rich and text == "/effort":
+            title, current = screen.t("menu_effort"), "/effort " + result["effort"]
+            _, choices, _ = modelmenu.inventory(engine)
+            values = dict.fromkeys(
+                effort
+                for row in choices
+                if not engine.selected_model or row["value"] == engine.selected_model
+                for effort in row["efforts"]
+            )
+            rows = [{"value": "/effort auto", "label": screen.t("auto_model")}]
+            rows += [{"value": "/effort " + value, "label": value} for value in values]
+        elif screen.rich and (text == "/my-projects" or "sessions" in result):
+            projects = text == "/my-projects"
+            title = screen.t("projects_title" if projects else "sessions_title")
+            entries = result["projects" if projects else "sessions"]
+            rows = [
+                {
+                    "value": text + " " + str(index),
+                    "label": item.get("name") if projects else item.get("title") or item["id"],
+                    "detail": item["root"]
+                    if projects
+                    else item.get("summary", item.get("task", "")),
+                }
+                for index, item in enumerate(entries, 1)
+            ]
+            if not projects:
+                page = result.get("page", 1)
+                if page > 1:
+                    rows.append(
+                        {"value": f"/chats page {page - 1}", "label": screen.t("previous_page")}
+                    )
+                if len(entries) == 50:
+                    rows.append(
+                        {"value": f"/chats page {page + 1}", "label": screen.t("next_page")}
+                    )
+                # Selections use the displayed page's snapshot, not its command prefix.
+                for index, row in enumerate(rows[: len(entries)], 1):
+                    row["value"] = "/chats " + str(index)
+        if not rows:
+            return result
+        selected = read_choice(screen, title, rows, current)
+        if selected is None:
+            return {}
+        text = selected
+
+
 def command(engine: ChatEngine | GeneralEngine, text: str) -> dict:
     name, _, rest = text.removeprefix("/").partition(" ")
     language = resolve_language(engine.connections.settings.language)
+    if name == "menu":
+        return {
+            "menu_choices": [
+                {"value": value, "label": message(language, key), "detail": value}
+                for value, key in (
+                    ("/my-projects", "menu_projects"),
+                    ("/model", "menu_models"),
+                    ("/effort", "menu_effort"),
+                    ("/chats", "menu_chats"),
+                    ("/files", "menu_files"),
+                    ("/diff", "menu_changes"),
+                    ("/tests", "menu_tests"),
+                    ("/status", "menu_status"),
+                    ("/view compact", "menu_view"),
+                    ("/settings", "menu_settings"),
+                    ("/help", "menu_help"),
+                )
+            ]
+        }
     if name == "language":
         if rest:
             if rest not in {"auto", "en", "tr"}:
@@ -1235,6 +1405,7 @@ def launch(
                 resources=screen.resources,
             )
         )
+        screen.write(screen.t("welcome_actions"))
         # Provider probes remain explicit in global mode; /help and exit create no state.
         for provider in engine.providers()[0] if engine.project is not None else []:
             screen.write(
@@ -1254,9 +1425,17 @@ def launch(
                     settings,
                     engine.mode if isinstance(engine, GeneralEngine) else engine.project.name,
                 )
+                screen.configure_selection(engine)
                 completions += [f"/connect {kind}" for kind in KINDS]
                 completions += ["/language " + value for value in ("auto", "en", "tr")]
                 completions += ["/view compact", "/view full", "/motion on", "/motion off"]
+                completions += [
+                    "/model auto",
+                    "/effort auto",
+                    "/effort low",
+                    "/effort medium",
+                    "/effort high",
+                ]
                 completions += [
                     f"/settings {field}"
                     for field in ("api_budget_usd", "policy", "checks_path", "task_timeout_seconds")
@@ -1270,7 +1449,7 @@ def launch(
                 history.append(text)
                 history = history[-100:]
                 if text.startswith("/"):
-                    result = command(engine, text)
+                    result = interactive_command(engine, text, screen)
                     if screen.preference != engine.connections.settings.language:
                         screen.set_language(engine.connections.settings.language)
                     if result.get("exit"):
@@ -1331,7 +1510,7 @@ def launch(
                         )
                     elif "commands" in result:
                         screen.write(present(result, screen.language))
-                    else:
+                    elif result:
                         screen.write(present(result, screen.language))
                 else:
                     if any(char.isalnum() for char in text):

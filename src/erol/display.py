@@ -79,6 +79,8 @@ class Display:
         self.suggestions: list[str] = []
         self.context: list[str] = []
         self.running = False
+        self.selection = ""
+        self.overlay: list[str] | None = None
         self.cached: tuple[str, int, list[str]] = ("", 0, [])
 
     def append(self, text: str) -> None:
@@ -97,7 +99,14 @@ class Display:
         rows = max(1, rows)
         width = max(1, columns - 1)  # Never trigger terminal auto-wrap in the last cell.
         if rows < 8:
-            lines = wrap(self.text, width)[-max(1, rows - 2) :] if rows > 2 else []
+            source = self.overlay if self.overlay is not None else wrap(self.text, width)
+            lines = (
+                [clip(line, width) for line in source[: max(1, rows - 2)]]
+                if self.overlay is not None and rows > 2
+                else source[-max(1, rows - 2) :]
+                if rows > 2
+                else []
+            )
             lines += [""] * (max(0, rows - 2) - len(lines))
             cursor = None
             if self.editor is not None:
@@ -114,7 +123,7 @@ class Display:
             return Frame(lines[-rows:], cursor)
         height = max(1, rows - 7)
         sidebar = (
-            (min(44, columns // 3) if self.expanded else min(32, columns // 4))
+            (min(44, columns // 3) if self.expanded else min(22, columns // 5))
             if columns >= 72 and rows >= 18 and not self.compact
             else 0
         )
@@ -126,13 +135,19 @@ class Display:
         end = len(wrapped) - self.scroll
         shown = wrapped[max(0, end - height) : end]
         lines = [clip(line, content) for line in shown] + [""] * (height - len(shown))
+        if self.overlay is not None:
+            lines = [clip(line, content) for line in self.overlay[:height]]
+            lines += [""] * (height - len(lines))
         if sidebar:
             self.logo_width = min(
-                sidebar, max(8, int((height - 4) * 1.6)), 44 if self.expanded else 18
+                sidebar, max(8, int((height - 6) * 1.6)), 44 if self.expanded else 22
             )
-            logo = render_logo(self.logo_width, bright=True, pose=pose).splitlines()
+            logo = render_logo(
+                self.logo_width, bright=True, pose=pose if self.motion else 0
+            ).splitlines()
+            logo = [" " * ((sidebar - self.logo_width) // 2) + line for line in logo]
             panel = (
-                ["EROL", *[clip(value, sidebar) for value in self.context[:2]], ""]
+                ["EROL", *[clip(value, sidebar) for value in self.context[:3]], ""]
                 + logo
                 + ["", message(self.language, "working" if self.running else "ready")]
             )
@@ -159,7 +174,12 @@ class Display:
             cursor = (height + 2 + line_index - first, column - offset + 1)
         lines.extend(inputs)
         lines.append(
-            clip(status + (message(self.language, "history_hint") if self.scroll else ""), width)
+            clip(
+                (self.selection + " · " if self.selection else "")
+                + status
+                + (message(self.language, "history_hint") if self.scroll else ""),
+                width,
+            )
         )
         if self.suggestions:
             lines.append(clip("Tab › " + " · ".join(self.suggestions), width))
