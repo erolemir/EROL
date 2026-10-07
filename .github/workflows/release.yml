@@ -57,6 +57,7 @@ jobs:
           python scripts/validate.py
           python -m build
           python scripts/package_smoke.py
+          python -m scripts.install_smoke
           npm pack --pack-destination dist
           python scripts/npm_package_smoke.py
       - name: Publish stable and immutable release artifacts
