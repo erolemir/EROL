@@ -14,7 +14,7 @@ from contextlib import ExitStack, contextmanager
 from pathlib import Path
 from typing import Any
 
-from .artifacts import external_directory, report_digest
+from .artifacts import external_directory, report_digest, report_files
 from .artifacts import instructions as artifact_instructions
 from .checktrust import CheckTrust
 from .common import (
@@ -165,6 +165,9 @@ class ConnectionContext:
         self.home = self.connections.home
         self.factory = factory
         self.selected_model: str | None = None
+        self.selected_effort: str | None = None
+        self.model_choices: list[dict] | None = None
+        self.model_configuration: str | None = None
         self.skill_names: list[str] | None = None
         self.session_title = ""
         self.project_choices: list[dict] | None = None
@@ -718,6 +721,7 @@ class ChatEngine(ConnectionContext):
             "schema_version": 1,
             "id": self.session_id,
             "project_id": self.project.id,
+            "project_root": str(self.root),
             "task_id": "chat-" + uuid.uuid4().hex,
             "task": task,
             "updated": now(),
@@ -739,7 +743,13 @@ class ChatEngine(ConnectionContext):
             "previous_changes": previous.get("changes", []),
             "continuation_history": previous.get("continuation_history", [])
             + (
-                [{"task_id": previous["task_id"], "changes": previous.get("changes", [])}]
+                [
+                    {
+                        "task_id": previous["task_id"],
+                        "changes": previous.get("changes", []),
+                        "project_root": previous.get("project_root", str(self.root)),
+                    }
+                ]
                 if previous
                 else []
             ),
@@ -791,6 +801,7 @@ class ChatEngine(ConnectionContext):
                     task,
                     available,
                     override=self.selected_model,
+                    effort_override=self.selected_effort,
                     plan=plan,
                     context_tokens=self._context_size(task, plan, "implementer"),
                 )
@@ -830,6 +841,7 @@ class ChatEngine(ConnectionContext):
                         task,
                         available,
                         override=self.selected_model,
+                        effort_override=self.selected_effort,
                         plan=plan,
                         minimum_level=escalation_level,
                         excluded=excluded,
@@ -909,6 +921,7 @@ class ChatEngine(ConnectionContext):
                             self.connections.settings,
                             task,
                             available,
+                            effort_override=self.selected_effort,
                             minimum_level=escalation_level,
                             excluded=excluded,
                             plan=plan,
@@ -1021,6 +1034,10 @@ class ChatEngine(ConnectionContext):
                     }
                 )
             finally:
+                try:
+                    self.record["report_files"] = report_files(self.record["artifact_directory"])
+                except (ErolError, OSError):
+                    self.record["outputs_unavailable"] = True
                 if baseline is not None:
                     try:
                         self.record["changes"] = changes(baseline, snapshot(self.root))

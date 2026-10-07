@@ -328,3 +328,28 @@ Project metadata stays in `~/.erol/global/projects.json`, project chats in
 `~/.erol/state/<project-id>/chat/`, and general chats in `~/.erol/global/chat/`
 (or the configured external EROL home). No project Markdown files are generated
 by these navigation commands.
+
+## Output paths, changes and manual model selection
+
+`/model` and `/models` show a numbered, selectable inventory with current model,
+supported efforts and access limitations. `/model NUMBER` uses the displayed
+snapshot, `/model NAME` requires an unambiguous raw ID, and full
+`/model CONNECTION:MODEL` takes priority over raw IDs. Configuration changes
+invalidate numbered selections; a vanished model is never replaced by another
+number. Disabled/unavailable connections are excluded. `/model auto` restores
+automatic model routing. `/effort auto|VALUE` applies only to the implementer or
+general assistant, filters eligibility against profile support, and is never
+silently downgraded. These preferences are process-local and survive project
+switches; active tasks reject changes. Planner/reviewer selection remains separate.
+
+Task results show absolute source paths, change types, line counts and bounded
+patch previews. `/diff NUMBER [PAGE]` reads the retained patch in 100-line pages;
+`/diff PATH [PAGE]` accepts a task path (use `./2` for a numeric filename).
+`/diff previous STEP NUMBER [PAGE]` preserves access to continuation diffs.
+Binary files and evidence truncation are marked, rather than claiming a full patch.
+`/files` lists the task's observed source changes and individual report paths.
+Report metadata is gathered from the exact external task subtree with the existing
+100-file / 1 MiB-per-file bounds and link rejection. No model-asserted filename is
+credited as an observed file. Listings describe task-time records, not a guarantee
+that a file still exists after external edits. Legacy records have no report
+inventory; displaying known project paths does not rewrite their evidence.

@@ -12,9 +12,9 @@ import sys
 import threading
 import time
 from contextlib import contextmanager
-from dataclasses import asdict
 from pathlib import Path
 
+from . import modelmenu
 from .chat import ChatEngine, Sessions
 from .common import ErolError, identifier, reject_links
 from .connections import CLI_KINDS, KINDS, Model, Settings, read_settings
@@ -33,6 +33,7 @@ from .presentation import (
 )
 from .projects import ProjectCatalog, choose
 from .providers import visible
+from .resultview import diff_result
 from .terminal import render_logo
 
 COMMANDS = {
@@ -48,11 +49,13 @@ COMMANDS = {
     "models": (
         "Model profilleri; /models compare TASK | /models refresh | /models add ID JSON_PROFILE"
     ),
-    "model": "Otomatik veya elle seçim: /model auto | /model CONNECTION:MODEL",
+    "model": "Model listesi/seçimi: /model | /model 1 | /model NAME | /model auto",
+    "effort": "Akıl yürütme eforu: /effort auto | /effort high (desteklenen değerler: /models)",
+    "files": "Son görevin çıktı dosyalarını tam yollarıyla göster",
     "settings": "Ayarları göster/değiştir: /settings api_budget_usd 5",
     "plan": "Çalıştırmadan planla: /plan GÖREV",
     "skills": "Skill seçimini düzelt: /skills use NAME… | /skills auto",
-    "diff": "Son görevin eklenen/değişen/silinen dosyaları ve diff'i",
+    "diff": "Değişiklik özeti; /diff 1 veya /diff 1 2 ile dosya/sayfa seç",
     "tests": "EROL'un gözlediği son test sonuçları",
     "usage": "Token olayları ve görev API bütçesi; kesin fatura değildir",
     "status": "Proje, oturum ve son görev durumu",
@@ -832,7 +835,15 @@ def command(engine: ChatEngine | GeneralEngine, text: str) -> dict:
             else choose(rows, selection)["id"]
         )
         if action == "show":
-            return {"saved_chat": engine.sessions.load(session_id)}
+            saved = engine.sessions.load(session_id)
+            return {
+                "saved_chat": {
+                    **saved,
+                    "project_root": saved.get(
+                        "project_root", str(engine.root) if engine.project else ""
+                    ),
+                }
+            }
         engine.ensure_idle()
         if action == "rename":
             title = Sessions.title(" ".join(argv[2:]))
@@ -903,6 +914,7 @@ def command(engine: ChatEngine | GeneralEngine, text: str) -> dict:
                         available,
                         role=role,
                         override=engine.selected_model if role == "implementer" else None,
+                        effort_override=engine.selected_effort if role == "implementer" else None,
                         plan=plan,
                         context_tokens=context_size,
                     )
@@ -922,21 +934,37 @@ def command(engine: ChatEngine | GeneralEngine, text: str) -> dict:
             connection = engine.connections.get(connection_id)
             connection.models = [m for m in connection.models if m.id != model.id] + [model]
             engine.connections.save()
-        rows, models = engine.providers(refresh=rest == "refresh")
-        return {
-            "providers": rows,
-            "profiles": {k: [asdict(m) for m in v] for k, v in models.items()},
-        }
+        return modelmenu.menu(engine, refresh=rest == "refresh")
     if name == "model":
         if rest:
-            if rest == "auto":
-                engine.selected_model = None
-            else:
-                cid, sep, mid = rest.partition(":")
-                if not sep or not any(m.id == mid for m in engine.connections.get(cid).models):
-                    raise ErolError("Use /model CONNECTION:MODEL or /model auto")
-                engine.selected_model = rest
-        return {"model": engine.selected_model or "auto"}
+            with engine.lock:
+                engine.ensure_idle()
+                engine.selected_model = (
+                    None if rest == "auto" else modelmenu.select(engine, rest.strip())
+                )
+            return {
+                "model": engine.selected_model or "auto",
+                "effort": engine.selected_effort or "auto",
+            }
+        return modelmenu.menu(engine)
+    if name == "effort":
+        if rest:
+            with engine.lock:
+                engine.ensure_idle()
+                engine.selected_effort = modelmenu.effort(engine, rest.strip())
+        return {
+            "model": engine.selected_model or "auto",
+            "effort": engine.selected_effort or "auto",
+        }
+    if name == "files":
+        return {
+            "files": {
+                **engine.record,
+                "project_root": engine.record.get(
+                    "project_root", str(engine.root) if engine.project else ""
+                ),
+            }
+        }
     if name == "settings":
         if rest:
             field, _, raw = rest.partition(" ")
@@ -985,16 +1013,17 @@ def command(engine: ChatEngine | GeneralEngine, text: str) -> dict:
                 "events": engine.record.get("usage_events", []),
             }
         if name == "diff":
-            return {
-                "diff": engine.record.get("changes", []),
-                "continuation_history": engine.record.get("continuation_history", []),
-            }
+            return diff_result(
+                engine.record, engine.record.get("project_root", str(engine.root)), rest
+            )
         return {name: engine.record.get("changes" if name == "diff" else "checks", [])}
     if name == "status":
         return {
             "project": engine.project.to_dict() if engine.project else None,
             "session": engine.session_id,
             "status": engine.record.get("status", "ready"),
+            "model_preference": engine.selected_model or "auto",
+            "effort_preference": engine.selected_effort or "auto",
             **(
                 {
                     "mode": engine.mode,
@@ -1249,6 +1278,7 @@ def launch(
                     if "select_project" in result:
                         replacement = ChatEngine(Path(result["select_project"]), home)
                         replacement.selected_model = engine.selected_model
+                        replacement.selected_effort = engine.selected_effort
                         engine.cancel()
                         engine = replacement
                         history = []
@@ -1260,6 +1290,7 @@ def launch(
                         if not isinstance(engine, GeneralEngine):
                             replacement_general = GeneralEngine(engine.root, home)
                             replacement_general.selected_model = engine.selected_model
+                            replacement_general.selected_effort = engine.selected_effort
                             engine.cancel()
                             engine = replacement_general
                         engine.mode = result["mode"]
@@ -1286,15 +1317,6 @@ def launch(
                         )
                     elif "continue_task" in result:
                         run_task(engine, result["continue_task"], screen, resume=True)
-                    elif "diff" in result:
-                        if not result["diff"] and not result.get("continuation_history"):
-                            screen.write(screen.t("no_changes") + "\n")
-                        for step in result.get("continuation_history", []):
-                            screen.write(screen.t("previous", task_id=step["task_id"]))
-                            for item in step["changes"]:
-                                screen.write(f"{item['status']}: {item['path']}\n{item['diff']}\n")
-                        for item in result["diff"]:
-                            screen.write(f"{item['status']}: {item['path']}\n{item['diff']}\n")
                     elif "language" in result:
                         screen.write(screen.t("language", **result))
                     elif "connection" in result:

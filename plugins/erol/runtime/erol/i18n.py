@@ -229,11 +229,13 @@ HELP_EN = {
     "models": (
         "Model profiles; /models compare TASK | /models refresh | /models add ID JSON_PROFILE"
     ),
-    "model": "Automatic or manual: /model auto | /model CONNECTION:MODEL",
+    "model": "List/select: /model | /model 1 | /model NAME | /model auto",
+    "effort": "Reasoning effort: /effort auto | /effort high (supported values: /models)",
+    "files": "Show the latest task's output files with absolute paths",
     "settings": "Show/change settings: /settings api_budget_usd 5",
     "plan": "Plan without execution: /plan TASK",
     "skills": "Override routing: /skills use NAME… | /skills auto",
-    "diff": "Latest task's added/modified/deleted files and diffs",
+    "diff": "Change summary; select file/page with /diff 1 or /diff 1 2",
     "tests": "Latest test results observed by EROL",
     "usage": "Token events and task API budget; not the final bill",
     "status": "Project, session and latest task status",
