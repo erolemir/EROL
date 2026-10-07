@@ -77,14 +77,17 @@ def install_cli(home: Path, bin_dir: Path, version: str, name: str, payload: byt
     python = scripts / ("python.exe" if os.name == "nt" else "python")
     source = scripts / ("erol.exe" if os.name == "nt" else "erol")
     if environment.exists():
+        print("[2/4] Checking the existing installation...", flush=True)
         if not source.is_file() or run(str(source), "--version") != version:
             raise ValueError(f"Existing CLI environment is incomplete: {environment}")
     else:
+        print("[2/4] Creating your isolated Python environment...", flush=True)
         environment.parent.mkdir(parents=True, exist_ok=True)
         # Reserve the final venv path atomically before cleanup ownership begins.
         environment.mkdir()
         try:
             venv.EnvBuilder(with_pip=True).create(environment)
+            print("[3/4] Installing the verified package...", flush=True)
             with tempfile.TemporaryDirectory(prefix="erol-install-wheel-") as directory:
                 wheel = Path(directory) / name
                 wheel.write_bytes(payload)
@@ -107,6 +110,10 @@ def install_cli(home: Path, bin_dir: Path, version: str, name: str, payload: byt
     target = bin_dir / source.name
     if target.is_dir():
         raise ValueError(f"Command destination is a directory: {target}")
+    if target.is_file() and not target.is_symlink() and target.read_bytes() == source.read_bytes():
+        shutil.copymode(source, target)
+        print(f"Already up to date: EROL {version}", flush=True)
+        return target
     if target.exists() or target.is_symlink():
         backups = home / "install-backups"
         backups.mkdir(parents=True, exist_ok=True)
@@ -209,10 +216,13 @@ def main(argv: list[str] | None = None) -> int:
         print("EROL needs Python 3.11+. Install it, then run this command again.", file=sys.stderr)
         return 1
     try:
-        print("Downloading the verified stable EROL release...")
+        stage = "download"
+        print("[1/4] Downloading and verifying the stable EROL release...", flush=True)
         version, name, payload = release_payload()
+        stage = "installation"
         target = install_cli(args.home, args.bin_dir, version, name, payload)
         print(f"Installed EROL {version}: {target}")
+        print("[4/4] Making the command available...", flush=True)
         if not args.no_path:
             try:
                 if os.name == "nt":
@@ -235,9 +245,34 @@ def main(argv: list[str] | None = None) -> int:
             else shlex.quote(str(target))
         )
         print("Run now: " + immediate)
+        print("In EROL: press Enter for the menu, or type /start to choose a connection.")
         return 0
     except (OSError, ValueError, subprocess.SubprocessError) as error:
-        print(f"EROL installation failed: {error}", file=sys.stderr)
+        print(f"EROL {stage} failed: {error}", file=sys.stderr)
+        if isinstance(error, PermissionError):
+            print(
+                "Use a writable --home and --bin-dir in your own account, "
+                "then rerun the installer.",
+                file=sys.stderr,
+            )
+        elif stage == "download":
+            print(
+                "Check your internet/proxy connection to GitHub, "
+                "then run the same installation command again.",
+                file=sys.stderr,
+            )
+        elif "Existing CLI environment is incomplete" in str(error):
+            print(
+                "Preserve or rename the incomplete folder shown above, "
+                "then rerun the installer. It was not removed.",
+                file=sys.stderr,
+            )
+        else:
+            print(
+                "Check Python 3.11+ and venv/pip support. Rerun the same command; "
+                "your previous launcher is preserved until replacement succeeds.",
+                file=sys.stderr,
+            )
         print(
             "No administrator/sudo is needed. Check Python venv support, network "
             "and home-directory write access.",

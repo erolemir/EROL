@@ -493,6 +493,7 @@ class GeneralTests(unittest.TestCase):
         with (
             patch("erol.console.Screen", return_value=screen),
             patch("erol.console.read_prompt", side_effect=inputs),
+            patch("erol.console.read_choice", return_value="/model codex:gpt-6.1-sol"),
             patch.object(sys.stdin, "isatty", return_value=True),
             patch.object(sys.stdout, "isatty", return_value=True),
             patch.object(ChatEngine, "providers", autospec=True, side_effect=inventory),

@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
+import io
 import json
 import os
 import tempfile
@@ -15,6 +17,40 @@ from scripts import install
 
 
 class UserInstallTests(unittest.TestCase):
+    def test_same_version_install_does_not_create_redundant_backup(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            home, bin_dir = Path(temporary) / "home", Path(temporary) / "bin"
+            scripts = home / "cli/0.2.5" / ("Scripts" if os.name == "nt" else "bin")
+            scripts.mkdir(parents=True)
+            bin_dir.mkdir()
+            name = "erol.exe" if os.name == "nt" else "erol"
+            (scripts / name).write_bytes(b"same launcher")
+            (bin_dir / name).write_bytes(b"same launcher")
+            (scripts / name).chmod(0o755)
+            (bin_dir / name).chmod(0o644)
+            with patch.object(install, "run", return_value="0.2.5"):
+                target = install.install_cli(
+                    home, bin_dir, "0.2.5", "erol_ai-0.2.5-py3-none-any.whl", b"wheel"
+                )
+            self.assertEqual(target.read_bytes(), b"same launcher")
+            self.assertFalse((home / "install-backups").exists())
+            if os.name != "nt":
+                self.assertEqual(target.stat().st_mode & 0o777, 0o755)
+
+    def test_download_failure_has_actionable_recovery_without_installation(self):
+        output, errors = io.StringIO(), io.StringIO()
+        with (
+            patch.object(install, "release_payload", side_effect=OSError("offline")),
+            patch.object(install, "install_cli") as installer,
+            contextlib.redirect_stdout(output),
+            contextlib.redirect_stderr(errors),
+        ):
+            self.assertEqual(install.main(["--no-path"]), 1)
+        installer.assert_not_called()
+        self.assertIn("[1/4]", output.getvalue())
+        self.assertIn("internet/proxy", errors.getvalue())
+        self.assertIn("same installation command", errors.getvalue())
+
     def test_release_rejects_wrong_bytes_before_any_installation(self):
         metadata = json.dumps(
             {

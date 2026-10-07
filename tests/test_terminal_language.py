@@ -223,7 +223,7 @@ class InputTests(unittest.TestCase):
         editor = Editor([], [])
         editor.insert("input")
         editor.key("clear_input")
-        self.assertEqual(editor.key("enter"), None)
+        self.assertEqual(editor.key("enter"), "")
         self.assertEqual(editor.text, "")
 
     def test_native_keyboard_repeat_and_mouse_wheel_events(self):

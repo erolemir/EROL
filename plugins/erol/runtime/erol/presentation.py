@@ -140,6 +140,12 @@ def present(result: dict, language: str) -> str:
                     + f"context {profile['context_window']} · {profile['profile_source']}"
                 )
         lines.append(result["note"])
+    elif "connection_choices" in result:
+        lines.append(t("menu_start"))
+        for index, row in enumerate(result["connection_choices"], 1):
+            lines.append(f"{index}. {row['label']}  ·  {row['value']}")
+            lines.append("  " + row["detail"])
+        lines.append(result["hint"])
     elif "menu_choices" in result:
         lines.append(t("menu_title"))
         for index, row in enumerate(result["menu_choices"], 1):
@@ -149,6 +155,7 @@ def present(result: dict, language: str) -> str:
             (
                 "help_conversation",
                 [
+                    "start",
                     "general",
                     "research",
                     "project",
