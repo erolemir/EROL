@@ -29,11 +29,10 @@ class ProjectChatTests(unittest.TestCase):
             project.mkdir()
             prior = ChatEngine(project, home)
             self.saved(prior)
-            result, output, engines = test_chat.StartupTests().start(
-                base,
-                home,
-                ["/my-projects", "/my-projects 1", "/chats", "/chats show 1", "/exit"],
-            )
+            with patch("erol.console.read_choice", side_effect=["/my-projects 1", "/chats 1"]):
+                result, output, engines = test_chat.StartupTests().start(
+                    base, home, ["/my-projects", "/chats", "/chats show 1", "/exit"]
+                )
             self.assertEqual(result, 0)
             engines.assert_called_once()
             self.assertEqual(engines.call_args.args[0], project)

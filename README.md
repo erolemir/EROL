@@ -37,7 +37,8 @@ erol
 The command runs our [installer](scripts/install.py). It verifies the release
 wheel against `SHA256SUMS`, installs into `~/.erol/cli/<version>`, places the
 command in `~/.local/bin`, and configures your user PATH (Windows or bash/zsh).
-An existing command is backed up under `~/.erol/install-backups`.
+An existing different command is backed up under `~/.erol/install-backups`;
+repeating an up-to-date install does not create extra backups.
 It prints the exact executable path so you can start immediately.
 For another shell, it prints the directory to add to PATH.
 Your project memory and npm settings are preserved. Run the same command to update.
@@ -77,16 +78,21 @@ Open a new Claude session and use `/erol:erol`.
 
 ## First use in the terminal
 
-Open your project folder and run `erol`. Have your chosen Codex or Claude CLI
-installed and logged in, then choose a connection and open the menu:
+Run `erol` and press **Enter** to open the menu. Choose a connection, open your
+project folder, then write your task. You can also type:
 
 ```text
-/connect codex
-/menu
+/start
 ```
 
-For Claude, use `/connect claude`. Write your task in normal words.
-`/menu` helps you choose a project/model, open saved chats, and inspect results.
+Type in a menu to search; use arrows and Enter to choose, Esc to go back.
+In a plain terminal, type a search or option number. Codex/Claude connections
+need the chosen CLI installed and logged in; API connections use environment
+variables. `/providers` checks access. Opening a menu does not call a model.
+
+The menu also lets you choose a model, name/open chats, find output paths and
+see changes/tests. If you send a task before connecting, EROL offers the
+connection picker and keeps your task if you cancel.
 
 **Need help?** Run `erol --version`. If the command is missing, reopen your
 terminal; [manual installation](#windows-make-erol-available-across-your-account)

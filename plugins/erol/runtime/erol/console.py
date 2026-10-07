@@ -38,6 +38,7 @@ from .resultview import diff_result
 from .terminal import render_logo
 
 COMMANDS = {
+    "start": "Yönlendiren başlangıç: bağlantı, proje, model ve dil",
     "menu": "Eylem menüsü: proje, model, sohbet, dosyalar ve görünüm",
     "help": "Komutları ve örneklerini göster",
     "project": "Proje göster/seç: /project C:/Projects/my-app (boşluk varsa tırnak kullan)",
@@ -160,9 +161,15 @@ class Editor:
             self.pasting = True
         elif key == "paste_end":
             self.pasting = False
+        elif self.pasting:
+            if key == "eof":
+                raise EOFError
+            if key in {"enter", "newline"}:
+                self.insert("\n")
+            elif len(key) == 1 and key.isprintable():
+                self.insert(key)
         elif key == "enter" and not self.pasting:
-            if self.text.strip():
-                return self.text
+            return self.text
         elif key in {"newline", "enter"}:
             self.insert("\n")
         elif key == "backspace" and self.cursor:
@@ -254,6 +261,7 @@ class Screen:
         self.owns_windows_title = False
         self.windows_keys: WindowsKeys | None = None
         self.pending_keys: list[str] = []
+        self.draft = ""
         self.started = 0.0
         self.running = False
         self.tokens = 0
@@ -746,10 +754,15 @@ def scroll_key(screen: Screen, key: str) -> bool:
     return True
 
 
-def read_prompt(screen: Screen, history: list[str], completions: list[str]) -> str:
+def read_prompt(
+    screen: Screen, history: list[str], completions: list[str], *, cancel_on_escape: bool = False
+) -> str:
     if not screen.rich:
         return input("erol › ")
     editor = Editor(history, completions)
+    if not cancel_on_escape:
+        editor.insert(screen.draft)
+        screen.draft = ""
     with input_session(screen) as (fd, windows_keys):
         try:
             while True:
@@ -764,6 +777,8 @@ def read_prompt(screen: Screen, history: list[str], completions: list[str]) -> s
                 )
                 if scroll_key(screen, key):
                     continue
+                if cancel_on_escape and key == "escape" and not editor.pasting:
+                    return ""
                 result = editor.key(key)
                 if result is not None:
                     screen.edit(None)
@@ -788,20 +803,29 @@ def read_choice(screen: Screen, title: str, rows: list[dict], current: str = "")
     if not rows:
         return None
     if not screen.rich:
-        screen.write(title + "\n")
-        for index, row in enumerate(rows, 1):
-            screen.write(f"{index}. {row['label']}\n")
-        value = input(screen.t("choice_plain"))
-        if value.isascii() and value.isdecimal() and 1 <= int(value) <= len(rows):
-            return rows[int(value) - 1]["value"]
-        return None
+        while True:
+            screen.write(title + "\n")
+            for index, row in enumerate(choice.rows, 1):
+                screen.write(f"{index}. {row['label']}\n")
+            if not choice.rows:
+                screen.write(screen.t("no_matches") + "\n")
+            value = input(screen.t("choice_plain")).strip()
+            if not value or value.startswith("/"):
+                return None
+            if value.isascii() and value.isdecimal():
+                return (
+                    choice.rows[int(value) - 1]["value"]
+                    if 1 <= int(value) <= len(choice.rows)
+                    else None
+                )
+            choice.search(value)
     with input_session(screen) as (fd, windows_keys):
         try:
             while True:
                 _, height = shutil.get_terminal_size()
                 with screen.lock:
                     screen.display.overlay = choice.lines(
-                        title, screen.t("choice_hint"), max(1, height - 7)
+                        title, screen.t("choice_hint"), max(1, height - 7), screen.t("no_matches")
                     )
                     screen.refresh()
                 key = (
@@ -830,15 +854,29 @@ def read_choice(screen: Screen, title: str, rows: list[dict], current: str = "")
 def interactive_command(engine: ChatEngine | GeneralEngine, text: str, screen: Screen) -> dict:
     """Use pickers only in the interactive frontend; CLI JSON commands stay repeatable."""
     while True:
+        if text in {"/project", "/rename"}:
+            screen.write(screen.t("folder_prompt" if text == "/project" else "rename_prompt"))
+            value = read_prompt(screen, [], [], cancel_on_escape=True).strip()
+            return command(engine, text + " " + value) if value else {}
         result = command(engine, text)
         rows: list[dict] = []
         title, current = screen.t("menu_title"), ""
-        if text == "/menu":
+        if text in {"/menu", "/start"}:
             rows = result["menu_choices"]
             for row in rows:
                 if row["value"] == "/view compact" and screen.display.compact:
                     row["value"] = row["detail"] = "/view full"
-        elif screen.rich and text == "/model":
+        elif text == "/connect":
+            title = screen.t("menu_start")
+            rows = result["connection_choices"]
+            current = "/connect use " + (engine.connections.settings.preferred_connection or "")
+            screen.write(result["hint"] + "\n")
+        elif text == "/language":
+            rows = [
+                {"value": "/language " + value, "label": label}
+                for value, label in (("auto", "Auto"), ("tr", "Türkçe"), ("en", "English"))
+            ]
+        elif text == "/model":
             title, current = screen.t("help_connections"), "/model " + result["model"]
             rows = [{"value": "/model auto", "label": screen.t("auto_model")}]
             rows += [
@@ -854,7 +892,7 @@ def interactive_command(engine: ChatEngine | GeneralEngine, text: str, screen: S
             if not result["model_choices"]:
                 screen.write(present(result, screen.language))
                 return {}
-        elif screen.rich and text == "/effort":
+        elif text == "/effort":
             title, current = screen.t("menu_effort"), "/effort " + result["effort"]
             _, choices, _ = modelmenu.inventory(engine)
             values = dict.fromkeys(
@@ -865,7 +903,7 @@ def interactive_command(engine: ChatEngine | GeneralEngine, text: str, screen: S
             )
             rows = [{"value": "/effort auto", "label": screen.t("auto_model")}]
             rows += [{"value": "/effort " + value, "label": value} for value in values]
-        elif screen.rich and (text == "/my-projects" or "sessions" in result):
+        elif text == "/my-projects" or "sessions" in result:
             projects = text == "/my-projects"
             title = screen.t("projects_title" if projects else "sessions_title")
             entries = result["projects" if projects else "sessions"]
@@ -879,6 +917,8 @@ def interactive_command(engine: ChatEngine | GeneralEngine, text: str, screen: S
                 }
                 for index, item in enumerate(entries, 1)
             ]
+            if projects:
+                rows.append({"value": "/project", "label": screen.t("menu_folder")})
             if not projects:
                 page = result.get("page", 1)
                 if page > 1:
@@ -903,15 +943,22 @@ def interactive_command(engine: ChatEngine | GeneralEngine, text: str, screen: S
 def command(engine: ChatEngine | GeneralEngine, text: str) -> dict:
     name, _, rest = text.removeprefix("/").partition(" ")
     language = resolve_language(engine.connections.settings.language)
-    if name == "menu":
+    if name in {"menu", "start"}:
         return {
             "menu_choices": [
                 {"value": value, "label": message(language, key), "detail": value}
                 for value, key in (
+                    ("/connect", "menu_start"),
                     ("/my-projects", "menu_projects"),
+                    ("/project", "menu_folder"),
                     ("/model", "menu_models"),
                     ("/effort", "menu_effort"),
                     ("/chats", "menu_chats"),
+                    ("/new", "menu_new"),
+                    ("/rename", "menu_rename"),
+                    ("/general", "menu_general"),
+                    ("/research", "menu_research"),
+                    ("/language", "menu_language"),
                     ("/files", "menu_files"),
                     ("/diff", "menu_changes"),
                     ("/tests", "menu_tests"),
@@ -919,7 +966,10 @@ def command(engine: ChatEngine | GeneralEngine, text: str) -> dict:
                     ("/view compact", "menu_view"),
                     ("/settings", "menu_settings"),
                     ("/help", "menu_help"),
+                    ("/exit", "menu_exit"),
                 )
+                if name != "start"
+                or value in {"/connect", "/project", "/model", "/language", "/help"}
             ]
         }
     if name == "language":
@@ -1037,6 +1087,42 @@ def command(engine: ChatEngine | GeneralEngine, text: str) -> dict:
         raise ErolError(message(language, "project_required"))
     if name == "connect":
         argv = split_command(rest, language)
+        if not argv:
+            configured = engine.connections.settings.connections
+            existing = [
+                {
+                    "value": "/connect use " + c.id,
+                    "label": c.id + " · " + c.kind,
+                    "detail": message(
+                        language, "connection_cli" if c.kind in CLI_KINDS else "connection_api"
+                    ),
+                }
+                for c in configured
+                if c.enabled
+            ]
+            return {
+                "connection_choices": existing
+                + [
+                    {
+                        "value": "/connect " + kind,
+                        "label": kind,
+                        "detail": message(
+                            language, "connection_cli" if kind in CLI_KINDS else "connection_api"
+                        ),
+                    }
+                    for kind in KINDS
+                    if kind != "compatible" and kind not in {c.id for c in configured}
+                ],
+                "hint": message(language, "connection_custom"),
+            }
+        if argv[0] == "use" and len(argv) == 2:
+            engine.ensure_idle()
+            connection = engine.connections.get(argv[1])
+            if not connection.enabled:
+                raise ErolError("/providers enable " + connection.id)
+            engine.connections.settings.preferred_connection = connection.id
+            engine.connections.save()
+            return {"connection": connection.to_dict()}
         if not argv or argv[0] not in KINDS:
             raise ErolError(
                 "/connect KIND [ID] [KEY_ENV] [BASE_URL]; CLI: codex, claude, "
@@ -1226,6 +1312,15 @@ def command(engine: ChatEngine | GeneralEngine, text: str) -> dict:
 def run_task(
     engine: ChatEngine | GeneralEngine, task: str, screen: Screen, *, resume: bool = False
 ) -> dict:
+    if not any(c.enabled for c in engine.connections.settings.connections):
+        result = interactive_command(engine, "/connect", screen)
+        if not result.get("connection"):
+            screen.draft = task
+            screen.write(screen.t("draft_kept"))
+            if not screen.rich:
+                screen.write(task + "\n")
+            return {}
+        screen.write(screen.t("setup_ready"))
     if not screen.rich:
         return execute_task(engine, task, screen, resume=resume)
     with input_session(screen) as (fd, reader):
@@ -1446,6 +1541,8 @@ def launch(
                     for m in c.models
                 ]
                 text = read_prompt(screen, history, completions)
+                if not text.strip():
+                    text = "/menu"
                 history.append(text)
                 history = history[-100:]
                 if text.startswith("/"):
@@ -1460,6 +1557,7 @@ def launch(
                         replacement.selected_effort = engine.selected_effort
                         engine.cancel()
                         engine = replacement
+                        screen.draft = ""
                         history = []
                         screen.status = screen.t("ready_hint")
                         screen.write(
@@ -1508,6 +1606,7 @@ def launch(
                                 count=len(connection["models"]),
                             )
                         )
+                        screen.write(screen.t("setup_ready"))
                     elif "commands" in result:
                         screen.write(present(result, screen.language))
                     elif result:
