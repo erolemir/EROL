@@ -2,22 +2,90 @@
 
 <p align="center"><img src="src/erol/data/brand/erol.png" alt="EROL green praying mantis logo" width="240"></p>
 
-**Extensible Reasoning & Orchestration Layer**
+One terminal for AI tasks, project memory, model selection and reviewed changes.
 
-A shared terminal, economical model routing, project memory, and controlled
-task execution for Codex, Claude Code, Antigravity, and API connections.
+## Install
 
-EROL helps your development assistant reuse previously verified solutions,
-choose relevant workflows, and evaluate results through tests and a separate
-review. It also supports technical, product, market, and competitor research.
-The Python core has no third-party runtime dependencies.
+Choose **one** option below. You can add the others later.
 
-**Distribution:** Tested packages are available through
-[GitHub Releases](https://github.com/erolemir/EROL/releases) and the `stable`
-branch. `main` is the development source; its version may differ from `stable`.
-EROL is not currently published to the npm or PyPI registries. Use the GitHub
-installation instructions below instead of `npm install -g erol` or
-`pip install erol-ai`.
+### Terminal — Windows
+
+Install [Python 3.11+](https://www.python.org/downloads/) if needed. Paste these
+three commands into PowerShell:
+
+```powershell
+py -3 -m pip install --user pipx
+py -3 -m pipx install https://github.com/erolemir/EROL/archive/refs/heads/stable.zip
+py -3 -m pipx ensurepath
+```
+
+Close and reopen the terminal, then run:
+
+```console
+erol
+```
+
+<details>
+<summary>Terminal — macOS / Linux</summary>
+
+You need Python 3.11+ and [pipx](https://pipx.pypa.io/stable/how-to/install-pipx.html).
+On macOS, install pipx with `brew install pipx`; on Linux, use your distribution's
+pipx package. Then:
+
+```sh
+pipx install https://github.com/erolemir/EROL/archive/refs/heads/stable.zip
+pipx ensurepath
+```
+
+Open a new terminal and run `erol`.
+
+</details>
+
+### Codex plugin
+
+With Codex CLI, Git, Python 3.11+ and Node.js 18+ installed:
+
+```console
+codex plugin marketplace add erolemir/EROL --ref stable
+codex plugin add erol@erol
+```
+
+Open a new Codex chat. Select `@EROL` in Desktop or `$erol` in CLI/IDE.
+
+### Claude Code plugin
+
+With Claude Code, Git, Python 3.11+ and Node.js 18+ installed:
+
+```console
+claude plugin marketplace add https://github.com/erolemir/EROL.git#stable
+claude plugin install erol@erol --scope user
+```
+
+Open a new Claude session and use `/erol:erol`.
+
+## First use in the terminal
+
+Open your project folder and run `erol`. Have your chosen Codex or Claude CLI
+installed and logged in, then choose a connection and open the menu:
+
+```text
+/connect codex
+/menu
+```
+
+For Claude, use `/connect claude`. Write your task in normal words.
+`/menu` helps you choose a project/model, open saved chats, and inspect results.
+
+**Need help?** Run `erol --version`. If the command is missing, reopen your
+terminal; [manual installation](#windows-make-erol-available-across-your-account)
+and [troubleshooting](#troubleshooting) are below.
+
+The terminal and plugins are separate installations. Terminal setup uses
+[pipx](https://pipx.pypa.io/stable/tutorial/getting-started.html) and the tested
+`stable` source channel; no Node.js or Git is needed for this terminal path.
+
+<details>
+<summary>Advanced setup, usage, updates and development checks</summary>
 
 <a id="içindekiler"></a>
 
@@ -153,14 +221,14 @@ and [skill naming rules](https://code.claude.com/docs/en/skills#how-a-skill-gets
 ## Windows: make erol available across your account
 
 This option creates a separate Python environment without changing packages in
-other projects. Run the steps in order in PowerShell. `0.1.6` is a reproducible
+other projects. Run the steps in order in PowerShell. `0.2.4` is a reproducible
 example version; adjust `$erolVersion` to your chosen version from the
 [Releases page](https://github.com/erolemir/EROL/releases).
 
 ### 1. Download the package and verify its SHA256 hash
 
 ```powershell
-$erolVersion = '0.1.6'
+$erolVersion = '0.2.4'
 $erolDownloadDir = Join-Path $env:USERPROFILE ".erol\downloads\$erolVersion"
 $erolWheelName = "erol_ai-$erolVersion-py3-none-any.whl"
 $erolReleaseUrl = "https://github.com/erolemir/EROL/releases/download/v$erolVersion"
@@ -215,13 +283,13 @@ check its ownership before copying over it.
 
 ## macOS and Linux: Python CLI
 
-Create a separate environment with Python 3.11+. Adapt the `0.1.6` example to
+Create a separate environment with Python 3.11+. Adapt the `0.2.4` example to
 your chosen release:
 
 ```sh
 python3 -m venv "$HOME/.local/share/erol/venv"
 "$HOME/.local/share/erol/venv/bin/python" -m pip install --no-deps \
-  https://github.com/erolemir/EROL/releases/download/v0.1.6/erol_ai-0.1.6-py3-none-any.whl
+  https://github.com/erolemir/EROL/releases/download/v0.2.4/erol_ai-0.2.4-py3-none-any.whl
 "$HOME/.local/share/erol/venv/bin/erol" --version
 ```
 
@@ -897,6 +965,10 @@ environment. The updater lives in `~/.erol/updater`.
 
 ### Update or uninstall the CLI
 
+For the quick pipx installation, update with `pipx upgrade erol-ai` or remove it
+with `pipx uninstall erol-ai`. On Windows, prefix either command with
+`py -3 -m`, for example `py -3 -m pipx upgrade erol-ai`.
+
 On Windows, repeat the wheel/SHA256/venv steps with a new `$erolVersion` and copy
 the global launcher again. On macOS/Linux, use the environment's Python to
 install the new release wheel with
@@ -1070,3 +1142,5 @@ EROL is in early development. [Implementation plan](docs/implementation-plan.md)
 required notices; the license's source-sharing requirements apply.
 [Contributing](CONTRIBUTING.md), [security reporting](SECURITY.md), and
 [open an issue](https://github.com/erolemir/EROL/issues).
+
+</details>

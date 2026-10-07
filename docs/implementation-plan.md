@@ -846,3 +846,22 @@ legacy Tab expectation. Runtime snapshots were regenerated through the canonical
 drift script, and the existing editor test now asserts the requested completion
 cycling. The failed CI log is retained externally; the corrected distribution
 must pass the complete matrix and local gates before publication.
+
+## Simple README installation — 2026-10-07
+
+The README now starts with a short terminal/Codex/Claude setup and first use.
+Windows terminal setup uses three pipx commands; the stable GitHub source archive
+keeps the command independent of changing wheel filenames and needs no Git/Node
+installation. macOS/Linux has a separate folded setup with official pipx package
+guidance. The original detailed guide and exact development validation sequence
+remain in a collapsed section, preserving existing anchors and manual options.
+The manual wheel example now targets the validated v0.2.4 release. pipx update
+and removal are documented alongside existing standalone installation options.
+
+Installation verification uses external temporary pipx home/bin directories and
+an isolated bootstrap, never the user's existing EROL executable or user PATH.
+The stable archive install, version and headless help/menu are exercised;
+ensurepath is checked in dry-run mode. macOS/Linux package-manager setup and
+native plugin installation are documented paths, not new live acceptance claims.
+Evidence remains external under
+`reports/erol-dc3958ee207243b6/erol-simple-readme-install-20261007/`.
