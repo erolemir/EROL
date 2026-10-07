@@ -398,15 +398,32 @@ Prices are USD per million tokens; both prices can be `0` for a free local model
 | `/project` | Show the project; select/change it with `/project PATH` |
 | `/general`, `/research` | Projectless conversation or source research, with an optional message |
 | `/providers` | Check login/capabilities; `enable ID`, `disable ID` |
-| `/models`, `/model` | Profiles, refresh access, `auto`, or `CONNECTION:MODEL` |
+| `/models`, `/model` | Numbered model list; `/model 1`, an unambiguous model name, `CONNECTION:MODEL`, or `auto` |
+| `/effort` | Supported reasoning effort for the implementer/assistant; `auto` or a value shown in `/models` |
 | `/settings` | Budget, policy, allowed commands, test manifest, and time limits |
 | `/plan` | An EROL plan without starting execution |
-| `/diff`, `/tests` | Task-relative file changes and observed test output |
+| `/files`, `/diff`, `/tests` | Absolute output paths, file change previews, and observed test output |
 | `/usage`, `/status` | Tokens, estimated cost, and session status |
 | `/new`, `/resume`, `/exit` | New session, load/continue a saved session, and exit |
 | `/logo` | Expand/contract the right logo panel; static logo in plain mode |
 | `/language` | Persistent interface language: `auto`, `en`, `tr` |
 | `/clear`, `/view`, `/motion` | Clear visible conversation, compact/full view, animation on/off |
+
+Use `/model` to see the numbered list, then `/model 1` to choose. `/model auto`
+restores automatic selection; `/effort high` chooses a supported effort for the
+implementer/assistant. These overrides last for the current terminal process,
+including project changes; reviewers/planners keep independent automatic routing.
+Changes to connection configuration require a fresh `/models` list before numbered
+selection. Profile presence does not prove account access: native CLI models need
+a real turn, and `/models refresh` checks API account listings.
+
+After a project task, the result shows added/modified/deleted files with absolute
+paths, line counts and short patches. `/files` lists observed report file paths
+under the external EROL home; a text response alone is not an exported file.
+`/diff 2` selects the second file, `/diff 2 3` its third 100-line page, and
+`/diff previous 1 2` the second file from the first continuation step. Stored
+patch truncation and binary changes are explicitly marked. Old chats retain
+their original evidence; missing historical report inventories are disclosed.
 
 Model routing considers task risk/scope and the EROL plan. Unknown work starts
 at a medium level; small explicit fixes prefer economical profiles, while

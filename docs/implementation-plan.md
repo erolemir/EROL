@@ -792,3 +792,26 @@ The two path regressions now cover report persistence and credential, relative,
 non-string and nested-field rejection. This is a narrow metadata fix, not a
 general relaxation of secret detection. The failed initial CI evidence is retained
 externally; the corrected source must pass the complete matrix before merge.
+
+## Terminal output and model selection usability — 2026-10-07
+
+The user reported missing generated paths, unclear edits and inaccessible manual
+model selection. Five regressions failed against the old behavior before repair.
+Results now show absolute source/report paths, change kinds, line counts and short
+patches. `/files` exposes observed report metadata; `/diff NUMBER [PAGE]` pages
+retained patches, including historical continuation steps. Legacy inventories and
+truncated/binary evidence remain explicit. No full conversations are retained.
+
+`/model` now opens a numbered inventory; `/model NUMBER`, unambiguous raw IDs and
+fully qualified names work. Snapshot/config guards prevent stale-number replacement,
+and unavailable connections are rejected. `/effort` validates supported profiles;
+manual preferences apply only to implementer/assistant, remain process-local and
+cannot change during active execution. Reviewers/planners retain separate routing.
+
+Independent review reproduced full-name/raw-ID collisions, numeric filename/index
+collisions, missing legacy absolute paths, inaccessible historical diffs and C++
+increment/decrement line-count errors. All were repaired with targeted regressions.
+The local global launcher points to `~/.erol/cli/0.2.0`, independently of installed
+plugins; it must be updated to the validated distribution to expose these changes.
+Final validation/review/installation evidence is kept outside the repository in
+`reports/erol-dc3958ee207243b6/erol-terminal-ux-20261007/`.

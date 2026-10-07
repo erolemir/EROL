@@ -473,12 +473,30 @@ class GeneralTests(unittest.TestCase):
             "/exit",
         ]
         screen = Screen(output)
+
+        def inventory(engine, refresh=False):
+            models = {c.id: c.models for c in engine.connections.settings.connections if c.enabled}
+            return (
+                [
+                    {
+                        "id": c.id,
+                        "kind": c.kind,
+                        "available": True,
+                        "model_access": "synthetic_fixture",
+                    }
+                    for c in engine.connections.settings.connections
+                    if c.enabled
+                ],
+                models,
+            )
+
         with (
             patch("erol.console.Screen", return_value=screen),
             patch("erol.console.read_prompt", side_effect=inputs),
             patch.object(sys.stdin, "isatty", return_value=True),
             patch.object(sys.stdout, "isatty", return_value=True),
-            patch.object(ChatEngine, "providers", return_value=([], {})),
+            patch.object(ChatEngine, "providers", autospec=True, side_effect=inventory),
+            patch.object(GeneralEngine, "providers", autospec=True, side_effect=inventory),
             patch("erol.console.run_task") as task,
         ):
             self.assertEqual(launch(self.base, self.home), 0)
@@ -486,7 +504,8 @@ class GeneralTests(unittest.TestCase):
         self.assertIn("No project selected · general conversation", output.getvalue())
         self.assertIn(str(project), output.getvalue())
         self.assertEqual(ConnectionStore(self.home).settings.api_budget_usd, 7)
-        self.assertEqual(output.getvalue().count("Model: codex:gpt-6.1-sol"), 3)
+        # Selection, two menus and two status views all expose the retained preference.
+        self.assertEqual(output.getvalue().count("Model: codex:gpt-6.1-sol"), 5)
 
     def test_native_general_readonly_and_research_web_tools(self):
         for kind in ("codex", "claude"):

@@ -215,6 +215,8 @@ def changes(before: Snapshot, after: Snapshot) -> list[dict]:
                     "diff": visible(patch[:64000]),
                     "diff_truncated": len(patch) > 64000,
                     "binary": False,
+                    "added_lines": sum(line.startswith("+") for line in patch_lines[2:]),
+                    "removed_lines": sum(line.startswith("-") for line in patch_lines[2:]),
                 }
             )
         except UnicodeError:

@@ -186,6 +186,7 @@ class GeneralEngine(ConnectionContext):
             models,
             role="assistant",
             override=self.selected_model,
+            effort_override=self.selected_effort,
             context_tokens=len(self._prompt(task, workflow).encode("utf-8"))
             + len(
                 canonical(

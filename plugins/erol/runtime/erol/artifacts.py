@@ -59,6 +59,22 @@ def report_digest(directory: str | None) -> str | None:
     return digest(files)
 
 
+def report_files(directory: str) -> list[dict]:
+    """Observe bounded report metadata; never trust paths asserted by a model."""
+    base = Path(directory)
+    reject_links(base)
+    files: list[dict] = []
+    if base.exists():
+        for path in sorted(base.rglob("*")):
+            reject_links(path)
+            if path.is_file():
+                size = path.stat().st_size
+                if len(files) >= 100 or size > 1024 * 1024:
+                    raise ErolError("Generated reports exceed the evidence budget")
+                files.append({"path": path.relative_to(base).as_posix(), "bytes": size})
+    return files
+
+
 def instructions(relative: str) -> str:
     return (
         f"Generated inspection/research reports belong only under {relative}/. "
