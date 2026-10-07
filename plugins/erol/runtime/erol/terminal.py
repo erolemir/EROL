@@ -34,23 +34,17 @@ def render_logo(width: int = 80, *, color: bool = True, bright: bool = False, po
                 intensity = round(255 * (intensity / 255) ** 0.25)
             row.append(intensity if intensity >= 8 else 0)
         scaled.append(row)
-    if pose:
-        # Keep the abdomen still while antennae and forelegs gently flex.
-        motion = (0, 1, 1, 0, -1, -1)[pose % 6]
-        for y, row in enumerate(scaled):
-            if y < height * 0.18 or height * 0.30 < y < height * 0.56:
-                moved = [0] * width
-                for x, intensity in enumerate(row):
-                    offset = motion * (-1 if x < width // 2 else 1)
-                    if 0 <= x + offset < width:
-                        moved[x + offset] = intensity
-                scaled[y] = moved
+    # A small terminal silhouette cannot tolerate disconnected, shifted limbs.
+    # Breathe through light only; every occupied pixel stays in place, including
+    # in monochrome. Pose zero is the original static rendering.
+    light = 0.88 + 0.12 * math.cos(2 * math.pi * (pose % 24) / 24)
     lines = []
     for y in range(0, height, 2):
         parts = []
         previous = None
         for top, bottom in zip(scaled[y], scaled[y + 1], strict=True):
             if color:
+                top, bottom = round(top * light), round(bottom * light)
                 pair = (top, bottom)
                 if pair != previous:
                     parts.append(f"\x1b[38;2;0;{top};0m\x1b[48;2;0;{bottom};0m")

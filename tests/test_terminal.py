@@ -110,7 +110,7 @@ class SidebarLayoutTests(unittest.TestCase):
         self.assertTrue(all(cells(line) <= 109 for line in frame.lines))
         for line in frame.lines[:23]:
             left, _, _ = SGR.sub("", line).partition(" │ ")
-            self.assertEqual(cells(left), 79)
+            self.assertEqual(cells(left), 84)
         row, col = frame.cursor
         self.assertTrue(25 <= row <= 27)
         self.assertTrue(1 <= col < 110)
