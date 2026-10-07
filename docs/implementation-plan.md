@@ -1,5 +1,34 @@
 # Living implementation plan
 
+## Guided terminal setup and installation — 2026-10-07
+
+`/start` offers five first-use choices; Enter on an empty prompt opens the full
+action menu. Connections, project folder entry, chat naming, language, models,
+effort and saved history use the same navigation in rich and plain terminals.
+Type to filter menus with accent-insensitive Turkish/English search. Selection
+keeps original project/chat values and displayed inventory bindings. Opening
+setup/connection menus neither probes providers nor calls models; access remains
+an explicit `/providers` check. Selecting an existing connection preserves its
+profiles and manual model/effort preferences. Test-manifest authorization remains
+explicit in the existing onboarding/check-trust workflow.
+
+Missing-connection task submission opens a picker before execution. Cancellation
+keeps the task in the rich editor (plain mode prints it for resubmission) without
+creating task evidence. Project switches clear drafts. Pasted controls are
+consumed through the bracketed payload in both menus and entry forms.
+
+The installer shows download, environment/package and command setup progress,
+targeted failure recovery and the next terminal action. An identical launcher
+does not generate another backup and restores its executable mode; different
+launchers still receive preserved backups before atomic replacement. README
+first-use instructions cover menu navigation and verified access boundaries.
+
+Regression evidence, full twelve-step README validation and separate review
+are retained externally under
+`reports/erol-dc3958ee207243b6/erol-guided-setup-20261007/`. Native OS installer CI
+and local synthetic terminal fixtures are distinct evidence; no live model
+benchmark or universal interactive terminal compatibility is inferred.
+
 Current milestone: bounded autonomous work, parallel review and evidence-linked research.
 
 Implemented user-authorized follow-up areas: bounded Git/TODO/check/issue discovery;

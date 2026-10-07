@@ -9,7 +9,16 @@ from unittest.mock import patch
 
 from erol.choices import Choice
 from erol.connections import Model
-from erol.console import Editor, Screen, command, escape_key, interactive_command, read_choice
+from erol.console import (
+    Editor,
+    Screen,
+    command,
+    escape_key,
+    interactive_command,
+    read_choice,
+    read_prompt,
+    run_task,
+)
 from erol.display import SGR, Display, cells
 from erol.general import GeneralEngine
 from erol.terminal import render_logo
@@ -71,6 +80,146 @@ class ChoiceTests(unittest.TestCase):
         editor.key("escape")
         self.assertEqual(editor.text, "")
         self.assertEqual(escape_key("\x1b"), "escape")
+
+    def test_search_preserves_values_and_handles_turkish_and_model_digits(self):
+        choice = Choice(
+            [
+                {"label": "İstanbul uygulaması", "value": "/my-projects 8"},
+                {"label": "gpt-6.1-sol", "value": "/model codex:gpt-6.1-sol"},
+            ]
+        )
+        for key in "istanbul":
+            choice.key(key)
+        self.assertEqual(choice.key("enter"), "/my-projects 8")
+        for _ in "istanbul":
+            choice.key("backspace")
+        for key in "gpt-6.1":
+            choice.key(key)
+        self.assertEqual(choice.key("enter"), "/model codex:gpt-6.1-sol")
+
+    def test_search_empty_results_cannot_select_and_recovers(self):
+        choice = Choice(self.rows)
+        choice.key("z")
+        self.assertIsNone(choice.key("enter"))
+        choice.key("end")
+        self.assertTrue(choice.lines("Models", "Search", 10))
+        choice.key("backspace")
+        self.assertEqual(choice.key("enter"), "1")
+
+
+class SetupTests(unittest.TestCase):
+    def test_pasted_controls_cannot_escape_form_into_next_prompt(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "project"
+            root.mkdir()
+            engine = GeneralEngine(root, Path(temporary) / "external-home")
+            for field in ("/project", "/rename"):
+                for control in ("cancel", "escape"):
+                    screen = Screen(io.StringIO())
+                    screen.rich = True
+                    screen.pending_keys = [
+                        "paste_start",
+                        control,
+                        "/",
+                        "e",
+                        "x",
+                        "i",
+                        "t",
+                        "enter",
+                        "paste_end",
+                        "escape",
+                    ]
+                    with (
+                        patch(
+                            "erol.console.input_session",
+                            return_value=contextlib.nullcontext((0, None)),
+                        ),
+                        patch.object(screen, "refresh"),
+                    ):
+                        self.assertEqual(interactive_command(engine, field, screen), {})
+                    self.assertEqual(screen.pending_keys, [])
+
+    def test_cancel_connection_keeps_task_without_running_or_creating_state(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "project"
+            root.mkdir()
+            home = Path(temporary) / "external-home"
+            engine, screen = GeneralEngine(root, home), Screen(io.StringIO())
+            with (
+                patch("erol.console.read_choice", return_value=None),
+                patch.object(engine, "execute") as execute,
+            ):
+                self.assertEqual(run_task(engine, "Fix pagination", screen), {})
+            execute.assert_not_called()
+            self.assertEqual(screen.draft, "Fix pagination")
+            self.assertFalse(home.exists())
+
+    def test_task_draft_is_restored_in_editor_and_empty_enter_opens_navigation(self):
+        screen = Screen(io.StringIO())
+        screen.rich, screen.draft = True, "Fix pagination"
+        screen.pending_keys = ["enter"]
+        with (
+            patch("erol.console.input_session", return_value=contextlib.nullcontext((0, None))),
+            patch.object(screen, "refresh"),
+        ):
+            self.assertEqual(read_prompt(screen, [], []), "Fix pagination")
+        self.assertEqual(screen.draft, "")
+        self.assertEqual(Editor([], []).key("enter"), "")
+
+    def test_plain_picker_search_and_cancelled_forms_are_reversible(self):
+        screen = Screen(io.StringIO())
+        with patch("builtins.input", side_effect=["istanbul", "1"]):
+            self.assertEqual(
+                read_choice(
+                    screen,
+                    "Projects",
+                    [
+                        {"label": "İstanbul", "value": "/my-projects 8"},
+                        {"label": "Ankara", "value": "/my-projects 2"},
+                    ],
+                ),
+                "/my-projects 8",
+            )
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "project"
+            root.mkdir()
+            home = Path(temporary) / "external-home"
+            engine = GeneralEngine(root, home)
+            for text in ("/project", "/rename"):
+                with patch("erol.console.read_prompt", return_value=""):
+                    self.assertEqual(interactive_command(engine, text, screen), {})
+            self.assertFalse(home.exists())
+
+    def test_start_and_connection_choices_do_not_probe_or_create_state(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "project"
+            root.mkdir()
+            home = Path(temporary) / "external-home"
+            engine = GeneralEngine(root, home)
+            with patch.object(engine, "providers", side_effect=AssertionError("no probes")):
+                self.assertIn(
+                    "/connect", {r["value"] for r in command(engine, "/start")["menu_choices"]}
+                )
+                self.assertTrue(command(engine, "/connect")["connection_choices"])
+            self.assertFalse(home.exists())
+
+    def test_connection_selection_preserves_profiles_and_manual_model(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "project"
+            root.mkdir()
+            engine = GeneralEngine(root, Path(temporary) / "external-home")
+            engine.connections.connect("codex", "work")
+            connection = engine.connections.get("work")
+            connection.models = [Model.load({"id": "custom", "level": 3})]
+            engine.connections.save()
+            engine.selected_model = "work:custom"
+            with patch.object(engine, "providers", side_effect=AssertionError("no probes")):
+                rows = command(engine, "/connect")["connection_choices"]
+                selected = next(row["value"] for row in rows if row["value"] == "/connect use work")
+                command(engine, selected)
+            self.assertEqual(engine.connections.settings.preferred_connection, "work")
+            self.assertEqual(engine.selected_model, "work:custom")
+            self.assertEqual(engine.connections.get("work").models[0].id, "custom")
 
 
 class PickerTests(unittest.TestCase):

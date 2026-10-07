@@ -6,6 +6,45 @@ import locale
 import os
 
 MESSAGES = {
+    "menu_exit": ("Exit EROL", "EROL'dan çık"),
+    "menu_start": ("Set up / choose a connection", "Başlangıç / bağlantı seç"),
+    "menu_folder": ("Open a project folder", "Proje klasörü aç"),
+    "menu_new": ("Start a new chat", "Yeni sohbet başlat"),
+    "menu_rename": ("Name this chat", "Bu sohbete isim ver"),
+    "menu_language": ("Choose interface language", "Arayüz dilini seç"),
+    "menu_general": ("General conversation", "Genel sohbet"),
+    "menu_research": ("Research with sources", "Kaynaklı araştırma"),
+    "connection_cli": ("CLI · install and log in first", "CLI · önce kur ve giriş yap"),
+    "connection_api": (
+        "API · uses an environment variable; /providers checks access",
+        "API · ortam değişkenini kullanır; /providers erişimi kontrol eder",
+    ),
+    "connection_custom": (
+        "Custom API: /connect compatible ID KEY_ENV HTTPS_URL",
+        "Özel API: /connect compatible ID KEY_ENV HTTPS_URL",
+    ),
+    "setup_ready": (
+        "Connection saved. /providers checks access; /model chooses a model. "
+        "Describe your task next.\n",
+        "Bağlantı kaydedildi. /providers erişimi kontrol eder; /model ile model seçebilirsin. "
+        "Ardından görevini yaz.\n",
+    ),
+    "folder_prompt": (
+        "Paste the project folder path (blank or Esc to cancel):\n",
+        "Proje klasörünün yolunu yapıştır (iptal için boş bırak veya Esc):\n",
+    ),
+    "rename_prompt": (
+        "Type a name for this chat (blank or Esc to cancel):\n",
+        "Bu sohbete isim yaz (iptal için boş bırak veya Esc):\n",
+    ),
+    "draft_kept": (
+        "Connection setup cancelled. Your task is kept; connect and send it again.\n",
+        "Bağlantı seçimi iptal edildi. Görevin korundu; bağlantı kurup tekrar gönder.\n",
+    ),
+    "no_matches": (
+        "No matches · Backspace to change search",
+        "Eşleşme yok · aramayı değiştirmek için Backspace",
+    ),
     "menu_title": ("What would you like to do?", "Ne yapmak istiyorsun?"),
     "menu_projects": ("Choose a project", "Proje seç"),
     "menu_models": ("Choose a model", "Model seç"),
@@ -20,14 +59,20 @@ MESSAGES = {
     "menu_view": ("Switch reading layout", "Okuma görünümünü değiştir"),
     "menu_settings": ("See settings", "Ayarları gör"),
     "menu_help": ("All commands and examples", "Tüm komutlar ve örnekler"),
-    "choice_hint": ("↑/↓ choose · Enter open · Esc back", "↑/↓ seç · Enter aç · Esc geri"),
-    "choice_plain": ("Number (blank to go back): ", "Numara (geri dönmek için boş bırak): "),
+    "choice_hint": (
+        "Type to search · ↑/↓ choose · Enter open · Esc back",
+        "Yazarak ara · ↑/↓ seç · Enter aç · Esc geri",
+    ),
+    "choice_plain": (
+        "Number or search (blank to go back): ",
+        "Numara veya arama (geri dönmek için boş bırak): ",
+    ),
     "auto_model": ("Automatic · choose for each task", "Otomatik · göreve göre seç"),
     "welcome_actions": (
-        "\nDescribe your task, or open /menu.\n"
+        "\nDescribe your task. Press Enter for the menu; /start for setup.\n"
         "/my-projects  project · /model  model · /chats  saved chats\n"
         "/files  output paths · /diff  changes · /tests  checks\n",
-        "\nGörevini yaz veya /menu ile seçim yap.\n"
+        "\nGörevini yaz. Menü için Enter; başlangıç için /start.\n"
         "/my-projects  proje · /model  model · /chats  eski sohbetler\n"
         "/files  çıktı yolları · /diff  değişiklikler · /tests  kontroller\n",
     ),
@@ -242,6 +287,7 @@ MESSAGES = {
 }
 
 HELP_EN = {
+    "start": "Guided setup: connections, project, model and language",
     "menu": "Action menu: project, model, saved chats, files and reading layout",
     "help": "Show commands and examples",
     "project": "Show/select project: /project C:/Projects/my-app (quote spaces)",

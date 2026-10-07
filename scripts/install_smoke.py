@@ -46,10 +46,23 @@ def main() -> None:
                 project = base / "explicit project"
                 project.mkdir()
                 before = command.read_bytes()
+                command.write_bytes(b"previous launcher fixture")
                 second = install.install_cli(home, bin_dir, version, name, payload)
                 backups = list((home / "install-backups").iterdir())
-                if second != command or not backups or backups[0].read_bytes() != before:
+                if (
+                    second != command
+                    or not backups
+                    or backups[0].read_bytes() != b"previous launcher fixture"
+                ):
                     raise RuntimeError("Reinstallation failed to preserve the existing command")
+                install.install_cli(home, bin_dir, version, name, payload)
+                if (
+                    command.read_bytes() != before
+                    or list((home / "install-backups").iterdir()) != backups
+                ):
+                    raise RuntimeError(
+                        "Same-version reinstallation changed the command or added backups"
+                    )
                 for arguments in [
                     ["--version"],
                     [

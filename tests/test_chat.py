@@ -827,18 +827,19 @@ class StartupTests(unittest.TestCase):
             home = root / ".erol"
             project = root / "workspace with spaces"
             project.mkdir()
-            result, output, engines = self.start(
-                root,
-                home,
-                [
-                    "/help",
-                    "Please fix something",
-                    "/project .",
-                    "/project missing",
-                    '/project "workspace with spaces"',
-                    "/exit",
-                ],
-            )
+            with patch("erol.console.read_choice", return_value=None):
+                result, output, engines = self.start(
+                    root,
+                    home,
+                    [
+                        "/help",
+                        "Please fix something",
+                        "/project .",
+                        "/project missing",
+                        '/project "workspace with spaces"',
+                        "/exit",
+                    ],
+                )
             self.assertEqual(result, 0)
             self.assertIn("/project", output)
             self.assertIn(str(project), output)
