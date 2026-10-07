@@ -8,15 +8,21 @@ One terminal for AI tasks, project memory, model selection and reviewed changes.
 
 Choose **one** option below. You can add the others later.
 
-### Terminal — Windows
+### Terminal — one command
 
-Install [Python 3.11+](https://www.python.org/downloads/) if needed. Paste these
-three commands into PowerShell:
+You only need [Python 3.11+](https://www.python.org/downloads/).
+No npm, Node.js or administrator access is needed.
+
+**macOS / Linux:** paste this into your terminal:
+
+```sh
+python3 -c "import urllib.request; exec(urllib.request.urlopen('https://raw.githubusercontent.com/erolemir/EROL/stable/scripts/install.py').read())"
+```
+
+**Windows:** paste this into PowerShell:
 
 ```powershell
-py -3 -m pip install --user pipx
-py -3 -m pipx install https://github.com/erolemir/EROL/archive/refs/heads/stable.zip
-py -3 -m pipx ensurepath
+py -3 -c "import urllib.request; exec(urllib.request.urlopen('https://raw.githubusercontent.com/erolemir/EROL/stable/scripts/install.py').read())"
 ```
 
 Close and reopen the terminal, then run:
@@ -26,18 +32,24 @@ erol
 ```
 
 <details>
-<summary>Terminal — macOS / Linux</summary>
+<summary>What does the installer do? / Alternative pipx setup</summary>
 
-You need Python 3.11+ and [pipx](https://pipx.pypa.io/stable/how-to/install-pipx.html).
-On macOS, install pipx with `brew install pipx`; on Linux, use your distribution's
-pipx package. Then:
+The command runs our [installer](scripts/install.py). It verifies the release
+wheel against `SHA256SUMS`, installs into `~/.erol/cli/<version>`, places the
+command in `~/.local/bin`, and configures your user PATH (Windows or bash/zsh).
+An existing command is backed up under `~/.erol/install-backups`.
+It prints the exact executable path so you can start immediately.
+For another shell, it prints the directory to add to PATH.
+Your project memory and npm settings are preserved. Run the same command to update.
+
+Prefer pipx? With [pipx installed](https://pipx.pypa.io/stable/how-to/install-pipx.html):
 
 ```sh
 pipx install https://github.com/erolemir/EROL/archive/refs/heads/stable.zip
 pipx ensurepath
 ```
 
-Open a new terminal and run `erol`.
+On Windows, prefix these commands with `py -3 -m`. Open a new terminal and run `erol`.
 
 </details>
 
@@ -80,9 +92,13 @@ For Claude, use `/connect claude`. Write your task in normal words.
 terminal; [manual installation](#windows-make-erol-available-across-your-account)
 and [troubleshooting](#troubleshooting) are below.
 
-The terminal and plugins are separate installations. Terminal setup uses
-[pipx](https://pipx.pypa.io/stable/tutorial/getting-started.html) and the tested
-`stable` source channel; no Node.js or Git is needed for this terminal path.
+**`npm install -g erol` fails?** EROL is distributed through GitHub releases;
+it is currently not published in the npm registry. Use the one-command setup above.
+Global npm `EACCES` errors concern the global installation directory;
+our installer uses your home directory instead. [npm's official explanation](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally/).
+
+The terminal and plugins are separate installations. The installer uses the tested
+`stable` release channel; no Node.js or Git is needed for this terminal path.
 
 <details>
 <summary>Advanced setup, usage, updates and development checks</summary>
@@ -965,6 +981,14 @@ environment. The updater lives in `~/.erol/updater`.
 
 ### Update or uninstall the CLI
 
+For the one-command installer, run the same setup command again to update. It keeps
+older version environments and a backup of the previous command under `~/.erol`.
+To uninstall this CLI, remove only `~/.local/bin/erol` (`erol.exe` on Windows) and
+its version directory under `~/.erol/cli`. Keep the rest of `~/.erol` for project
+memory and reports. The `# EROL user CLI` block can be removed from your bash/zsh
+profile; on Windows remove only the installer's user PATH entry if no other command
+uses that directory. If you used `--bin-dir`, remove that command location instead.
+
 For the quick pipx installation, update with `pipx upgrade erol-ai` or remove it
 with `pipx uninstall erol-ai`. On Windows, prefix either command with
 `py -3 -m`, for example `py -3 -m pipx upgrade erol-ai`.
@@ -1002,6 +1026,8 @@ and retained worktrees may share that home.
 | Symptom | Check / fix |
 | --- | --- |
 | `erol` is not recognized | The plugin does not install a global CLI. Install the CLI and try the full venv executable path. On Windows, check the user `.local\bin` PATH entry and open a new terminal. |
+| npm `EACCES` / global install permission error | Use the one-command user installer above. It needs no global npm write access or sudo. If npm reports 404 for `erol`, the package is not currently published in that registry. |
+| Installer reports missing `venv` / `ensurepip` | On Linux, install your distribution's Python venv package, then retry. Python 3.11+ is required; use the exact executable path printed by the installer if PATH setup fails. |
 | Python is too old | Check `py -3 --version` / `python3 --version`; use 3.11+. For Node, set the executable path with `EROL_PYTHON`. |
 | Skill does not appear | Check plugin enablement/version and start a new session or restart. Use `/erol:erol` in Claude or `$erol` in Codex CLI. |
 | Claude OAuth expired / HTTP 401 | Run `/login` inside Claude Code, then retry. EROL does not copy credentials or bypass login. |
@@ -1085,6 +1111,7 @@ python scripts/check_adapter_drift.py --check
 python scripts/validate.py
 python -m build
 python scripts/package_smoke.py
+python -m scripts.install_smoke
 npm pack --pack-destination dist
 python scripts/npm_package_smoke.py
 ```

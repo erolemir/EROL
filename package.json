@@ -19,6 +19,7 @@
     "plugins/erol/LICENSE",
     "plugins/erol/COPYRIGHT",
     "scripts/update-plugins.ps1",
+    "scripts/install.py",
     "plugins/erol/.claude-plugin/plugin.json",
     "plugins/erol/skills/**/*",
     "plugins/erol/scripts/*.mjs",

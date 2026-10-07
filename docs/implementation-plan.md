@@ -865,3 +865,24 @@ ensurepath is checked in dry-run mode. macOS/Linux package-manager setup and
 native plugin installation are documented paths, not new live acceptance claims.
 Evidence remains external under
 `reports/erol-dc3958ee207243b6/erol-simple-readme-install-20261007/`.
+
+## One-command user installation — 2026-10-07
+
+Replace the visible pipx bootstrap with one Python command per platform. The
+stdlib-only installer resolves the tested stable release, checks the wheel's
+SHA256 before installation, creates a versioned user venv and backs up the old
+launcher before replacing it. It avoids npm/global directories and administrator
+privileges; Windows user PATH and bash/zsh startup profiles discover the command.
+Unsupported shells and PATH conflicts retain a printed full executable command.
+Registry discovery confirmed npm `erol` is not published; no registry publication
+is implied. The actual user's macOS error text was not supplied, so its exact
+cause remains unconfirmed.
+
+Regression coverage includes checksum/version identity, existing installations,
+atomic version-path ownership, rollback, Windows PATH ordering and shell startup
+precedence. A real built-wheel installer smoke uses external home/bin directories,
+an untouched global npm prefix, reinstall backup and native bash/zsh startup when
+available. CI runs it on Windows/macOS/Linux with Python 3.11/3.14, and release
+builds repeat it. Tests do not edit the real user's registry or shell profiles.
+Installer reports and review evidence remain under the external task directory
+`reports/erol-dc3958ee207243b6/erol-one-command-installer-20261007/`.
